@@ -10,13 +10,13 @@ public:
 		offGrid = false;
 		// Extended classes need to calculate heuristic, curSTate, travelCost, and totalCost
 	}
-	void onEnter(void) {};
-	void onExit(void) {};
+	void onEnter(void) {}
+	void onExit(void) {}
 	virtual void spawnChildren(void) = 0;
-	int getTotalCost() const { return totalCost; }''
+	int getTotalCost() const { return totalCost; }
 
-	bool isGoal() {return isGoal;};
-	bool isOffGrid(){return offGrid;};
+	bool isGoal() {return isGoal;}
+	bool isOffGrid(){return offGrid;}
 	bool isEnd(){return isGoal || offGrid;}
 
 protected:
