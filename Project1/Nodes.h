@@ -14,13 +14,26 @@ private:
 	void turnRobot(RobotState s);
 };
 
-class BashNode : public AbstractNode {
+class BashNode : public AbstractNode{
 public:
 	BashNode(RobotState s, float prevCost);
 	void spawnChildren(void);
 
 private:
 	bashRobot(RobotState);
+};
+
+class ForwardNode : public Abstract Node{
+public:
+	ForwardNode(RobotState s, float prevCost);
+	void spawnChildren(void);
+	
+}
+
+class SourceNode: public AbstractNode{
+public: 
+	SourceNode(RobotState s);
+	void spawnChildren();
 };
 
 #endif
