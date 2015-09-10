@@ -14,10 +14,6 @@ y	^
 
 */
 
-
-
-
-
 World::World(unsigned int in_width, unsigned int in_height)
 {
 	m_worldGrid = new int[in_width * in_height];

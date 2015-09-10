@@ -1,3 +1,7 @@
+#ifndef _ABSTRACTNODE_
+#define _ABSTRACTNODE_
+
+#include "RobotState.h"
 
 // Abstract Class representing a Node.
 class AbstractNode {
@@ -25,3 +29,5 @@ private:
 	// the state of the robot on this node
 	RobotState curState;
 };
+
+#endif
