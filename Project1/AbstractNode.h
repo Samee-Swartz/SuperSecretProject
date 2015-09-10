@@ -6,19 +6,21 @@
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(int p) : prevCost(p) {
-		offGrid = false;
-		// Extended classes need to calculate heuristic, curSTate, travelCost, and totalCost
-	}
-	void onEnter(void) {};
-	void onExit(void) {};
+	AbstractNode(int p, AbstractNode* parent): prevCost(p), offGrid(false)
+	{}
+
+	virtual void onEnter(void) {}
+	virtual void onExit(void) {}
+
 	virtual void spawnChildren(void) = 0;
 	int getTotalCost() const { return totalCost; }
 
-	bool isGoal() {return isGoal;};
-	bool isOffGrid(){return offGrid;};
-	bool isEnd(){return isGoal || offGrid;}
 	vector<AbstractNode> getChildren() {return children;}
+	bool isGoal() const { return isGoal; }
+	bool isOffGrid() const { return offGrid; }
+	bool isEnd() const { return isGoal || offGrid; }
+
+	AbstractNode* getParent() const {return parent;}
 
 protected:
 	// determines whether this node moves the robot off the world
@@ -37,6 +39,8 @@ protected:
 	RobotState curState;
 	// vector of children nodes. Created by spawnChildren
 	vector<AbstractNode> children;
+
+	AbstractNode* parent;
 };
 
 #endif

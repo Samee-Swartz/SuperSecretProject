@@ -1,3 +1,7 @@
+#ifndef ROBOTSTATE
+#define ROBOTSTATE
+
+
 //Header file for the RobotStateClass
 #include ModData.h
 
@@ -12,3 +16,5 @@ class RobotState{
 	getRobotDirection();
 	getRobotPosition();
 };
+
+#endif

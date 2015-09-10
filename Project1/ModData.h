@@ -1,3 +1,6 @@
+#ifndef MODDATA
+#define MODDATA
+
 //Header file for the Mod Class and the Cell Data Class
 
 struct Position {
@@ -34,3 +37,5 @@ class Mod{
 	Mod(struct Position);
 	restoreWorld();
 };
+
+#endif
