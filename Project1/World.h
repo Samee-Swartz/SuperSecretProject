@@ -17,7 +17,6 @@ public:
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
 
-	World&
 private:
 	World(unsigned int in_width, unsigned int in_height);
 
@@ -25,7 +24,7 @@ private:
 private:
 	static World* m_instance;
 
-	int* m_worldGrid;
+	char* m_worldGrid;
 	unsigned int m_width;
 	unsigned int m_height;
 };

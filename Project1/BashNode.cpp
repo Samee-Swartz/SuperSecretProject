@@ -2,7 +2,7 @@
 using namespace std;
 
 BashNode::BashNode(RobotState s, float prevCost) : AbstractNode(prevCost) {
-	travelCost = 3;
+	travelCost = -3;
 	bashRobot(s);
 	heuristic = World.getInstance().getHeuristic(curState.getPosition());
 	totalCost = heuristic + prevCost + travelCost;
@@ -10,6 +10,7 @@ BashNode::BashNode(RobotState s, float prevCost) : AbstractNode(prevCost) {
 
 // Spawns one forward node
 void BashNode::spawnChildren(void) {
+	// TODO: BAD don't do this
 	if (offGrid) {
 		cout << "Ran off the edge of the board at (" << curState.getPosition().x << "," <<
 		                                           curState.getPosition().y << ")" << endl;

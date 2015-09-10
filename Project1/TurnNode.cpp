@@ -8,7 +8,7 @@ using namespace std;
 TurnNode::TurnNode(RobotState s, float prevCost, Direction d) : AbstractNode(prevCost) {
 	dir = d;
 	turnRobot(s);
-	travelCost = ceil((float)World.getInstance().getTerrain(curState.position) / 3.0);
+	travelCost = -ceil((float)World.getInstance().getTerrain(curState.position) / 3.0);
 	heuristic = World.getInstance().getHeuristic(curState.getPosition());
 	totalCost = heuristic + prevCost + travelCost;
 	// Extended classes need to calculate travelCost and totalCost

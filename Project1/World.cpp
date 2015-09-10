@@ -12,7 +12,7 @@ y	^
 	|
 	 ------------------>
 0,0						x
-
+w,h
 */
 
 World::World(unsigned int in_width, unsigned int in_height)
@@ -22,22 +22,16 @@ World::World(unsigned int in_width, unsigned int in_height)
 	m_height = in_height;
 }
 
-World& World::create(unsigned int width, unsigned int height)
-{
-	if(!m_instance)
-	{
-
-	}
-
-	return *m_instance;
-}
-
 World& World::generateWorld() {
 	int width = (rand() % 1000) + 10;
 	int height = (rand() % 1000) + 10;
 	m_instance = new World(width, height);
 
-	for (m_instance)
+	for (int w = 0; w < m_width; w++) {
+		for (int h = 0; h < m_height; h++) {
+			m_instance[w][h] = (rand() % 9) + 1;
+		}
+	}
 }
 
 World& World::getInstance()
