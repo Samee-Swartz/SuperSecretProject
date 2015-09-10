@@ -4,8 +4,7 @@
 class World
 {
 public:
-	//Create an instance of the world
-	static World& create(unsigned int width, unsigned int height);
+	static World& generateWorld();
 
 	//Get the singleton instance of the world
 	static World& getInstance();
@@ -17,6 +16,8 @@ public:
 
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
+
+	World&
 private:
 	World(unsigned int in_width, unsigned int in_height);
 
