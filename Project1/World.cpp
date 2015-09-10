@@ -15,16 +15,16 @@ y	^
 w,h
 */
 
-World::World(unsigned int in_width, unsigned int in_height)
-{
+World::World(unsigned int in_width, unsigned int in_height) {
 	m_worldGrid = new int[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
 }
 
 World& World::generateWorld() {
-	int width = (rand() % 1000) + 10;
-	int height = (rand() % 1000) + 10;
+	// World size ranges from 10 - 1009
+	m_width = (rand() % 1000) + 10;
+	m_height = (rand() % 1000) + 10;
 	m_instance = new World(width, height);
 
 	for (int w = 0; w < m_width; w++) {
@@ -32,8 +32,40 @@ World& World::generateWorld() {
 			m_instance[w][h] = '0'+(rand() % 9) + 1;
 		}
 	}
-	// Randomly add start and goal
+	goal = Position((rand() % (m_width-1))+1, (rand() % (m_height  -1))+1);
+	start = goal;
+	while (start == goal) {
+		start = Position((rand() % (m_width-1))+1, (rand() % (m_height  -1))+1);
+	}
+	return *m_instance;
+}
 
+void World::setHeuristic(int in_h) {
+	heuristic = in_h;
+}
+
+void World::calculateHeuristic(Position in_pos) {
+	switch (heuristic) {
+		case 1:
+			return 0;
+		case 2:
+			return min(abs(in_pos.x - goal.x), abs(in_pos.y - goal.y));
+		case 3:
+			return max(abs(in_pos.x - goal.x), abs(in_pos.y - goal.y));
+		case 4:
+			return abs(in_pos.x - goal.x) + abs(in_pos.y - goal.y);
+		case 5:
+		case 6:
+			int h = ceil(sqrt((float)(pow(in_pos.x - goal.x, 2) + pow(in_pos.y - goal.y, 2))))
+			// 5. Find an admissable heuristic that dominates #4.  A small tweak of #4 will work here.
+			if (heuristic == 5)
+				return h;
+			return h*3;
+			// 6. Create a non-admissable heuristic by multiplying heuristic #5 by 3.
+			//See the lecture notes on heuristics for why we might want to do such a thing.
+		case default:
+			cout << "invalid heuristic" << endl;
+	}
 }
 
 World& World::getInstance()

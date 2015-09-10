@@ -14,6 +14,11 @@ public:
 	//Set the terrain at a position
 	void setTerrain(const Position& in_worldPosition, int in_newValue);
 
+	//Get the heuristic computed from the given Position
+	int calculateHeuristic(const Position& in_pos);
+	//Set the heuristic type
+	void setHeuristic(int in_h);
+
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
 
@@ -27,6 +32,10 @@ private:
 	char* m_worldGrid;
 	unsigned int m_width;
 	unsigned int m_height;
+	Position goal;
+	Position start;
+	// 1-6 given as program input
+	int heuristic;
 };
 
 #endif

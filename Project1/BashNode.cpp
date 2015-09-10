@@ -14,7 +14,7 @@ void BashNode::spawnChildren(void) {
 	if (offGrid) {
 		cout << "Ran off the edge of the board at (" << curState.getPosition().x << "," <<
 		                                           curState.getPosition().y << ")" << endl;
-		exit();
+		// exit();
 	}
 	children.push_back(ForwardNode(curState, prevCost + travelCost));
 }
