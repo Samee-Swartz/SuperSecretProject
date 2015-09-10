@@ -2,7 +2,7 @@
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(RobotState s, int p) : prevCost(p) {
+	AbstractNode(int p) : prevCost(p) {
 		offGrid = false;
 		// Extended classes need to calculate heuristic, curSTate, travelCost, and totalCost
 	}
