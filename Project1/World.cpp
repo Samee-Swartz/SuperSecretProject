@@ -29,9 +29,11 @@ World& World::generateWorld() {
 
 	for (int w = 0; w < m_width; w++) {
 		for (int h = 0; h < m_height; h++) {
-			m_instance[w][h] = (rand() % 9) + 1;
+			m_instance[w][h] = '0'+(rand() % 9) + 1;
 		}
 	}
+	// Randomly add start and goal
+
 }
 
 World& World::getInstance()

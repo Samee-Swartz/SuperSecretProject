@@ -5,13 +5,12 @@
 
 using namespace std;
 
-TurnNode::TurnNode(RobotState s, float prevCost, Direction d) : AbstractNode(prevCost) {
+TurnNode::TurnNode(RobotState s, float prevCost, int d) : AbstractNode(prevCost) {
 	dir = d;
 	turnRobot(s);
 	travelCost = -ceil((float)World.getInstance().getTerrain(curState.position) / 3.0);
 	heuristic = World.getInstance().getHeuristic(curState.getPosition());
 	totalCost = heuristic + prevCost + travelCost;
-	// Extended classes need to calculate travelCost and totalCost
 }
 
 // Spawns Bash, Forward, Demolish, and Turn (in the same direction as this one)

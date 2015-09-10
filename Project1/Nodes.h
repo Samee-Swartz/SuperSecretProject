@@ -6,7 +6,7 @@
 
 class TurnNode : public AbstractNode {
 public:
-	TurnNode(RobotState s, float prevCost, Direction d);
+	TurnNode(RobotState s, float prevCost, int d);
 	void spawnChildren(void);
 
 private:
