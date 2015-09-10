@@ -2,27 +2,26 @@
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(RobotState s, float p) : prevCost(p) {
-		heuristic = World.getInstance().getHeuristic();
+	AbstractNode(RobotState s, int p) : prevCost(p) {
 		offGrid = false;
-		// Extended classes need to calculate curSTate, travelCost, and totalCost
+		// Extended classes need to calculate heuristic, curSTate, travelCost, and totalCost
 	}
 	void onEnter(void) {};
 	void onExit(void) {};
 	virtual void spawnChildren(void) = 0;
-	float getTotalCost() const { return totalCost; }
+	int getTotalCost() const { return totalCost; }
 
 private:
 	// determines whether this node moves the robot off the world
 	bool offGrid;	// Calculated in constructor. If world terrain >= -100
 	// heuristic to the goal
-	float heuristic;
+	int heuristic;
 	// travel cost for this node on this terrain
-	float travelCost;
-	// previous cost to get to this node
-	float prevCost;
+	int travelCost;
+	// previous cost to get to this nodefloat
+	int prevCost;
 	// total = heuristic + travel + previous
-	float totalCost;
+	int totalCost;
 	// the state of the robot on this node
 	RobotState curState;
 };
