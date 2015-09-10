@@ -6,16 +6,16 @@ class SourceNode:AbstractNode {
 public:
 
 	SourceNode::SourceNode(RobotState rs){
-		
 		curState = rs;
+		
+		//Source Node has no total cost; all cost values start at 1. 
 		prevCost = 0;
 		heuristic = 0;
 		travelCost = 0;
 		totalCost = 0;
-		
 	}
 
-	//The source node should be able to spawn all types of Nodes
+	//The source node can spawn all types of Nodes
 	void SourceNode::spawnChildren(){
 		//both turns
 		children.push_back(TurnNode(curState, prevCost + travelCost, 90));

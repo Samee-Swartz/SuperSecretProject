@@ -5,6 +5,7 @@
 class ForwardNode:AbstractNode {
 public:
 
+	//ForwardNode constructor 
 	ForwardNode::ForwardNode(RobotState rs, float p){
 		//keep direction of previous RobotState
 		 dir = rs.getRobotDirection();
@@ -25,7 +26,10 @@ public:
 			
 		}
 		
+		//assign thew new RobotState
 		curState = new RobotState(thisDir, thisPos);
+		
+		//Calculate the totalCost using prevCost + heuristic + travelCost
 		prevCost = p;
 		heuristic = World.getInstance().getHeuristic(curState.getPosition());
 		travelCost = 1 + heuristic;
@@ -33,12 +37,16 @@ public:
 		
 	}
 
+	//A ForwardNode may spawn all 5 types of child nodes
 	void ForwardNode::spawnChildren(){
-		//all 5 (Tl, Tr, B, F, D)
+		//Turn left and right
 		children.push_back(TurnNode(curState, prevCost + travelCost, 90));
 		children.push_back(TurnNode(curState, prevCost + travelCost, -90));
+		//Bash
 		children.push_back(BashNode(curState, prevCost + travelCost));
+		//Forward
 		children.push_back(ForwardNode(curState, prevCost + travelCost));
+		//Demolish
 		children.push_back(DemolishNode(curState,prevCost + travelCost));
 
 	}
