@@ -1,4 +1,7 @@
+#include <cstddef>
+
 #include "AStarSearcher.h"
+#include "Nodes.h"
 #include "World.h"
 
 bool AStarPriorityQueueComparer(const AbstractNode* const a, const AbstractNode* const b)
@@ -44,7 +47,7 @@ void goToChild(AbstractNode* currentNode, AbstractNode* endNode)
 
 AStarSearcher::AStarSearcher()
 {
-	m_rootNode = new StartNode(0);
+	m_rootNode = new SourceNode(0);
 }
 
 AStarSearcher& AStarSearcher::create()

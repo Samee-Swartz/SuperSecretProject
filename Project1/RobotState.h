@@ -1,8 +1,7 @@
 #ifndef _ROBOTSTATE_
 #define _ROBOTSTATE_
 
-//Header file for the RobotStateClass
-#include "ModData.h"
+#include "Position.h"
 
 enum Direction { NORTH, SOUTH, EAST, WEST };
 

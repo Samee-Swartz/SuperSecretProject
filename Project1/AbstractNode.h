@@ -1,14 +1,20 @@
 #ifndef _ABSTRACTNODE_
 #define _ABSTRACTNODE_
 
+#include <vector>
+
 #include "RobotState.h"
+#include "World.h"
 
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(RobotState s, int p, AbstractNode* parent): prevCost(p) {
-		offGrid = World.getInstance().isInWorld(s.getRobotPosition());
-		isGoal = World.getInstance().isGoal(s.getRobotPosition());
+	AbstractNode(RobotState s, int p, AbstractNode* parent) 
+	: prevCost(p),
+	curState(s)
+	{
+		offGrid = World::getInstance().isInWorld(s.getRobotPosition());
+		m_isGoal = World::getInstance().isGoal(s.getRobotPosition());
 	}
 
 	virtual void onEnter(void) {}
@@ -17,10 +23,10 @@ public:
 	virtual void spawnChildren(void) = 0;
 	int getTotalCost() const { return totalCost; }
 
-	vector<AbstractNode> getChildren() {return children;}
-	bool isGoal() const { return isGoal; }
+	std::vector<AbstractNode*> getChildren() {return children;}
+	bool isGoal() const { return m_isGoal; }
 	bool isOffGrid() const { return offGrid; }
-	bool isEnd() const { return isGoal || offGrid; }
+	bool isEnd() const { return m_isGoal || offGrid; }
 
 	AbstractNode* getParent() const {return parent;}
 
@@ -30,7 +36,7 @@ protected:
 	// heuristic to the goal
 	int heuristic;
 	// does this node reach a goal state
-	bool isGoal;
+	bool m_isGoal;
 	// travel cost for this node on this terrain
 	int travelCost;
 	// previous cost to get to this nodefloat
@@ -40,7 +46,7 @@ protected:
 	// the state of the robot on this node
 	RobotState curState;
 	// vector of children nodes. Created by spawnChildren
-	vector<AbstractNode> children;
+	std::vector<AbstractNode*> children;
 
 	AbstractNode* parent;
 };

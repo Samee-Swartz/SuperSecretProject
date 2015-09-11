@@ -3,6 +3,8 @@
 
 #include <vector>
 
+class SourceNode;
+
 class AbstractNode;
 
 class AStarSearcher
@@ -16,7 +18,7 @@ public:
 private:
 	AStarSearcher();
 private:
-	StartNode* m_rootNode;
+	SourceNode* m_rootNode;
 private:
 	//The singleton instance
 	static AStarSearcher* m_instance;

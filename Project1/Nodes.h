@@ -1,12 +1,13 @@
 #ifndef _NODES_
 #define _NODES_
 
+#include "World.h"
 #include "AbstractNode.h"
 #include "RobotState.h"
 
 class TurnNode : public AbstractNode {
 public:
-	TurnNode(RobotState s, int prevCost, int d);
+	TurnNode(RobotState s, int prevCost, AbstractNode* parent, int d);
 	void spawnChildren();
 
 private:
@@ -16,16 +17,16 @@ private:
 
 class BashNode : public AbstractNode {
 public:
-	BashNode(RobotState s, int prevCost);
+	BashNode(RobotState s, int prevCost, AbstractNode* parent);
 	void spawnChildren();
 
 private:
-	bashRobot(RobotState s);
+	void bashRobot(RobotState s);
 };
 
 class ForwardNode : public AbstractNode {
 public:
-	ForwardNode(RobotState s, int prevCost);
+	ForwardNode(RobotState s, int prevCost, AbstractNode* parent);
 	void spawnChildren();
 };
 
@@ -37,7 +38,7 @@ public:
 
 class DemolishNode : public AbstractNode {
 public:
-	DemolishNode(RobotState s, int prevCost);
+	DemolishNode(RobotState s, int prevCost, AbstractNode* parent);
 	void onEnter();
 	void onExit();
 	void spawnChildren();

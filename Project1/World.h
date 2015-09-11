@@ -1,6 +1,11 @@
 #ifndef _WORLD_
 #define _WORLD_
 
+#include <stack>
+
+#include "Position.h"
+#include "ModData.h"
+
 class World
 {
 public:
@@ -18,6 +23,8 @@ public:
 	int calculateHeuristic(const Position& in_pos);
 	//Set the heuristic type
 	void setHeuristic(int in_h) {heuristic = in_h;}
+
+	int getHeuristic(const Position& in_worldPosition) const;
 
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
