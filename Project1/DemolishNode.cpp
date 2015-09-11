@@ -9,10 +9,12 @@ DemolishNode::DemolishNode(RobotState s, int prevCost)
 	totalCost = heuristic + prevCost + travelCost;
 }
 
+// creates a new mod to keep track of old world state.
 void DemolishNode::onEnter() {
 	World.getInstance().pushMod(Mod(curState.getRobotPosition()));
 }
 
+// restores old world state
 void DemolishNode::onExit() {
 	World.getInstance().popMod();
 }
