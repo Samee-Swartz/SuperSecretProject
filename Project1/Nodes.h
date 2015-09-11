@@ -4,11 +4,14 @@
 #include "World.h"
 #include "AbstractNode.h"
 #include "RobotState.h"
+#include <string>
 
 class TurnNode : public AbstractNode {
 public:
 	TurnNode(RobotState s, int prevCost, int d, AbstractNode* parent);
 	void spawnChildren();
+
+	std::string getNodeType() {	return "turn " + dir; }
 
 private:
 	int dir; // either 90 or -90
@@ -19,6 +22,7 @@ class BashNode : public AbstractNode {
 public:
 	BashNode(RobotState s, int prevCost, AbstractNode* parent);
 	void spawnChildren();
+	std::string getNodeType() {	return "bash"; }
 
 private:
 	void bashRobot(RobotState s);
@@ -28,12 +32,14 @@ class ForwardNode : public AbstractNode {
 public:
 	ForwardNode(RobotState s, int prevCost, AbstractNode* parent);
 	void spawnChildren();
+	std::string getNodeType() {	return "forward"; }
 };
 
 class SourceNode: public AbstractNode {
 public:
 	SourceNode(RobotState s);
 	void spawnChildren();
+	std::string getNodeType() {	return "start"; }
 };
 
 class DemolishNode : public AbstractNode {
@@ -42,6 +48,7 @@ public:
 	void onEnter();
 	void onExit();
 	void spawnChildren();
+	std::string getNodeType() {	return "demolish"; }
 };
 
 #endif

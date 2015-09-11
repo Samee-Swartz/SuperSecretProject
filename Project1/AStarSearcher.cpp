@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <iostream>
 
 #include <queue>
 #include <functional>
@@ -52,9 +53,10 @@ AStarSearcher::AStarSearcher()
 
 AStarSearcher& AStarSearcher::create()
 {
-	if(!m_instance)
+	if(!m_instance) {
 		m_instance = new AStarSearcher();
-		
+	}
+
 	return *m_instance;
 }
 
@@ -68,6 +70,8 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 	std::priority_queue<AbstractNode*, std::vector<AbstractNode*>, AStarPriorityQueueComparer> edgeList;
 
 	AbstractNode* currentNode = m_rootNode;
+
+	std::cout << "starting best path" << std::endl;
 
 	while(!currentNode->isEnd())
 	{

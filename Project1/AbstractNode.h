@@ -9,7 +9,7 @@
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(RobotState s, int p, AbstractNode* parent) 
+	AbstractNode(RobotState s, int p, AbstractNode* parent)
 	: prevCost(p),
 	curState(s)
 	{
@@ -21,6 +21,7 @@ public:
 	virtual void onExit(void) {}
 
 	virtual void spawnChildren(void) = 0;
+	virtual std::string getNodeType() = 0;
 	int getTotalCost() const { return totalCost; }
 
 	const std::vector<AbstractNode*>& getChildren() {return children;}

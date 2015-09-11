@@ -42,23 +42,23 @@ World& World::generateWorld() {
 	// World size ranges from 10 - 1009
 	unsigned int width = (rand() % 1000) + 10;
 	unsigned int height = (rand() % 1000) + 10;
-	World* instance = new World(width, height);
+	m_instance = new World(width, height);
 
 	for (int w = 0; w < width; w++)
 	{
 		for (int h = 0; h < height; h++)
 		{
-			instance->setTerrain(Position(w, h), (rand() % 9) + 1);
+			m_instance->setTerrain(Position(w, h), (rand() % 9) + 1);
 		}
 	}
 
-	instance->goal = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
-	instance->start = instance->goal;
-	while (instance->start == instance->goal) {
-		instance->start = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
+	m_instance->goal = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
+	m_instance->start = m_instance->goal;
+	while (m_instance->start == m_instance->goal) {
+		m_instance->start = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
 	}
 
-	instance->m_startState = RobotState(NORTH, instance->start);
+	m_instance->m_startState = RobotState(NORTH, m_instance->start);
 
 	return *m_instance;
 }
@@ -75,28 +75,47 @@ World& World::createWorldFrom(std::string file) {
 		char c;
 		while ( iss >> c) {
 			tempRow.push_back(c);
-			if (c == 'S')
-				s = Position(cols, rows);
-			if (c == 'G')
-				g = Position(cols, rows);
-			rows++;
+			if (c == 'S') {
+				s.x = rows;
+				s.y = cols;
+			}
+			if (c == 'G') {
+				g.x = rows;
+				g.y = cols;
+			}
+			cols++;
 		}
 		tempWorld.push_back(tempRow);
-		cols++;
+		rows++;
 	}
-	rows /= cols;
-	World* instance = new World(cols, rows);
+	cols /= rows;
 
-	for (int w = 0; w < cols; w++)
+	std::cout << "cols: " << cols << " rows: " << rows << std::endl;
+	m_instance = new World(rows, cols);
+
+	for (int w = 0; w < rows; w++)
 	{
-		for (int h = 0; h < rows; h++)
+		for (int h = 0; h < cols; h++)
 		{
-			instance->setTerrain(Position(w, h), tempWorld[w][h]);
+			m_instance->setTerrain(Position(w, h), tempWorld[w][h]);
 		}
 	}
-	instance->start = s;
-	instance->goal = g;
-	instance->m_startState = RobotState(NORTH, instance->start);
+
+	m_instance->start = Position(s.x, s.y - (s.x*cols));
+	m_instance->goal = Position(g.x, g.y - (g.x*cols));
+	std::cout << "correct start   ";
+	std::cout << "rows: " << s.x << " cols: " << s.y - (s.x*cols) << std::endl;
+	std::cout << "correct goal    ";
+	std::cout << "rows: " << g.x << " cols: " << g.y - (g.x*cols) << std::endl;
+
+	std::cout << "wrong start   ";
+	std::cout << "rows: " << m_instance->start.x << " cols: " << m_instance->start.y << std::endl;
+	std::cout << "wrong goal    ";
+	std::cout << "rows: " << m_instance->goal.x << " cols: " << m_instance->goal.y << std::endl;
+
+
+
+	m_instance->m_startState = RobotState(NORTH, m_instance->start);
 	return *m_instance;
 }
 

@@ -3,8 +3,8 @@
 
 using namespace std;
 
-BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent) 
-: AbstractNode(s, prevCost, parent) 
+BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent)
+: AbstractNode(s, prevCost, parent)
 {
 	travelCost = -3;
 	bashRobot(s);
@@ -20,9 +20,9 @@ void BashNode::spawnChildren(void)
 
 // Updates the robot's position based on it's previous direction. Check's if the robot
 // has fallen off the world
-void BashNode::bashRobot(RobotState s) 
+void BashNode::bashRobot(RobotState s)
 {
-	switch (s.getRobotDirection()) 
+	switch (s.getRobotDirection())
 	{
 		case NORTH:
 			curState = RobotState(s.getRobotDirection(),
