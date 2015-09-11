@@ -1,5 +1,7 @@
 #include "World.h"
+#include "ModData.h"
 #include <stdlib.h>
+#include <time.h>
 
 /*
 
@@ -22,6 +24,7 @@ World::World(unsigned int in_width, unsigned int in_height) {
 }
 
 World& World::generateWorld() {
+	srand(time(NULL));
 	// World size ranges from 10 - 1009
 	m_width = (rand() % 1000) + 10;
 	m_height = (rand() % 1000) + 10;
@@ -40,11 +43,7 @@ World& World::generateWorld() {
 	return *m_instance;
 }
 
-void World::setHeuristic(int in_h) {
-	heuristic = in_h;
-}
-
-void World::calculateHeuristic(Position in_pos) {
+int World::calculateHeuristic(Position in_pos) {
 	switch (heuristic) {
 		case 1:
 			return 0;
@@ -65,6 +64,7 @@ void World::calculateHeuristic(Position in_pos) {
 			//See the lecture notes on heuristics for why we might want to do such a thing.
 		case default:
 			cout << "invalid heuristic" << endl;
+			return 0;
 	}
 }
 
@@ -92,6 +92,10 @@ void World::setTerrain(const Position& in_worldPosition, int in_newValue)
 bool World::isInWorld(const Position& in_worldPosition) const
 {
 	return in_worldPosition.x >= 0 && in_worldPosition.x < m_width && in_worldPosition.y >= 0 && in_worldPosition.y < m_width;
+}
+
+bool World::isGoal(const Position& in_worldPosition) const {
+	return in_worldPosition.equals(goal);
 }
 
 unsigned int World::getArrayIndex(const Position& in_worldPosition) const

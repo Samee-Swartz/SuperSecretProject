@@ -6,8 +6,10 @@
 // Abstract Class representing a Node.
 class AbstractNode {
 public:
-	AbstractNode(int p, AbstractNode* parent): prevCost(p), offGrid(false)
-	{}
+	AbstractNode(RobotState s, int p, AbstractNode* parent): prevCost(p) {
+		offGrid = World.getInstance().isInWorld(s.getRobotPosition());
+		isGoal = World.getInstance().isGoal(s.getRobotPosition());
+	}
 
 	virtual void onEnter(void) {}
 	virtual void onExit(void) {}

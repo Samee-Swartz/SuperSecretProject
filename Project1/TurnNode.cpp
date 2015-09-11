@@ -5,10 +5,10 @@
 
 using namespace std;
 
-TurnNode::TurnNode(RobotState s, float prevCost, int d) : AbstractNode(prevCost) {
+TurnNode::TurnNode(RobotState s, int prevCost, int d) : AbstractNode(s, prevCost) {
 	dir = d;
 	turnRobot(s);
-	travelCost = -ceil((float)World.getInstance().getTerrain(curState.position) / 3.0);
+	travelCost = -ceil((float)World.getInstance().getTerrain(curState.getRobotPosition()) / 3.0);
 	heuristic = World.getInstance().getHeuristic(curState.getPosition());
 	totalCost = heuristic + prevCost + travelCost;
 }
@@ -24,36 +24,36 @@ void TurnNode::spawnChildren(void) {
 
 // Sets curState based on the given RobotState and this turn node.
 void TurnNode::turnRobot(RobotState s) {
-	switch (s.getDirection()) {
+	switch (s.getRobotDirection()) {
 		case NORTH:
 			if (dir == 90)
-				curState = RobotState(s.getPosition(), EAST);
+				curState = RobotState(s.getRobotPosition(), EAST);
 			else if (dir == -90)
-				curState = RobotState(s.getPosition(), WEST);
+				curState = RobotState(s.getRobotPosition(), WEST);
 			else
 				cout << "dir was a bad value" << endl;
 			break;
 		case EAST:
 			if (dir == 90)
-				curState = RobotState(s.getPosition(), SOUTH);
+				curState = RobotState(s.getRobotPosition(), SOUTH);
 			else if (dir == -90)
-				curState = RobotState(s.getPosition(), NORTH);
+				curState = RobotState(s.getRobotPosition(), NORTH);
 			else
 				cout << "dir was a bad value" << endl;
 			break;
 		case SOUTH:
 			if (dir == 90)
-				curState = RobotState(s.getPosition(), WEST);
+				curState = RobotState(s.getRobotPosition(), WEST);
 			else if (dir == -90)
-				curState = RobotState(s.getPosition(), EAST);
+				curState = RobotState(s.getRobotPosition(), EAST);
 			else
 				cout << "dir was a bad value" << endl;
 			break;
 		case WEST:
 			if (dir == 90)
-				curState = RobotState(s.getPosition(), NORTH);
+				curState = RobotState(s.getRobotPosition(), NORTH);
 			else if (dir == -90)
-				curState = RobotState(s.getPosition(), SOUTH);
+				curState = RobotState(s.getRobotPosition(), SOUTH);
 			else
 				cout << "dir was a bad value" << endl;
 			break;

@@ -17,10 +17,18 @@ public:
 	//Get the heuristic computed from the given Position
 	int calculateHeuristic(const Position& in_pos);
 	//Set the heuristic type
-	void setHeuristic(int in_h);
+	void setHeuristic(int in_h) {heuristic = in_h;}
 
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
+	//Check if the Position is the goal
+	bool isGoal(const Position& in_worldPosition) const;
+
+	void pushMod(Mod m) {mods.push(m);}
+	void popMod() {
+		mods.top().restoreWorld();
+		mods.pop();
+	}
 
 private:
 	World(unsigned int in_width, unsigned int in_height);
@@ -36,6 +44,7 @@ private:
 	Position start;
 	// 1-6 given as program input
 	int heuristic;
+	std::stack<Mod> mods;
 };
 
 #endif

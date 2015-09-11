@@ -1,43 +1,37 @@
 #include "Nodes.h"
 using namespace std;
 
-BashNode::BashNode(RobotState s, float prevCost) : AbstractNode(prevCost) {
+BashNode::BashNode(RobotState s, int prevCost) : AbstractNode(s, prevCost) {
 	travelCost = -3;
 	bashRobot(s);
-	heuristic = World.getInstance().getHeuristic(curState.getPosition());
+	heuristic = World.getInstance().getHeuristic(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
 }
 
 // Spawns one forward node
 void BashNode::spawnChildren(void) {
-	// TODO: BAD don't do this
-	if (offGrid) {
-		cout << "Ran off the edge of the board at (" << curState.getPosition().x << "," <<
-		                                           curState.getPosition().y << ")" << endl;
-		// exit();
-	}
 	children.push_back(ForwardNode(curState, prevCost + travelCost));
 }
 
 // Updates the robot's position based on it's previous direction. Check's if the robot
 // has fallen off the world
 void BashNode::bashRobot(RobotState s) {
-	switch (s.getDirection()) {
+	switch (s.getRobotDirection()) {
 		case NORTH:
-			curState = RobotState(Position(s.getPosition().x, s.getPosition().y+1), s.getDirection);
+			curState = RobotState(Position(s.getRobotPosition().x, s.getRobotPosition().y+1),
+			                      s.getRobotDirection());
 			break;
 		case EAST:
-			curState = RobotState(Position(s.getPosition().x+1, s.getPosition().y), s.getDirection);
+			curState = RobotState(Position(s.getRobotPosition().x+1, s.getRobotPosition().y),
+			                      s.getRobotDirection());
 			break;
 		case SOUTH:
-			curState = RobotState(Position(s.getPosition().x, s.getPosition().y-1), s.getDirection);
+			curState = RobotState(Position(s.getRobotPosition().x, s.getRobotPosition().y-1),
+			                      s.getRobotDirection());
 			break;
 		case WEST:
-			curState = RobotState(Position(s.getPosition().x-1, s.getPosition().y), s.getDirection);
+			curState = RobotState(Position(s.getRobotPosition().x-1, s.getRobotPosition().y),
+			                      s.getRobotDirection());
 			break;
 	}
-
-	// Check if this makes the robot fall off the world
-	if (World.getInstance().getHeuristic(curState.getPosition()) >= -100)
-		offGrid = true;
 }

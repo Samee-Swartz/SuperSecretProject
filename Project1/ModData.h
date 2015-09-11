@@ -1,8 +1,7 @@
-#ifndef MODDATA
-#define MODDATA
+#ifndef _MODDATA_
+#define _MODDATA_
 
-//Header file for the Mod Class and the Cell Data Class
-
+// (x,y) coordinate position
 struct Position {
 	int x;
 	int y;
@@ -10,17 +9,24 @@ struct Position {
 		x = x;
 		y = y;
 	}
-};
 
+	bool equals(struct Position p) {
+		return x == p.x && y == p.y;
+	}
+};
+typedef struct Position Position;
+
+// Position and Terrain information about a single world cell
 class CellData{
-	struct Position p;
+	Position p;
 	int terrain;
   public:
-    CellData(struct position, int);
-	getPosition();
-	getTerrain();
+    CellData(const Position position, const int terrain);
+	Position getPosition() {return p;}
+	int getTerrain() {return terrain;}
 };
 
+// Stores information about 8 world cells that have been demolished
 class Mod{
 	CellData northWest;
 	CellData north;
@@ -31,11 +37,10 @@ class Mod{
 	CellData south;
 	CellData southEast;
 
-
   public:
-	Mod(CellData);
-	Mod(struct Position);
+	Mod(const Position);
 	restoreWorld();
+	destroyWorld();
 };
 
 #endif
