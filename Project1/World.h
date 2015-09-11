@@ -5,6 +5,7 @@
 
 #include "Position.h"
 #include "ModData.h"
+#include "RobotState.h"
 
 class World
 {
@@ -24,8 +25,6 @@ public:
 	//Set the heuristic type
 	void setHeuristic(int in_h) {heuristic = in_h;}
 
-	int getHeuristic(const Position& in_worldPosition) const;
-
 	//Tests if a point is in the world
 	bool isInWorld(const Position& in_worldPosition) const;
 	//Check if the Position is the goal
@@ -36,6 +35,8 @@ public:
 		mods.top().restoreWorld();
 		mods.pop();
 	}
+
+	RobotState getStartState() const {return m_startState;}
 
 private:
 	World(unsigned int in_width, unsigned int in_height);
@@ -52,6 +53,8 @@ private:
 	// 1-6 given as program input
 	int heuristic;
 	std::stack<Mod> mods;
+
+	RobotState m_startState;
 };
 
 #endif

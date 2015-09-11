@@ -17,7 +17,9 @@ y	^
 w,h
 */
 
-World::World(unsigned int in_width, unsigned int in_height) {
+World::World(unsigned int in_width, unsigned int in_height)
+	: m_startState(NORTH, Position(0, 0))
+{
 	m_worldGrid = new int[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
@@ -40,6 +42,9 @@ World& World::generateWorld() {
 	while (start == goal) {
 		start = Position((rand() % (m_width-1))+1, (rand() % (m_height  -1))+1);
 	}
+
+	m_startState = RobotState(NORTH, start);
+
 	return *m_instance;
 }
 
@@ -76,7 +81,7 @@ World& World::getInstance()
 int World::getTerrain(const Position& in_worldPosition) const
 {
 	if(!inWorld(in_worldPosition))
-		return -100;
+		return 100;
 
 	return m_worldGrid[getArrayIndex(in_worldPosition)];
 }

@@ -1,32 +1,29 @@
 #include "AbstractNode.h"
+#include "Nodes.h"
 #include "World.h"
 #include <stdio.h>
 
-class SourceNode:AbstractNode {
-public:
+SourceNode::SourceNode(RobotState rs)
+	: AbstractNode(rs, 0 , NULL)
+{
+	//Source Node has no total cost; all cost values start at 1. 
+	prevCost = 0;
+	heuristic = 0;
+	travelCost = 0;
+	totalCost = 0;
+}
 
-	SourceNode::SourceNode(RobotState rs){
-		curState = rs;
-		
-		//Source Node has no total cost; all cost values start at 1. 
-		prevCost = 0;
-		heuristic = 0;
-		travelCost = 0;
-		totalCost = 0;
-	}
+//The source node can spawn all types of Nodes
+void SourceNode::spawnChildren()
+{
+	//both turns
+	children.push_back(new TurnNode(curState, prevCost + travelCost, 90, this));
+	children.push_back(new TurnNode(curState, prevCost + travelCost, -90, this));
+	//Bash
+	children.push_back(new BashNode(curState, prevCost + travelCost, this));
+	//Forward
+	children.push_back(new ForwardNode(curState, prevCost + travelCost, this));
+	//Demolish
+	children.push_back(new DemolishNode(curState,prevCost + travelCost, this));
 
-	//The source node can spawn all types of Nodes
-	void SourceNode::spawnChildren(){
-		//both turns
-		children.push_back(TurnNode(curState, prevCost + travelCost, 90));
-		children.push_back(TurnNode(curState, prevCost + travelCost, -90));
-		//Bash
-		children.push_back(BashNode(curState, prevCost + travelCost));
-		//Forward
-		children.push_back(ForwardNode(curState, prevCost + travelCost));
-		//Demolish
-		children.push_back(DemolishNode(curState,prevCost + travelCost));
-
-	}
-
-};
+}

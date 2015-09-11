@@ -2,10 +2,18 @@
 #define _A_STAR_SEARCHER_
 
 #include <vector>
+#include "AbstractNode.h"
 
 class SourceNode;
 
-class AbstractNode;
+class AStarPriorityQueueComparer
+{
+public:
+	bool operator()(AbstractNode* a, AbstractNode* b)
+	{
+		return a->getTotalCost() < b->getTotalCost();
+	}
+};
 
 class AStarSearcher
 {
@@ -14,7 +22,7 @@ public:
 	static AStarSearcher& getInstance();
 	
 public:
-	void computeBestPath(std::vector<AbstractNode>& out_path);
+	void computeBestPath(std::vector<AbstractNode*>& out_path);
 private:
 	AStarSearcher();
 private:

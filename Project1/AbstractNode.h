@@ -23,7 +23,7 @@ public:
 	virtual void spawnChildren(void) = 0;
 	int getTotalCost() const { return totalCost; }
 
-	std::vector<AbstractNode*> getChildren() {return children;}
+	const std::vector<AbstractNode*>& getChildren() {return children;}
 	bool isGoal() const { return m_isGoal; }
 	bool isOffGrid() const { return offGrid; }
 	bool isEnd() const { return m_isGoal || offGrid; }

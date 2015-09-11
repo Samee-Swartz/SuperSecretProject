@@ -1,13 +1,11 @@
 #include <cstddef>
 
+#include <queue>
+#include <functional>
+
 #include "AStarSearcher.h"
 #include "Nodes.h"
 #include "World.h"
-
-bool AStarPriorityQueueComparer(const AbstractNode* const a, const AbstractNode* const b)
-{
-	return a->getTotalCost() > b->getTotalCost();
-}
 
 AbstractNode* goBackToRoot(AbstractNode* startNode)
 {
@@ -47,7 +45,7 @@ void goToChild(AbstractNode* currentNode, AbstractNode* endNode)
 
 AStarSearcher::AStarSearcher()
 {
-	m_rootNode = new SourceNode(0);
+	m_rootNode = new SourceNode(World::getInstance().getStartState());
 }
 
 AStarSearcher& AStarSearcher::create()
@@ -65,19 +63,18 @@ AStarSearcher& AStarSearcher::getInstance()
 
 void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 {
-	std::priority_queue<AbstractNode*, std::vector<AbstractNode*>, decltype(&AStarPriorityQueueComparer)> edgeList(&AStarPriorityQueueComparer);
+	std::priority_queue<AbstractNode*, std::vector<AbstractNode*>, AStarPriorityQueueComparer> edgeList;
 
 	AbstractNode* currentNode = m_rootNode;
 
-	while(!currentNode.isEnd())
+	while(!currentNode->isEnd())
 	{
 		currentNode->spawnChildren();
-		std::vector<AbstractNode*>* children = currentNode->getChildren();
+		const std::vector<AbstractNode*>& children = currentNode->getChildren();
 
-		//put all children into edge list
-		for(std::vector<AbstractNode*>::iterator child : *children)
+		for(int i = 0; i < children.size(); i++)
 		{
-			edgeList.push(*child);
+			edgeList.push(children[i]);
 		}
 
 		AbstractNode* nextBest = edgeList.top();
@@ -85,15 +82,17 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 		//if we did not select a child node then we have to go back down and up through the tree
 		if(nextBest->getParent() != currentNode)
-			goToChild(nextBest);
+			goToChild(currentNode, nextBest);
 		else
 			nextBest->onEnter();
 
 		currentNode = nextBest;
+		currentNode->onEnter();
 	}
 
 	while(currentNode)
 	{
-		out_path.insert(0, currentNode);
+		out_path.insert(out_path.begin(), currentNode);
+		currentNode = currentNode->getParent();
 	}
 }
