@@ -43,6 +43,8 @@ void goToChild(AbstractNode* currentNode, AbstractNode* endNode)
 	}
 }
 
+AStarSearcher* AStarSearcher::m_instance = NULL;
+
 AStarSearcher::AStarSearcher()
 {
 	m_rootNode = new SourceNode(World::getInstance().getStartState());

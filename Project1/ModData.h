@@ -6,6 +6,7 @@ class CellData{
 	Position p;
 	int terrain;
   public:
+  	CellData();
     CellData(const Position position, const int terrain);
 	Position getPosition() {return p;}
 	int getTerrain() {return terrain;}
@@ -23,9 +24,9 @@ class Mod{
 	CellData southEast;
 
   public:
-	Mod(const Position);
-	restoreWorld();
-	destroyWorld();
+	Mod(const Position pos);
+	void restoreWorld();
+	void destroyWorld();
 };
 
 #endif

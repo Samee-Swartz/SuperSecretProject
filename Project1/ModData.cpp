@@ -1,43 +1,52 @@
 //Class declaration for CellDataClass
+#include "Position.h"
 #include "RobotState.h"
 #include "ModData.h"
 #include "World.h"
 
-CellData::CellData(const Position pos, const int terr){
-	p = pos;
-	terrain = terr;
+CellData::CellData()
+	: p(0,0),
+	terrain(0)
+{
 }
 
-Mod::Mod(const Position pos){
-	northWestPos = Position(pos.x - 1, pos.y + 1);
-	northWest = CellData(northWestPos, World.getInstance().getTerrain(northWestPos));
+CellData::CellData(const Position pos, const int terr)
+	: p(pos),
+	terrain(terr)
+{
+}
 
-	nortPos = Position(pos.x, pos.y + 1)
-	north = CellData(northPos, World.getInstance().getTerrain(northPos));
+Mod::Mod(const Position pos)
+{
+	Position northWestPos = Position(pos.x - 1, pos.y + 1);
+	northWest = CellData(northWestPos, World::getInstance().getTerrain(northWestPos));
 
-	northEastPos = Position(pos.x + 1, pos.y + 1)
-	northEast = CellData(northEastPos, World.getInstance().getTerrain(northEastPos));
+	Position northPos = Position(pos.x, pos.y + 1);
+	north = CellData(northPos, World::getInstance().getTerrain(northPos));
 
-	westPos = Position(pos.x - 1, pos.y);
-	west = CellData(westPos, World.getInstance().getTerrain(westPos));
+	Position northEastPos = Position(pos.x + 1, pos.y + 1);
+	northEast = CellData(northEastPos, World::getInstance().getTerrain(northEastPos));
 
-	eastPos = Position(pos.x + 1, pos.y);
-	east = CellData(eastPos, World.getInstance().getTerrain(eastPos));
+	Position westPos = Position(pos.x - 1, pos.y);
+	west = CellData(westPos, World::getInstance().getTerrain(westPos));
 
-	southWestPos = Position(pos.x - 1, pos.y - 1)
-	southWest = CellData(southWestPos, World.getInstance().getTerrain(southWestPos));
+	Position eastPos = Position(pos.x + 1, pos.y);
+	east = CellData(eastPos, World::getInstance().getTerrain(eastPos));
 
-	southPos = Position(pos.x, pos.y - 1);
-	south = CellData(southPos, World.getInstance().getTerrain(southPos));
+	Position southWestPos = Position(pos.x - 1, pos.y - 1);
+	southWest = CellData(southWestPos, World::getInstance().getTerrain(southWestPos));
 
-	southEastPos = Position(pos.x + 1, pos.y - 1);
-	southEast = CellData(southEastPos, World.getInstance().getTerrain(southEastPos));
+	Position southPos = Position(pos.x, pos.y - 1);
+	south = CellData(southPos, World::getInstance().getTerrain(southPos));
+
+	Position southEastPos = Position(pos.x + 1, pos.y - 1);
+	southEast = CellData(southEastPos, World::getInstance().getTerrain(southEastPos));
 
 	destroyWorld();
 }
 
 void Mod::destroyWorld() {
-	World w = World.getInstance();
+	World& w = World::getInstance();
 	w.setTerrain(northWest.getPosition(), 3);
 	w.setTerrain(north.getPosition(), 3);
 	w.setTerrain(northEast.getPosition(), 3);
@@ -49,7 +58,7 @@ void Mod::destroyWorld() {
 }
 
 void Mod::restoreWorld() {
-	World w = World.getInstance();
+	World& w = World::getInstance();
 	w.setTerrain(northWest.getPosition(), northWest.getTerrain());
 	w.setTerrain(north.getPosition(), north.getTerrain());
 	w.setTerrain(northEast.getPosition(), northEast.getTerrain());

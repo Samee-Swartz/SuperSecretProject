@@ -2,6 +2,11 @@
 #include "ModData.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+#include <iostream>
+#include <cstddef>
+
+using namespace std;
 
 /*
 
@@ -17,10 +22,14 @@ y	^
 w,h
 */
 
+World* World::m_instance = NULL;
+
 World::World(unsigned int in_width, unsigned int in_height)
-	: m_startState(NORTH, Position(0, 0))
+	: m_startState(NORTH, Position(0, 0)),
+	start(0, 0),
+	goal(0, 0)
 {
-	m_worldGrid = new int[in_width * in_height];
+	m_worldGrid = new char[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
 }
@@ -28,27 +37,30 @@ World::World(unsigned int in_width, unsigned int in_height)
 World& World::generateWorld() {
 	srand(time(NULL));
 	// World size ranges from 10 - 1009
-	m_width = (rand() % 1000) + 10;
-	m_height = (rand() % 1000) + 10;
-	m_instance = new World(width, height);
+	unsigned int width = (rand() % 1000) + 10;
+	unsigned int height = (rand() % 1000) + 10;
+	World* instance = new World(width, height);
 
-	for (int w = 0; w < m_width; w++) {
-		for (int h = 0; h < m_height; h++) {
-			m_instance[w][h] = '0'+(rand() % 9) + 1;
+	for (int w = 0; w < width; w++) 
+	{
+		for (int h = 0; h < height; h++) 
+		{
+			instance->setTerrain(Position(w, h), (rand() % 9) + 1);
 		}
 	}
-	goal = Position((rand() % (m_width-1))+1, (rand() % (m_height  -1))+1);
-	start = goal;
-	while (start == goal) {
-		start = Position((rand() % (m_width-1))+1, (rand() % (m_height  -1))+1);
+
+	instance->goal = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
+	instance->start = instance->goal;
+	while (instance->start == instance->goal) {
+		instance->start = Position((rand() % (width-1))+1, (rand() % (height  -1))+1);
 	}
 
-	m_startState = RobotState(NORTH, start);
+	instance->m_startState = RobotState(NORTH, instance->start);
 
 	return *m_instance;
 }
 
-int World::calculateHeuristic(Position in_pos) {
+int World::calculateHeuristic(const Position& in_pos) {
 	switch (heuristic) {
 		case 1:
 			return 0;
@@ -60,14 +72,16 @@ int World::calculateHeuristic(Position in_pos) {
 			return abs(in_pos.x - goal.x) + abs(in_pos.y - goal.y);
 		case 5:
 		case 6:
-			int h = ceil(sqrt((float)(pow(in_pos.x - goal.x, 2) + pow(in_pos.y - goal.y, 2))))
+		{
+			int h = ceil(sqrt((float)(pow(in_pos.x - goal.x, 2) + pow(in_pos.y - goal.y, 2))));
 			// 5. Find an admissable heuristic that dominates #4.  A small tweak of #4 will work here.
 			if (heuristic == 5)
 				return h;
 			return h*3;
+		}
 			// 6. Create a non-admissable heuristic by multiplying heuristic #5 by 3.
 			//See the lecture notes on heuristics for why we might want to do such a thing.
-		case default:
+		default:
 			cout << "invalid heuristic" << endl;
 			return 0;
 	}
@@ -80,18 +94,18 @@ World& World::getInstance()
 
 int World::getTerrain(const Position& in_worldPosition) const
 {
-	if(!inWorld(in_worldPosition))
+	if(!isInWorld(in_worldPosition))
 		return 100;
 
-	return m_worldGrid[getArrayIndex(in_worldPosition)];
+	return (int)'0' - (int)m_worldGrid[getArrayIndex(in_worldPosition)];
 }
 
 void World::setTerrain(const Position& in_worldPosition, int in_newValue)
 {
-	if(!inWorld(in_worldPosition))
+	if(!isInWorld(in_worldPosition))
 		return;
 
-	m_worldGrid[getArrayIndex(in_worldPosition)] = in_newValue;
+	m_worldGrid[getArrayIndex(in_worldPosition)] = (char)((int)'0' - in_newValue);
 }
 
 bool World::isInWorld(const Position& in_worldPosition) const

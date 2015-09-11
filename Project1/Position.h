@@ -10,10 +10,14 @@ struct Position {
 		y = y;
 	}
 
-	bool equals(struct Position p) {
+	bool equals(const Position& p) const {
 		return x == p.x && y == p.y;
 	}
+
+	bool operator==(const Position& other) const
+	{
+		return equals(other);
+	}
 };
-typedef struct Position Position;
 
 #endif

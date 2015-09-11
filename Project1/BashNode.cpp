@@ -1,4 +1,6 @@
 #include "Nodes.h"
+#include "World.h"
+
 using namespace std;
 
 BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent) 
@@ -6,7 +8,7 @@ BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent)
 {
 	travelCost = -3;
 	bashRobot(s);
-	heuristic = World::getInstance().getHeuristic(curState.getRobotPosition());
+	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
 }
 
