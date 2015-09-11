@@ -2,6 +2,8 @@
 #define _WORLD_
 
 #include <stack>
+#include <string>
+#include <stdlib.h>
 
 #include "Position.h"
 #include "ModData.h"
@@ -11,6 +13,7 @@ class World
 {
 public:
 	static World& generateWorld();
+	static World& createWorldFrom(std::string);
 
 	//Get the singleton instance of the world
 	static World& getInstance();

@@ -4,7 +4,10 @@
 #include <time.h>
 #include <math.h>
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <cstddef>
+#include <vector>
 
 using namespace std;
 
@@ -41,9 +44,9 @@ World& World::generateWorld() {
 	unsigned int height = (rand() % 1000) + 10;
 	World* instance = new World(width, height);
 
-	for (int w = 0; w < width; w++) 
+	for (int w = 0; w < width; w++)
 	{
-		for (int h = 0; h < height; h++) 
+		for (int h = 0; h < height; h++)
 		{
 			instance->setTerrain(Position(w, h), (rand() % 9) + 1);
 		}
@@ -57,6 +60,43 @@ World& World::generateWorld() {
 
 	instance->m_startState = RobotState(NORTH, instance->start);
 
+	return *m_instance;
+}
+
+World& World::createWorldFrom(std::string file) {
+	std::vector<std::vector<char> > tempWorld;
+	std::ifstream givenWorld(file.c_str());
+	Position s, g;
+	std::string line;
+	int rows = 0, cols = 0;
+	while (std::getline(givenWorld, line)) {
+		std::vector<char> tempRow;
+		std::istringstream iss(line);
+		char c;
+		while ( iss >> c) {
+			tempRow.push_back(c);
+			if (c == 'S')
+				s = Position(cols, rows);
+			if (c == 'G')
+				g = Position(cols, rows);
+			rows++;
+		}
+		tempWorld.push_back(tempRow);
+		cols++;
+	}
+	rows /= cols;
+	World* instance = new World(cols, rows);
+
+	for (int w = 0; w < cols; w++)
+	{
+		for (int h = 0; h < rows; h++)
+		{
+			instance->setTerrain(Position(w, h), tempWorld[w][h]);
+		}
+	}
+	instance->start = s;
+	instance->goal = g;
+	instance->m_startState = RobotState(NORTH, instance->start);
 	return *m_instance;
 }
 
