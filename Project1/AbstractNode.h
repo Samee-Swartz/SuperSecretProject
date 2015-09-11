@@ -13,7 +13,7 @@ public:
 	: prevCost(p),
 	curState(s)
 	{
-		offGrid = World::getInstance().isInWorld(s.getRobotPosition());
+		offGrid = !World::getInstance().isInWorld(s.getRobotPosition());
 		m_isGoal = World::getInstance().isGoal(s.getRobotPosition());
 	}
 

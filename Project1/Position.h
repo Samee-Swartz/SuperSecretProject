@@ -5,9 +5,9 @@
 struct Position {
 	int x;
 	int y;
-	Position(int x, int y) {
-		x = x;
-		y = y;
+	Position(int in_x, int in_y) {
+		x = in_x;
+		y = in_y;
 	}
 	Position() {
 		x = 0;
@@ -21,10 +21,6 @@ struct Position {
 	bool operator==(const Position& other) const
 	{
 		return equals(other);
-	}
-
-	Position operator=(const Position& other) const {
-		return Position(other.x, other.y);
 	}
 
 	void setValues(int x, int y) {

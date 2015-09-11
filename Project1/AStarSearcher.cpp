@@ -75,6 +75,7 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 	while(!currentNode->isEnd())
 	{
+		std::cout << "finding ";
 		currentNode->spawnChildren();
 		const std::vector<AbstractNode*>& children = currentNode->getChildren();
 

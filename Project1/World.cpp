@@ -90,7 +90,6 @@ World& World::createWorldFrom(std::string file) {
 	}
 	cols /= rows;
 
-	std::cout << "cols: " << cols << " rows: " << rows << std::endl;
 	m_instance = new World(rows, cols);
 
 	for (int w = 0; w < rows; w++)
@@ -103,18 +102,6 @@ World& World::createWorldFrom(std::string file) {
 
 	m_instance->start = Position(s.x, s.y - (s.x*cols));
 	m_instance->goal = Position(g.x, g.y - (g.x*cols));
-	std::cout << "correct start   ";
-	std::cout << "rows: " << s.x << " cols: " << s.y - (s.x*cols) << std::endl;
-	std::cout << "correct goal    ";
-	std::cout << "rows: " << g.x << " cols: " << g.y - (g.x*cols) << std::endl;
-
-	std::cout << "wrong start   ";
-	std::cout << "rows: " << m_instance->start.x << " cols: " << m_instance->start.y << std::endl;
-	std::cout << "wrong goal    ";
-	std::cout << "rows: " << m_instance->goal.x << " cols: " << m_instance->goal.y << std::endl;
-
-
-
 	m_instance->m_startState = RobotState(NORTH, m_instance->start);
 	return *m_instance;
 }

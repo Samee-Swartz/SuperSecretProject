@@ -34,24 +34,24 @@ int main(int argc, char** argv)
 		usage();
 	}
 
-	// std::cout << "start state: " <<
-	// 	World::getInstance().getStartState().getRobotPosition().x
-	// 	<< World::getInstance().getStartState().getRobotPosition().y << std::endl;
+	std::cout << "start state: " <<
+		World::getInstance().getStartState().getRobotPosition().x << "  "
+		<< World::getInstance().getStartState().getRobotPosition().y << std::endl;
 
-	// std::vector<AbstractNode*> bestPath;
-	// AStarSearcher searcher = AStarSearcher::create();
-	// searcher.computeBestPath(bestPath);
+	std::vector<AbstractNode*> bestPath;
+	AStarSearcher searcher = AStarSearcher::create();
+	searcher.computeBestPath(bestPath);
 
-	// std::cout << "score: " << bestPath[bestPath.size()-1]->getTotalCost() << std::endl;
-	// std::cout << "number of actions: " << bestPath.size() << std::endl;
+	std::cout << "score: " << bestPath[bestPath.size()-1]->getTotalCost() << std::endl;
+	std::cout << "number of actions: " << bestPath.size() << std::endl;
 	// TODO: get this vv
-	// std::cout << "number of nodes expanded: " << std::endl;
-	// std::cout << "actions taken:" << std::endl;
+	std::cout << "number of nodes expanded: " << std::endl;
+	std::cout << "actions taken:" << std::endl;
 
-	// for(int i = 0; i < bestPath.size(); i++)
-	// {
-	// 	std::cout << bestPath[i]->getNodeType() << ", ";
-	// 	//print out nodes
-	// }
-	// std::cout << std::endl;
+	for(int i = 0; i < bestPath.size(); i++)
+	{
+		std::cout << bestPath[i]->getNodeType() << ", ";
+		//print out nodes
+	}
+	std::cout << std::endl;
 }
