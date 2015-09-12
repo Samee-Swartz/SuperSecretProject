@@ -45,6 +45,7 @@ private:
 	World(unsigned int in_width, unsigned int in_height);
 
 	unsigned int getArrayIndex(const Position& in_worldPosition) const;
+	void saveWorld();
 private:
 	static World* m_instance;
 

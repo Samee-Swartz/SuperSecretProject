@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 
@@ -39,6 +40,27 @@ World::World(unsigned int in_width, unsigned int in_height)
 	m_height = in_height;
 }
 
+void World::saveWorld() {
+	std::stringstream ss;
+	ss << "generatedWorld-" << m_width << "x" << m_height << ".txt";
+	std::ofstream file;
+	file.open(ss.str().c_str());
+	for (int w = 0; w < m_width; w++) {
+		for (int h = 0; h < m_height; h++) {
+			if (m_instance->start.x == w && m_instance->start.y == h)
+				file << 'S';
+			else if (m_instance->goal.x == w && m_instance->goal.y == h)
+				file << 'G';
+			else
+				file << m_instance->getTerrain(Position(w,h));
+			file << "\t";
+		}
+		file << "\n";
+	}
+	file.close();
+	std::cout << "file saved to " << ss.str() << std::endl;
+}
+
 // generates a world with varying difficulty. difficulty should be between 1 and 5
 World& World::generateWorld(int difficulty) {
 	srand(time(NULL));
@@ -48,11 +70,11 @@ World& World::generateWorld(int difficulty) {
 	unsigned int height;
 
 	switch(difficulty) {
-		case 1: // board size 10 - 50
-			width = (rand() % 40) + 10;
-			height = (rand() % 40) + 10;
+		case 1: // board size 5 - 10
+			width = (rand() % 5) + 5;
+			height = (rand() % 5) + 5;
 			break;
-		case 2: // board size 50 - 100
+		case 2: // board size 10 - 100
 			width = (rand() % 500) + 50;
 			height = (rand() % 500) + 50;
 			break;
@@ -75,7 +97,6 @@ World& World::generateWorld(int difficulty) {
 			break;
 	}
 
-
 	m_instance = new World(width, height);
 
 	for (int w = 0; w < width; w++)
@@ -93,6 +114,7 @@ World& World::generateWorld(int difficulty) {
 	}
 
 	m_instance->m_startState = RobotState(NORTH, m_instance->start);
+	m_instance->saveWorld();
 
 	return *m_instance;
 }
@@ -195,7 +217,7 @@ void World::setTerrain(const Position& in_worldPosition, int in_newValue)
 
 bool World::isInWorld(const Position& in_worldPosition) const
 {
-	return in_worldPosition.x >= 0 && in_worldPosition.x < m_width && in_worldPosition.y >= 0 && in_worldPosition.y < m_width;
+	return in_worldPosition.x >= 0 && in_worldPosition.x < m_width && in_worldPosition.y >= 0 && in_worldPosition.y < m_height;
 }
 
 bool World::isGoal(const Position& in_worldPosition) const {
