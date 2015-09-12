@@ -71,11 +71,8 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 	AbstractNode* currentNode = m_rootNode;
 
-	std::cout << "starting best path" << std::endl;
-
 	while(!currentNode->isEnd())
 	{
-		std::cout << "finding ";
 		currentNode->spawnChildren();
 		World::getInstance().addExpandedNode();
 		const std::vector<AbstractNode*>& children = currentNode->getChildren();

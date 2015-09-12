@@ -94,18 +94,16 @@ World& World::createWorldFrom(std::string file) {
 
 			if (worldValue == 'G' || worldValue == 'S')
 			{
-				m_instance->setTerrain(Position(w, h), 1);
+				m_instance->setTerrain(Position(h, w), 1);
 				if (worldValue == 'G')
-					m_instance->goal = Position(w, h);
+					m_instance->goal = Position(h, w);
 				else
-					m_instance->start = Position(w, h);
+					m_instance->start = Position(h, w);
 			}
 			else
-				m_instance->setTerrain(Position(w, h), worldValue - '0');
+				m_instance->setTerrain(Position(h, w), worldValue - '0');
 
-			std::cout << tempWorld[w][h] << "  ";
 		}
-		std::cout << std::endl;
 	}
 
 	m_instance->m_startState = RobotState(NORTH, m_instance->start);
