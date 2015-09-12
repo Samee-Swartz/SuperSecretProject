@@ -49,6 +49,7 @@ AStarSearcher* AStarSearcher::m_instance = NULL;
 AStarSearcher::AStarSearcher()
 {
 	m_rootNode = new SourceNode(World::getInstance().getStartState());
+	expandedNodes = 0;
 }
 
 AStarSearcher& AStarSearcher::create()
@@ -74,7 +75,7 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 	while(!currentNode->isEnd())
 	{
 		currentNode->spawnChildren();
-		World::getInstance().addExpandedNode();
+		addExpandedNode();
 		const std::vector<AbstractNode*>& children = currentNode->getChildren();
 
 		for(int i = 0; i < children.size(); i++)

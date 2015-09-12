@@ -37,7 +37,6 @@ World::World(unsigned int in_width, unsigned int in_height)
 	m_worldGrid = new int[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
-	expandedNodes = 0;
 }
 
 World& World::generateWorld() {

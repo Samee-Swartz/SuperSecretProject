@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	std::cout << "score: " << bestPath[bestPath.size()-1]->getTotalCost() << std::endl;
 	std::cout << "number of actions: " << bestPath.size() << std::endl;
 	// TODO: get this vv
-	std::cout << "number of nodes expanded: " << World::getInstance().getExpandedNodes() << std::endl;
+	std::cout << "number of nodes expanded: " << searcher.getExpandedNodes() << std::endl;
 	std::cout << "actions taken:" << std::endl;
 
 	for(int i = 0; i < bestPath.size(); i++)
