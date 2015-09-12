@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 	AStarSearcher searcher = AStarSearcher::create();
 	searcher.computeBestPath(bestPath);
 
-	std::cout << "score: " << bestPath[bestPath.size()-1]->getTotalCost() << std::endl;
+	std::cout << "score: " << searcher.getFinalScore() << std::endl;
 	std::cout << "number of actions: " << bestPath.size() << std::endl;
 	// TODO: get this vv
 	std::cout << "number of nodes expanded: " << searcher.getExpandedNodes() << std::endl;
@@ -53,4 +53,6 @@ int main(int argc, char** argv)
 		//print out nodes
 	}
 	std::cout << std::endl;
+
+	system("pause");
 }

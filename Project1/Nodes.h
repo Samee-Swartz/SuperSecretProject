@@ -11,7 +11,7 @@ public:
 	TurnNode(RobotState s, int prevCost, int d, AbstractNode* parent);
 	void spawnChildren();
 
-	std::string getNodeType() {	return "turn " + dir; }
+	std::string getNodeType() {	return dir == 90 ? "turn right" : "turn left"; }
 
 private:
 	int dir; // either 90 or -90

@@ -96,9 +96,9 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 	if (currentNode->isGoal()) {
 		// Award 100 points
-		setFinalScore(currentNode->getTotalCost()+100);
+		setFinalScore(-currentNode->getTotalCost());
 	} else {
-		setFinalScore(currentNode->getTotalCost());
+		setFinalScore(-currentNode->getTotalCost());
 	}
 
 	while(currentNode)
