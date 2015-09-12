@@ -85,21 +85,21 @@ World& World::generateWorld(int difficulty) {
 			width = (rand() % 5) + 5;
 			height = (rand() % 5) + 5;
 			break;
-		case 2: // board size 10 - 100
-			width = (rand() % 500) + 50;
-			height = (rand() % 500) + 50;
+		case 2: // board size 10 - 20
+			width = (rand() % 10) + 10;
+			height = (rand() % 10) + 10;
 			break;
-		case 3: // board size 100 - 300
-			width = (rand() % 200) + 100;
-			height = (rand() % 200) + 100;
+		case 3: // board size 20 - 30
+			width = (rand() % 10) + 20;
+			height = (rand() % 10) + 20;
 			break;
-		case 4: // board size 300 - 800
-			width = (rand() % 500) + 3000;
-			height = (rand() % 500) + 3000;
+		case 4: // board size 30 - 40
+			width = (rand() % 10) + 30;
+			height = (rand() % 10) + 30;
 			break;
-		case 5: // board size 800 - 1000
-			width = (rand() % 200) + 800;
-			height = (rand() % 200) + 800;
+		case 5: // board size 40 - 50
+			width = (rand() % 10) + 40;
+			height = (rand() % 10) + 40;
 			break;
 		default:
 			std::cout << "Bad difficulty value. for your stupidity you get difficulty 1." << std::endl;
