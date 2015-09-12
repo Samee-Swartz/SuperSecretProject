@@ -30,7 +30,7 @@ ForwardNode::ForwardNode(RobotState rs, int p, AbstractNode* parent) : AbstractN
 	//Calculate the totalCost using prevCost + heuristic + travelCost
 	prevCost = p;
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
-	travelCost = -World::getInstance().getTerrain(curState.getRobotPosition());
+	travelCost = World::getInstance().getTerrain(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
 	offGrid = !World::getInstance().isInWorld(curState.getRobotPosition());
 	m_isGoal = World::getInstance().isGoal(curState.getRobotPosition());

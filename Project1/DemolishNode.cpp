@@ -5,7 +5,7 @@ DemolishNode::DemolishNode(RobotState s, int prevCost, AbstractNode* parent)
 		: AbstractNode(s, prevCost, parent)
 {
 	curState = s;
-	travelCost = -4;
+	travelCost = 4;
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
 	offGrid = !World::getInstance().isInWorld(curState.getRobotPosition());
