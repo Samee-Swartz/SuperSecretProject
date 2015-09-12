@@ -6,9 +6,9 @@
 
 void usage() {
 	std::cout << "This program runs a* search using a given heuristic on a world. "
-	<< "If no world is given, one will be randomly generated." << std::endl;
+	<< "If you run this program without arguments it will generate and save a world without running a*" << std::endl;
 	std::cout << "./program <file containing world> <heuristic value 1-6>  OR" << std::endl;
-	std::cout << "./program <difficulty level for world 1-5> <heuristic value 1-6>" << std::endl;
+	std::cout << "./program" << std::endl;
 	exit(1);
 }
 
@@ -18,18 +18,17 @@ meeting the specifications given above (see the included sample maze).
 */
 int main(int argc, char** argv)
 {
+	if (argc == 1) {
+		World::generateWorld();
+		return 1;
+	}
+
 	if (argc == 3) {
 		int h = atoi(argv[2]);
-		int d = atoi(argv[1]);
 		if (h == 0) {
 			usage();
 		}
-		if (d == 0) { // the first argument is the file
-			World::createWorldFrom(argv[1]).setHeuristic(h);
-		} else { // first argument is difficulty level
-			World::generateWorld(d).setHeuristic(h);
-			return 1;
-		}
+		World::createWorldFrom(argv[1]).setHeuristic(h);
 	} else {
 		usage();
 	}
