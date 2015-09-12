@@ -11,7 +11,7 @@ using namespace std;
 TurnNode::TurnNode(RobotState s, int prevCost, int d, AbstractNode* parent) : AbstractNode(s, prevCost, parent) {
 	dir = d;
 	turnRobot(s);
-	travelCost = -ceil((float)World::getInstance().getTerrain(curState.getRobotPosition()) / 3.0);
+	travelCost = ceil((float)World::getInstance().getTerrain(curState.getRobotPosition()) / 3.0);
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
 }
