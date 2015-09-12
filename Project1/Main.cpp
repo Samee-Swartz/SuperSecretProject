@@ -56,5 +56,7 @@ int main(int argc, char** argv)
 	}
 	std::cout << std::endl;
 
+#if _WIN32
 	system("pause");
+#endif
 }
