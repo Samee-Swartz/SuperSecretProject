@@ -11,7 +11,9 @@ class AbstractNode {
 public:
 	AbstractNode(RobotState s, int p, AbstractNode* parent)
 	: prevCost(p),
-	curState(s)
+	curState(s),
+	m_isGoal(false),
+	offGrid(false)
 	{
 		this->parent = parent;
 	}

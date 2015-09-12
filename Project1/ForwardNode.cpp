@@ -31,9 +31,13 @@ ForwardNode::ForwardNode(RobotState rs, int p, AbstractNode* parent) : AbstractN
 	prevCost = p;
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
 	travelCost = World::getInstance().getTerrain(curState.getRobotPosition());
-	totalCost = heuristic + prevCost + travelCost;
 	offGrid = !World::getInstance().isInWorld(curState.getRobotPosition());
 	m_isGoal = World::getInstance().isGoal(curState.getRobotPosition());
+
+	if (m_isGoal)
+		travelCost -= 100;
+
+	totalCost = heuristic + prevCost + travelCost;
 }
 
 //A ForwardNode may spawn all 5 types of child nodes

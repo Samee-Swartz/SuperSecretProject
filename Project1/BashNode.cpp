@@ -9,9 +9,15 @@ BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent)
 	travelCost = 3;
 	bashRobot(s);
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
-	totalCost = heuristic + prevCost + travelCost;
 	offGrid = !World::getInstance().isInWorld(curState.getRobotPosition());
 	m_isGoal = World::getInstance().isGoal(curState.getRobotPosition());
+
+	if (offGrid)
+		travelCost += 100;
+	else if (m_isGoal)
+		travelCost -= 100;
+
+	totalCost = heuristic + prevCost + travelCost;
 }
 
 // Spawns one forward node
