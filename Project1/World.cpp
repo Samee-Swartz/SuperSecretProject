@@ -47,9 +47,9 @@ void World::saveWorld() {
 	file.open(ss.str().c_str());
 	for (int w = 0; w < m_width; w++) {
 		for (int h = 0; h < m_height; h++) {
-			if (m_instance->start.x == w && m_instance->start.y == h)
+			if (m_instance->start.x == w && (m_height - m_instance->start.y) == h)
 				file << 'S';
-			else if (m_instance->goal.x == w && m_instance->goal.y == h)
+			else if (m_instance->goal.x == w && (m_height - m_instance->goal.y) == h)
 				file << 'G';
 			else
 				file << m_instance->getTerrain(Position(w,h));
