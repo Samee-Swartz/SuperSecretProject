@@ -77,6 +77,7 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 	{
 		std::cout << "finding ";
 		currentNode->spawnChildren();
+		World::getInstance().addExpandedNode();
 		const std::vector<AbstractNode*>& children = currentNode->getChildren();
 
 		for(int i = 0; i < children.size(); i++)
@@ -95,6 +96,13 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 		currentNode = nextBest;
 		currentNode->onEnter();
+	}
+
+	if (currentNode->isGoal()) {
+		// Award 100 points
+		World::getInstance().setFinalScore(currentNode->getTotalCost()+100);
+	} else {
+		World::getInstance().setFinalScore(currentNode->getTotalCost());
 	}
 
 	while(currentNode)

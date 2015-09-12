@@ -20,13 +20,16 @@ class AStarSearcher
 public:
 	static AStarSearcher& create();
 	static AStarSearcher& getInstance();
-	
+
 public:
 	void computeBestPath(std::vector<AbstractNode*>& out_path);
+	void setFinalScore(int m_final) {finalScore = m_final;}
+	int getFinalScore() {return finalScore;}
 private:
 	AStarSearcher();
 private:
 	SourceNode* m_rootNode;
+	int finalScore;
 private:
 	//The singleton instance
 	static AStarSearcher* m_instance;
