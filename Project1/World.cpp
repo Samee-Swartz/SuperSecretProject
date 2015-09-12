@@ -23,6 +23,7 @@ y	^
 	 ------------------>
 0,0						x
 w,h
+r,c
 */
 
 World* World::m_instance = NULL;
@@ -35,6 +36,7 @@ World::World(unsigned int in_width, unsigned int in_height)
 	m_worldGrid = new char[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
+	expandedNodes = 0;
 }
 
 World& World::generateWorld() {
@@ -85,7 +87,7 @@ World& World::createWorldFrom(std::string file) {
 			}
 			cols++;
 		}
-		tempWorld.push_back(tempRow);
+		tempWorld.insert(tempWorld.begin(), tempRow);
 		rows++;
 	}
 	cols /= rows;
@@ -97,7 +99,9 @@ World& World::createWorldFrom(std::string file) {
 		for (int h = 0; h < cols; h++)
 		{
 			m_instance->setTerrain(Position(w, h), tempWorld[w][h]);
+			std::cout << tempWorld[w][h] << "  ";
 		}
+		std::cout << std::endl;
 	}
 
 	m_instance->start = Position(s.x, s.y - (s.x*cols));

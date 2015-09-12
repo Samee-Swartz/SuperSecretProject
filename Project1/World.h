@@ -32,6 +32,8 @@ public:
 	bool isInWorld(const Position& in_worldPosition) const;
 	//Check if the Position is the goal
 	bool isGoal(const Position& in_worldPosition) const;
+	void addExpandedNode() { expandedNodes++;}
+	int getExpandedNodes() {return expandedNodes;}
 
 	void pushMod(Mod m) {mods.push(m);}
 	void popMod() {
@@ -56,6 +58,7 @@ private:
 	// 1-6 given as program input
 	int heuristic;
 	std::stack<Mod> mods;
+	int expandedNodes;
 
 	RobotState m_startState;
 };
