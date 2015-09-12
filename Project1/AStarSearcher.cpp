@@ -83,6 +83,9 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 			edgeList.push(children[i]);
 		}
 
+		if (edgeList.size() == 0)
+			break;
+
 		AbstractNode* nextBest = edgeList.top();
 		edgeList.pop();
 

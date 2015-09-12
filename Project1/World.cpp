@@ -45,17 +45,28 @@ void World::saveWorld() {
 	ss << "generatedWorld-" << m_width << "x" << m_height << ".txt";
 	std::ofstream file;
 	file.open(ss.str().c_str());
-	for (int w = 0; w < m_width; w++) {
-		for (int h = 0; h < m_height; h++) {
-			if (m_instance->start.x == w && (m_height - m_instance->start.y) == h)
-				file << 'S';
-			else if (m_instance->goal.x == w && (m_height - m_instance->goal.y) == h)
-				file << 'G';
+	for (int h = m_height - 1; h >= 0; h--)
+	{
+		for (int w = 0; w < m_width; w++)
+		{
+			Position p = Position(w, h);
+
+			if (p == start)
+				file << "S";
+			else if (p == goal)
+				file << "G";
 			else
-				file << m_instance->getTerrain(Position(w,h));
-			file << "\t";
+			{
+				int terrain = getTerrain(p);
+				char c = '0' + (char)terrain;
+
+				file << c;
+			}
+
+			if (w != m_width - 1)
+				file << '\t';
 		}
-		file << "\n";
+		file << std::endl;
 	}
 	file.close();
 	std::cout << "file saved to " << ss.str() << std::endl;
