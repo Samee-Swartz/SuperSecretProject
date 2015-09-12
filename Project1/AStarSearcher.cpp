@@ -91,7 +91,7 @@ void AStarSearcher::computeBestPath(std::vector<AbstractNode*>& out_path)
 
 		//if we did not select a child node then we have to go back down and up through the tree
 		if(nextBest->getParent() != currentNode)
-			goToChild(currentNode, nextBest);
+			goToChild(currentNode, nextBest->getParent());
 
 		currentNode = nextBest;
 		currentNode->onEnter();

@@ -18,6 +18,7 @@ meeting the specifications given above (see the included sample maze).
 */
 int main(int argc, char** argv)
 {
+	argv[2] = "6";
 	if (argc == 1) {
 		World::generateWorld();
 		return 1;
