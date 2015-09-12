@@ -103,8 +103,8 @@ World& World::generateWorld(int difficulty) {
 			break;
 		default:
 			std::cout << "Bad difficulty value. for your stupidity you get difficulty 1." << std::endl;
-			width = (rand() % 1000) + 10;
-			height = (rand() % 1000) + 10;
+			width = (rand() % 5) + 5;
+			height = (rand() % 5) + 5;
 			break;
 	}
 

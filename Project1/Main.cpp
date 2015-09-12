@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 			World::createWorldFrom(argv[1]).setHeuristic(h);
 		} else { // first argument is difficulty level
 			World::generateWorld(d).setHeuristic(h);
+			return 1;
 		}
 	} else {
 		usage();
