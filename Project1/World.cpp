@@ -8,6 +8,7 @@
 #include <fstream>
 #include <cstddef>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -169,5 +170,5 @@ bool World::isGoal(const Position& in_worldPosition) const {
 
 unsigned int World::getArrayIndex(const Position& in_worldPosition) const
 {
-	return (unsigned int)(in_worldPosition.x + in_worldPosition.y * m_height);
+	return (unsigned int)(in_worldPosition.x + in_worldPosition.y * m_width);
 }

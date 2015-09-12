@@ -15,6 +15,7 @@ public:
 	{
 		offGrid = !World::getInstance().isInWorld(s.getRobotPosition());
 		m_isGoal = World::getInstance().isGoal(s.getRobotPosition());
+		this->parent = parent;
 	}
 
 	virtual void onEnter(void) {}
