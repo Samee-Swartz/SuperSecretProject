@@ -49,7 +49,9 @@ int main(int argc, char** argv)
 
 	for(int i = 0; i < bestPath.size(); i++)
 	{
-		std::cout << bestPath[i]->getNodeType() << ", ";
+		std::cout << bestPath[i]->getNodeType();
+		if (i != bestPath.size() - 1)
+			std::cout << ", ";
 		//print out nodes
 	}
 	std::cout << std::endl;
