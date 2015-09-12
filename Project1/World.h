@@ -50,7 +50,7 @@ private:
 private:
 	static World* m_instance;
 
-	char* m_worldGrid;
+	int* m_worldGrid;
 	unsigned int m_width;
 	unsigned int m_height;
 	Position goal;

@@ -34,7 +34,7 @@ World::World(unsigned int in_width, unsigned int in_height)
 	start(0, 0),
 	goal(0, 0)
 {
-	m_worldGrid = new char[in_width * in_height];
+	m_worldGrid = new int[in_width * in_height];
 	m_width = in_width;
 	m_height = in_height;
 	expandedNodes = 0;
@@ -78,14 +78,6 @@ World& World::createWorldFrom(std::string file) {
 		char c;
 		while ( iss >> c) {
 			tempRow.push_back(c);
-			if (c == 'S') {
-				s.x = rows;
-				s.y = cols;
-			}
-			if (c == 'G') {
-				g.x = rows;
-				g.y = cols;
-			}
 			cols++;
 		}
 		tempWorld.insert(tempWorld.begin(), tempRow);
@@ -99,7 +91,19 @@ World& World::createWorldFrom(std::string file) {
 	{
 		for (int h = 0; h < cols; h++)
 		{
-			m_instance->setTerrain(Position(w, h), tempWorld[w][h]);
+			char worldValue = tempWorld[w][h];
+
+			if (worldValue == 'G' || worldValue == 'S')
+			{
+				m_instance->setTerrain(Position(w, h), 1);
+				if (worldValue == 'G')
+					m_instance->goal = Position(w, h);
+				else
+					m_instance->start = Position(w, h);
+			}
+			else
+				m_instance->setTerrain(Position(w, h), worldValue - '0');
+
 			std::cout << tempWorld[w][h] << "  ";
 		}
 		std::cout << std::endl;
@@ -148,7 +152,7 @@ int World::getTerrain(const Position& in_worldPosition) const
 	if(!isInWorld(in_worldPosition))
 		return 100;
 
-	return (int)'0' - (int)m_worldGrid[getArrayIndex(in_worldPosition)];
+	return m_worldGrid[getArrayIndex(in_worldPosition)];
 }
 
 void World::setTerrain(const Position& in_worldPosition, int in_newValue)
@@ -156,7 +160,7 @@ void World::setTerrain(const Position& in_worldPosition, int in_newValue)
 	if(!isInWorld(in_worldPosition))
 		return;
 
-	m_worldGrid[getArrayIndex(in_worldPosition)] = (char)((int)'0' - in_newValue);
+	m_worldGrid[getArrayIndex(in_worldPosition)] = in_newValue;
 }
 
 bool World::isInWorld(const Position& in_worldPosition) const
