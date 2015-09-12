@@ -14,7 +14,7 @@ BashNode::BashNode(RobotState s, int prevCost, AbstractNode* parent)
 
 	if (offGrid)
 		travelCost += 100;
-	else if (m_isGoal)
+	else if (offGrid)
 		travelCost -= 100;
 
 	totalCost = heuristic + prevCost + travelCost;

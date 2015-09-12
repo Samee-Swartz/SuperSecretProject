@@ -152,24 +152,24 @@ World& World::createWorldFrom(std::string file) {
 	}
 	cols /= rows;
 
-	m_instance = new World(rows, cols);
+	m_instance = new World(cols, rows);
 
-	for (int w = 0; w < rows; w++)
+	for (int h = 0; h < rows; h++)
 	{
-		for (int h = 0; h < cols; h++)
+		for (int w = 0; w < cols; w++)
 		{
-			char worldValue = tempWorld[w][h];
+			char worldValue = tempWorld[h][w];
 
 			if (worldValue == 'G' || worldValue == 'S')
 			{
-				m_instance->setTerrain(Position(h, w), 1);
+				m_instance->setTerrain(Position(w, h), 1);
 				if (worldValue == 'G')
-					m_instance->goal = Position(h, w);
+					m_instance->goal = Position(w, h);
 				else
-					m_instance->start = Position(h, w);
+					m_instance->start = Position(w, h);
 			}
 			else
-				m_instance->setTerrain(Position(h, w), worldValue - '0');
+				m_instance->setTerrain(Position(w, h), worldValue - '0');
 
 		}
 	}

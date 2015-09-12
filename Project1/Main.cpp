@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 		if (i != bestPath.size() - 1)
 		{
 			std::cout << ", ";
-			if (i % 7 == 0)
+			if (i % 7 == 0 && i != 0)
 				std::cout << std::endl;
 		}
 		//print out nodes
