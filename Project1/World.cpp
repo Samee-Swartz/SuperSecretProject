@@ -69,7 +69,6 @@ World& World::generateWorld() {
 World& World::createWorldFrom(std::string file) {
 	std::vector<std::vector<char> > tempWorld;
 	std::ifstream givenWorld(file.c_str());
-	Position s, g;
 	std::string line;
 	int rows = 0, cols = 0;
 	while (std::getline(givenWorld, line)) {
@@ -109,8 +108,6 @@ World& World::createWorldFrom(std::string file) {
 		std::cout << std::endl;
 	}
 
-	m_instance->start = Position(s.x, s.y - (s.x*cols));
-	m_instance->goal = Position(g.x, g.y - (g.x*cols));
 	m_instance->m_startState = RobotState(NORTH, m_instance->start);
 	return *m_instance;
 }
