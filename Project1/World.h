@@ -12,7 +12,7 @@
 class World
 {
 public:
-	static World& generateWorld();
+	static World& generateWorld(int);
 	static World& createWorldFrom(std::string);
 
 	//Get the singleton instance of the world

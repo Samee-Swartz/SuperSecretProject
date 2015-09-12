@@ -39,11 +39,43 @@ World::World(unsigned int in_width, unsigned int in_height)
 	m_height = in_height;
 }
 
-World& World::generateWorld() {
+// generates a world with varying difficulty. difficulty should be between 1 and 5
+World& World::generateWorld(int difficulty) {
 	srand(time(NULL));
-	// World size ranges from 10 - 1009
-	unsigned int width = (rand() % 1000) + 10;
-	unsigned int height = (rand() % 1000) + 10;
+	// World size ranges from 10 - 1000
+
+	unsigned int width;
+	unsigned int height;
+
+	switch(difficulty) {
+		case 1: // board size 10 - 50
+			width = (rand() % 40) + 10;
+			height = (rand() % 40) + 10;
+			break;
+		case 2: // board size 50 - 100
+			width = (rand() % 500) + 50;
+			height = (rand() % 500) + 50;
+			break;
+		case 3: // board size 100 - 300
+			width = (rand() % 200) + 100;
+			height = (rand() % 200) + 100;
+			break;
+		case 4: // board size 300 - 800
+			width = (rand() % 500) + 3000;
+			height = (rand() % 500) + 3000;
+			break;
+		case 5: // board size 800 - 1000
+			width = (rand() % 200) + 800;
+			height = (rand() % 200) + 800;
+			break;
+		default:
+			std::cout << "Bad difficulty value. for your stupidity you get difficulty 1." << std::endl;
+			width = (rand() % 1000) + 10;
+			height = (rand() % 1000) + 10;
+			break;
+	}
+
+
 	m_instance = new World(width, height);
 
 	for (int w = 0; w < width; w++)
@@ -68,6 +100,10 @@ World& World::generateWorld() {
 World& World::createWorldFrom(std::string file) {
 	std::vector<std::vector<char> > tempWorld;
 	std::ifstream givenWorld(file.c_str());
+	if (!givenWorld) {
+		std::cout << "Given input file is invalid, randomly generating a world" << std::endl;
+		return generateWorld(3);
+	}
 	std::string line;
 	int rows = 0, cols = 0;
 	while (std::getline(givenWorld, line)) {

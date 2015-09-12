@@ -14,6 +14,8 @@ TurnNode::TurnNode(RobotState s, int prevCost, int d, AbstractNode* parent) : Ab
 	travelCost = -ceil((float)World::getInstance().getTerrain(curState.getRobotPosition()) / 3.0);
 	heuristic = World::getInstance().calculateHeuristic(curState.getRobotPosition());
 	totalCost = heuristic + prevCost + travelCost;
+	offGrid = !World::getInstance().isInWorld(curState.getRobotPosition());
+	m_isGoal = World::getInstance().isGoal(curState.getRobotPosition());
 }
 
 // Spawns Bash, Forward, Demolish, and Turn (in the same direction as this one)
