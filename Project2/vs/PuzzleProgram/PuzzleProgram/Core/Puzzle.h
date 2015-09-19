@@ -15,80 +15,28 @@ namespace std{
 
 class GenerationWorker;
 
-template<class C>
 class Puzzle
 {
 public:
 
-	explicit Puzzle(unsigned int in_populationSize)
-	{
-		CreatePopulation(in_populationSize);
-	}
+	explicit Puzzle(unsigned int in_populationSize);
 
-	virtual ~Puzzle()
-	{
-	}
+	virtual ~Puzzle();
 
-	void Run(unsigned int in_seconds, unsigned int in_workers)
-	{
-		CreateWorkers(in_workers);
-		StartWorkers();
-
-		boost::chrono::seconds runTimeSeconds(in_seconds);
-
-		boost::thread mainThread = boost::thread(boost::bind(&WorkerGenerator, this));
-		mainThread.start_thread();
-
-		boost::this_thread::sleep_for(runTimeSeconds);
-
-		mainThread.interrupt();
-		mainThread.join();
-	}
+	void Run(unsigned int in_seconds, unsigned int in_workers);
 
 protected:
-	virtual void SelectParents(int& out_parent1, int& out_parent2) const = 0;
+	virtual Creature* CreateCreature() const = 0;
 
 private:
-	void CreatePopulation(unsigned int in_populationSize)
-	{
-		for (unsigned int i = 0; i < in_populationSize; i++)
-		{
-			C* newCreature = new C();
-			m_polulation.push_back(newCreature);
-		}
-	}
+	void CreatePopulation(unsigned int in_populationSize);
 
-	void CreateWorkers(unsigned int in_workerSize)
-	{
-		for (unsigned int i = 0; i < in_workerSize; i++)
-		{
-			boost::thread* worker = new boost::thread(boost::bind(&WorkerThread, this));
-			m_workers.push_back(worker);
-		}
-	}
+	void CreateWorkers(unsigned int in_workerSize);
 
-	void StartWorkers()
-	{
-		for(auto& worker : m_workers)
-		{
-			worker->start_thread();
-		}
-	}
+	void StartWorkers();
 
-	void StopWorkers()
-	{
-		for(auto& worker : m_workers)
-		{
-			worker->interrupt();
-		}
+	void StopWorkers();
 
-		for (auto& worker : m_workers)
-		{
-			worker->join();
-		}
-	}
-
-	
 
 	void WorkerGenerator()
 	{

@@ -53,5 +53,8 @@
     <ClCompile Include="Core\GenerationWorker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Puzzle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -154,6 +154,7 @@
     <ClCompile Include="Core\Creature.cpp" />
     <ClCompile Include="Core\DNA.cpp" />
     <ClCompile Include="Core\GenerationWorker.cpp" />
+    <ClCompile Include="Core\Puzzle.cpp" />
     <ClCompile Include="PuzzleProgram.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
