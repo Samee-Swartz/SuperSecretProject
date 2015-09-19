@@ -30,6 +30,12 @@
     <ClInclude Include="Core\Creature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Puzzle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GenerationWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Creature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GenerationWorker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

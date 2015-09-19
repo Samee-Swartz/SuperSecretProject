@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "DNA.h"
 
 DNA::DNA(const DNA& in_source1, const DNA& in_source2)
