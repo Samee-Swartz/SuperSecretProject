@@ -1,64 +1,34 @@
 #include "Creature.h"
 #include "DNA.h"
-/*
-Class Creature
-Created from two (parent) Creature
-Constructor does crossover from parents
-Empty constructor for first generation (randomly generated)
-Utility function - overridden for each puzzle
-Contains DNA - specific to the puzzle
-*/
-
-/*
-1. Towers must have a door as their bottom-most piece.
-2. The top piece in a tower must be a lookout.
-3. Pieces between the top and bottom of a tower, if any, must be composted of wall segments.
-4. A piece in a tower can, at most, be as wide as the piece below it.
-5. A piece in a tower can support its strength value in pieces placed above it.
-*/
-
 
 class Puzzle3Creature : public Creature {
 public:
-	Puzzle3Creature(Puzzle3Creature& in_parent1, Puzzle3Creature& in_parent2) {
-		// crossover from parents
-	}
-	Puzzle3Creature() {
-		 // used to randomly generate first generation
+	// Used to reproduce creatures from parents
+	Puzzle3Creature(const Puzzle3Creature& in_parent1, const Puzzle3Creature& in_parent2) {
+		m_dna = DNA(in_parent1, in_parent2);
 	}
 
+	// Used to randomly generate first generation of creatures
+	Puzzle3Creature(const vector<TowerPiece> in_validDNA) {
+		m_dna = DNA(in_validDNA);
+	}
+
+	// Scoring function specified in puzzle instructions
 	float GetScore() {
-		// Calculate puzzle's scoring mechanism
+		if (m_dna.IsDoorOnBottom() && m_dna.IsLookoutOnTop() && m_dna.AreWallsInMiddle() &&
+		    	m_dna.VerifyWidths() && m_dna.VerifyStrength())
+			return (float)10 + pow(m_dna.GetTowerHeight(), 2) - m_dna.GetTowerCost();
+		return 0;
 	}
 
 private:
+	// Utility function
+	// TODO: MAKE THIS BETTER
 	float CalculateFitness() {
-		// Utility function
+		if (m_dna.IsDoorOnBottom() && m_dna.IsLookoutOnTop() && m_dna.AreWallsInMiddle() &&
+		    	m_dna.VerifyWidths() && m_dna.VerifyStrength())
+			return (float)10 + pow(m_dna.GetTowerHeight(), 2) - m_dna.GetTowerCost();
+		return 0;
 	}
-	bool DoorOnBottom() {
-		m_dna.GetPieces().front()
-		...
-	}
-	bool LookoutOnTop() {
-		m_dna.GetPieces().back()
-		...
-	}
-	bool WallsInMiddle() {
-		m_dna.GetPieces()
-		...
-	}
-	bool VerifyWidths() {
-		vector<TowerPiece> tower = m_dna.GetPieces();
-		int cur_width = tower.front().m_width;
-		for (auto p : tower) {
-			if (p.m_width < cur_width)
-				cur_width = p.m_width;
-			else if (p.m_width > cur_width) // unstable tower!
-				return false;
-		}
-		return true;
-	}
-	bool VerifyStrength() {
-		m_dna.GetPieces()
-	}
+
 };
