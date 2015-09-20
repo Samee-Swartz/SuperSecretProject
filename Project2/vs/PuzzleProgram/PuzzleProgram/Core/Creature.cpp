@@ -40,4 +40,6 @@ void Creature::Born(const Creature& in_parent1, const Creature& in_parent2)
 	m_dna = CreateDNA();
 	m_dna->Splice();
 	m_dna->Mutate();
+
+	CalculateFitness();
 }

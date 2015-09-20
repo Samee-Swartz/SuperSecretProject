@@ -1,5 +1,6 @@
 #include "Puzzle.h"
 #include <boost/chrono/duration.hpp>
+#include <filesystem>
 
 Puzzle::Puzzle(unsigned int in_populationSize)
 {
@@ -38,9 +39,15 @@ void Puzzle::CreateWorkers(unsigned in_workerSize)
 {
 	for (unsigned int i = 0; i < in_workerSize; i++)
 	{
-		boost::thread* worker = new boost::thread(boost::bind(&WorkerThread, this));
+		boost::thread* worker = new boost::thread(boost::bind(&BreedingThread, this));
 		m_workers.push_back(worker);
 	}
+}
+
+void Puzzle::SelectNextParents(unsigned& out_parent1, unsigned& out_parent2)
+{
+	out_parent1 = 0;
+	out_parent2 = rand() % 5 % (m_polulation.size() - 1) + 1;
 }
 
 void Puzzle::StartWorkers()
@@ -61,5 +68,94 @@ void Puzzle::StopWorkers()
 	for (auto& worker : m_workers)
 	{
 		worker->join();
+	}
+}
+
+void Puzzle::WorkerGenerator()
+{
+	while(true)
+	{
+		try
+		{
+			//Check to see if the main thread has signled us to stop
+			boost::this_thread::interruption_point();
+		}
+		catch(boost::exception& e)
+		{
+			//If we have been signled to stop then shutdown all worker threads and wait
+			StopWorkers();
+			throw;
+		}
+
+		//If the population is empty then we should just wait
+		if (m_polulation.size() == 0)
+		{
+			boost::this_thread::yield();
+			continue;
+		}
+
+		Creature* c1;
+		Creature* c2;
+
+		{
+			boost::unique_lock<boost::mutex> lock(m_populationLock);
+
+			int creature1Index, creature2Index;
+
+			
+
+			c1 = m_polulation[creature1Index];
+			c2 = m_polulation[creature2Index];
+
+			m_polulation.erase(m_polulation.begin() + creature1Index);
+			if (creature1Index < creature2Index)
+				creature2Index -= 1;
+			m_polulation.erase(m_polulation.begin() + creature2Index);
+		}
+			
+			
+		{
+			boost::unique_lock<boost::mutex> lock(m_pairsAccess);
+
+			
+		}
+
+		m_workerTrigger.notify_one();
+	}
+}
+
+void Puzzle::BreedingThread()
+{
+	while (true)
+	{
+		boost::unique_lock<boost::mutex> lock(m_pairsAccess);
+
+		while (m_pairs.size() < 2)
+		{
+			m_workerTrigger.wait(lock);
+		}
+
+		std::pair<Creature*, Creature*>* pair = m_pairs.top();
+		m_pairs.pop();
+
+		lock.release();
+
+		Creature* const baby = CreateCreature(*pair->first, *pair->second);
+
+		std::array<Creature*, 3> all;
+		all[0] = pair->first;
+		all[1] = pair->second;
+		all[2] = baby;
+
+		std::sort(all.begin(), all.end(), [](Creature* a, Creature* b)
+		{
+			return b->GetFitness() < a->GetFitness();
+		});
+
+		lock.lock();
+
+
+
+		boost::this_thread::interruption_point();
 	}
 }
