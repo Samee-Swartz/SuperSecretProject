@@ -40,13 +40,13 @@ struct TowerPiece {
 
 class Puzzle3DNA : public DNA {
 public:
-	Puzzle3DNA(const Puzzle3DNA& in_source1, const Puzzle3DNA& in_source2,
-	        const vector<TowerPiece> in_validPieces);
+	Puzzle3DNA(const Puzzle3DNA& in_source1, const Puzzle3DNA& in_source2);
+	Puzzle3DNA();
 
 	void Splice();
 
 	void Mutate();
-	int GetPieceAt(int in_index) { return m_pieces[in_index];}
+	TowerPiece GetPieceAt(int in_index) { return m_pieces[in_index];}
 
 	int GetTowerHeight() {return m_pieces.size();}
 	int GetTowerCost() {
@@ -94,13 +94,18 @@ public:
 		return true;
 	}
 
+	static void SetValidPieces(vector<TowerPiece> in_pieces) {
+		std::sort(m_validPieces.begin(), m_validPieces.end(), compareTowerPieces);
+		m_validPieces = in_pieces;
+	}
+
 private:
 	// element at index 0 is bottom of tower.
 	vector<TowerPiece> m_pieces;
 	// sorted list of valid Tower Pieces
-	vector<TowerPiece> m_validPieces;
+	static vector<TowerPiece> m_validPieces;
 
-	bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) const {
+	static bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) const {
 		return p1.m_width + p1.m_strength + p1.m_cost < p2.m_width + p2.m_strength + p2.m_cost;
 	}
 };

@@ -1,6 +1,9 @@
 #include <iostream>
 #include <time.h>
 
+#define POPULATION_SIZE 1000
+#define WORKERS_SIZE 64
+
 void usage() {
 	std::cout << "This program will run a genetic algorithm on one of "
 		<< "three puzzles. To use run: " << std::endl;
@@ -43,4 +46,15 @@ int main(int argc, char** argv) {
 			usage();
 			return 1;
 	}
+	p->Run(POPULATION_SIZE, atoi(argv[3]), WORKERS_SIZE);
+	Creature best = p->GetBestCreature();
+	std::cout << "Ran " << p->GetFinalGeneration() << " generations." << std::endl;
+	std::cout << "The best offspring was:" << std::endl << best << std::endl;
 }
+
+/*
+current best offspring found
+current best score
+current best generation #
+final generation #
+ */

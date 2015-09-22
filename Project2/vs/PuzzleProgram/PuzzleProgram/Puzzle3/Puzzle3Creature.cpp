@@ -8,8 +8,8 @@ Puzzle3Creature::Puzzle3Creature(const Puzzle3Creature& in_parent1, const Puzzle
 }
 
 // Used to randomly generate first generation of creatures
-Puzzle3Creature::Puzzle3Creature(const vector<TowerPiece> in_validDNA) {
-	m_dna = Puzzle3DNA(in_validDNA);
+Puzzle3Creature::Puzzle3Creature() {
+	m_dna = Puzzle3DNA();
 }
 
 // Scoring function specified in puzzle instructions

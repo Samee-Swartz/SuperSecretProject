@@ -2,9 +2,13 @@
 #include <time.h>
 #include "Puzzle3.h"
 
+#define WORKER_COUNT
+#define POPULATION_SIZE
 
-Puzzle3::Puzzle3(std::string in_file, int seconds) : m_secondsToRun(seconds){
+void Puzzle3::Setup(std::string in_file, unsigned int& out_populationSize, unsigned int& out_workerCount) {
 	std::ifstream givenWorld(in_file.c_str());
+	vector<TowerPiece> validPieces;
+
 	if (!givenWorld) { // problem...
 		std::cout << "Given input file is invalid." << std::endl;
 		// TODO: handle somehow?
@@ -29,6 +33,10 @@ Puzzle3::Puzzle3(std::string in_file, int seconds) : m_secondsToRun(seconds){
 		else
 			std::cout << "input file has bad piece type"
 
-		m_validDNA.push_back(t);
+		validPieces.push_back(t);
 	}
+
+	Puzzle3DNA::SetValidPieces(validPieces);
+	out_populationSize = POPULATION_SIZE;
+	out_workerCount = WORKER_COUNT;
 }
