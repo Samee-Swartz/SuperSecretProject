@@ -9,12 +9,12 @@ class DNA
 {
 public:
 	DNA();
-	explicit DNA(const DNA& in_source1, const DNA& in_source2);
 	virtual ~DNA();
 
 protected:
 	friend class Creature;
 
+	virtual void Generate() = 0;
 	virtual void Splice() = 0;
 	virtual void Mutate() = 0;
 
@@ -22,6 +22,8 @@ protected:
 	const DNA* GetParent2() const { return m_parent2; }
 
 private:
+	void InternalSplice(const DNA& in_parent1, const DNA& in_parent2);
+
 	const DNA* m_parent1;
 	const DNA* m_parent2;
 };

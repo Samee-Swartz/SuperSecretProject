@@ -21,12 +21,10 @@ void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime)
 	Setup(in_fileName, m_populationSize, workerCount);
 
 	CreateWorkers(workerCount);
-	StartWorkers();
 
 	boost::chrono::seconds runTimeSeconds(in_runtime);
 
-	boost::thread mainThread = boost::thread(boost::bind(&WorkerGenerator, this));
-	mainThread.start_thread();
+	boost::thread mainThread = boost::thread(boost::bind(&Puzzle::WorkerGenerator, this));
 
 	boost::this_thread::sleep_for(runTimeSeconds);
 
@@ -39,6 +37,7 @@ void Puzzle::CreatePopulation(unsigned int in_populationSize)
 	for (unsigned int i = 0; i < in_populationSize; i++)
 	{
 		Creature* newCreature = CreateCreature();
+		newCreature->OnInit();
 		m_polulation->push_back(newCreature);
 	}
 }
@@ -47,7 +46,7 @@ void Puzzle::CreateWorkers(unsigned int in_workerSize)
 {
 	for (unsigned int i = 0; i < in_workerSize; i++)
 	{
-		boost::thread* worker = new boost::thread(boost::bind(&BreedingThread, this));
+		boost::thread* worker = new boost::thread(boost::bind(&Puzzle::BreedingThread, this));
 		m_workers.push_back(worker);
 	}
 }
@@ -62,15 +61,28 @@ void Puzzle::AddToNext(Creature& in_creature)
 {
 	boost::unique_lock<boost::mutex> lock(m_nextPopulationLock);
 
-	
+	float fitness = in_creature.GetFitness();
+
+	int i;
+	for (i = 0; i < m_nextPopulation->size(); i++)
+	{
+		Creature* creature = (*m_nextPopulation)[i];
+		
+		if (creature->GetFitness() < fitness)
+			break;
+	}
+
+	m_nextPopulation->insert(m_nextPopulation->begin() + i, &in_creature);
 }
 
-void Puzzle::StartWorkers()
+void Puzzle::SwapPopulations()
 {
-	for(auto& worker : m_workers)
-	{
-		worker->start_thread();
-	}
+	boost::unique_lock<boost::mutex> populationLock(m_populationLock);
+	boost::unique_lock<boost::mutex> nextLock(m_nextPopulationLock);
+
+	auto& temp = m_polulation;
+	m_polulation = m_nextPopulation;
+	m_nextPopulation = m_polulation;
 }
 
 void Puzzle::StopWorkers()
@@ -97,47 +109,52 @@ void Puzzle::WorkerGenerator()
 			//Check to see if the main thread has signled us to stop
 			boost::this_thread::interruption_point();
 		}
-		catch(boost::exception& e)
+		catch(boost::exception&)
 		{
 			//If we have been signled to stop then shutdown all worker threads and wait
 			StopWorkers();
 			throw;
 		}
 
-		//If the population is empty then we should just wait
-		if (m_polulation->size() == 0)
+		int lastSize = m_polulation->size();
+
+		while (m_polulation->size() != 0)
+		{
+			Creature* c1;
+			Creature* c2;
+
+			{
+				boost::unique_lock<boost::mutex> lock(m_populationLock);
+
+				unsigned int creature1Index = 0, creature2Index = 0;
+
+				SelectNextParents(creature1Index, creature2Index);
+
+				c1 = (*m_polulation)[creature1Index];
+				c2 = (*m_polulation)[creature2Index];
+
+				m_polulation->erase(m_polulation->begin() + creature1Index);
+				if (creature1Index < creature2Index)
+					creature2Index -= 1;
+				m_polulation->erase(m_polulation->begin() + creature2Index);
+			}
+
+
+			{
+				boost::unique_lock<boost::mutex> lock(m_pairsAccess);
+
+				m_pairs.push(std::pair<Creature*, Creature*>(c1, c2));
+			}
+
+			m_workerTrigger.notify_one();
+		}
+
+		while(m_nextPopulation->size() != lastSize || m_pairs.size() != 0)
 		{
 			boost::this_thread::yield();
-			continue;
 		}
 
-		Creature* c1;
-		Creature* c2;
-
-		{
-			boost::unique_lock<boost::mutex> lock(m_populationLock);
-
-			unsigned int creature1Index = 0, creature2Index = 0;
-
-			SelectNextParents(creature1Index, creature2Index);
-
-			c1 = (*m_polulation)[creature1Index];
-			c2 = (*m_polulation)[creature2Index];
-
-			m_polulation->erase(m_polulation->begin() + creature1Index);
-			if (creature1Index < creature2Index)
-				creature2Index -= 1;
-			m_polulation->erase(m_polulation->begin() + creature2Index);
-		}
-			
-			
-		{
-			boost::unique_lock<boost::mutex> lock(m_pairsAccess);
-
-			m_pairs.push(std::pair<Creature*, Creature*>(c1, c2));
-		}
-
-		m_workerTrigger.notify_one();
+		SwapPopulations();
 	}
 }
 
@@ -157,7 +174,9 @@ void Puzzle::BreedingThread()
 
 		lock.release();
 
-		Creature* const baby = CreateCreature(*pair.first, *pair.second);
+		Creature* const baby = CreateCreature();
+		baby->SetParents(*pair.first, *pair.second);
+		baby->OnInit();
 
 		std::array<Creature*, 3> all;
 		all[0] = pair.first;
@@ -170,8 +189,8 @@ void Puzzle::BreedingThread()
 		});
 
 		
-		
-
+		AddToNext(*all[0]);
+		AddToNext(*all[1]);
 
 		boost::this_thread::interruption_point();
 	}

@@ -21,7 +21,6 @@ protected:
 	virtual void Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount) = 0;
 
 	virtual Creature* CreateCreature() const = 0;
-	virtual Creature* CreateCreature(const Creature& in_parent1, const Creature& in_parent2) const = 0;
 
 private:
 	void CreatePopulation(unsigned int in_populationSize);
@@ -33,8 +32,6 @@ private:
 	void AddToNext(Creature& in_creature);
 
 	void SwapPopulations();
-
-	void StartWorkers();
 
 	void StopWorkers();
 

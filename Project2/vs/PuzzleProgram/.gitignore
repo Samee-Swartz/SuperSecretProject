@@ -1,3 +1,4 @@
 ipch/
 Debug/
 *.sdf
+boost/

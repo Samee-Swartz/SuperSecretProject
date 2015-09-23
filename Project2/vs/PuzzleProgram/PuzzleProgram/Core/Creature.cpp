@@ -6,14 +6,15 @@ Creature::Creature()
 {
 }
 
-Creature::Creature(const Creature& in_parent1, const Creature& in_parent2)
-{
-	Born(in_parent1, in_parent2);
-}
-
 Creature::~Creature()
 {
 	
+}
+
+void Creature::SetParents(const Creature& in_parent1, const Creature& in_parent2)
+{
+	m_parent1 = &in_parent1;
+	m_parent2 = &in_parent2;
 }
 
 void Creature::Lock()
@@ -31,15 +32,23 @@ void Creature::Unlock()
 	m_mutex.unlock();
 }
 
-void Creature::Born(const Creature& in_parent1, const Creature& in_parent2)
+void Creature::OnInit()
 {
 	boost::unique_lock<boost::mutex> lock(m_mutex);
 
-	m_generation = std::max(in_parent1.m_generation, in_parent2.m_generation);
-
 	m_dna = CreateDNA();
-	m_dna->Splice();
-	m_dna->Mutate();
+
+	if(m_parent1 == nullptr || m_parent2 == nullptr)
+	{
+		m_generation = -1;
+		m_dna->Generate();
+	}
+	else
+	{
+		m_generation = m_parent1->m_generation;
+		m_dna->InternalSplice(m_parent1->GetDNA(), m_parent2->GetDNA());
+		m_dna->Mutate();
+	}
 
 	CalculateFitness();
 }

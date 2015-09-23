@@ -6,12 +6,14 @@ DNA::DNA()
 {
 }
 
-DNA::DNA(const DNA& in_source1, const DNA& in_source2)
-	: m_parent1(&in_source1),
-	m_parent2(&in_source2)
+DNA::~DNA()
 {
 }
 
-DNA::~DNA()
+void DNA::InternalSplice(const DNA& in_parent1, const DNA& in_parent2)
 {
+	m_parent1 = &in_parent1;
+	m_parent2 = &in_parent2;
+
+	Splice();
 }
