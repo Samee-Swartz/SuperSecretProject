@@ -3,23 +3,25 @@
 
 // Scoring function specified in puzzle instructions
 float Puzzle3Creature::CalculateScore() {
-	if (m_dna.IsDoorOnBottom() && m_dna.IsLookoutOnTop() && m_dna.AreWallsInMiddle() &&
-	    	m_dna.VerifyWidths() && m_dna.VerifyStrength())
-		return (float)10 + pow(m_dna.GetTowerHeight(), 2) - m_dna.GetTowerCost();
+	const Puzzle3DNA& dna = static_cast<const Puzzle3DNA&>(GetDNA());
+	if (dna.IsDoorOnBottom() && dna.IsLookoutOnTop() && dna.AreWallsInMiddle() &&
+	    	dna.VerifyWidths() && dna.VerifyStrength())
+		return (float)10 + pow(dna.GetTowerHeight(), 2) - dna.GetTowerCost();
 	return 0;
 }
 
 float Puzzle3Creature::CalculateFitness() {
+	const Puzzle3DNA& dna = static_cast<const Puzzle3DNA&>(GetDNA());
 	float fitnessScore = 0;
-	if (m_dna.IsDoorOnBottom())
+	if (dna.IsDoorOnBottom())
 		fitnessScore += 5;
-	if (m_dna.IsLookoutOnTop())
+	if (dna.IsLookoutOnTop())
 		fitnessScore += 5;
-	if (m_dna.AreWallsInMiddle())
+	if (dna.AreWallsInMiddle())
 		fitnessScore += 5;
-	if (m_dna.VerifyWidths())
+	if (dna.VerifyWidths())
 		fitnessScore += 5;
-	if (m_dna.VerifyStrength())
+	if (dna.VerifyStrength())
 		fitnessScore += 5;
 	return fitnessScore;
 }

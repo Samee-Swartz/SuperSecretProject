@@ -37,22 +37,23 @@ int main(int argc, char** argv) {
 			usage();
 			return 1;
 		case 1:
-			// p = new Puzzle1(argv[2], atoi(argv[3]));
+			// p = new Puzzle1();
 			break;
 		case 2:
-			// p = new Puzzle2(argv[2], atoi(argv[3]));
+			// p = new Puzzle2();
 			break;
 		case 3:
-			p = new Puzzle3(argv[2], atoi(argv[3]));
+			p = new Puzzle3();
 			break;
-		case default:
+		default:
 			usage();
 			return 1;
 	}
-	p->Run(POPULATION_SIZE, atoi(argv[3]), WORKERS_SIZE);
-	Creature best = p->GetBestCreature();
-	std::cout << "Ran " << p->GetFinalGeneration() << " generations." << std::endl;
-	std::cout << "The best offspring was:" << std::endl << best << std::endl;
+	p->Run(argv[2], atoi(argv[3]));
+	std::cout << "TODO: ADD THE FUNCTIONS FOR THE BEST SHIT HERE" << std::endl;
+	// Creature best = p->GetBestCreature();
+	// std::cout << "Ran " << p->GetFinalGeneration() << " generations." << std::endl;
+	// std::cout << "The best offspring was:" << std::endl << best << std::endl;
 }
 
 /*

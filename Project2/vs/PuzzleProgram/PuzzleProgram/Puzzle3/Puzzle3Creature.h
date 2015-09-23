@@ -11,6 +11,12 @@ public:
 	DNA* CreateDNA() {
 		return new Puzzle3DNA();
 	}
+
+private:
+
+	DNA* CreateDNA() const;
+	float CalculateFitness();
+	float CalculateScore();
 };
 
 #endif

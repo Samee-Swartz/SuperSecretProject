@@ -2,7 +2,9 @@
 #define _PUZZLE_3_DNA
 
 #include "../Core/DNA.h"
+#include <vector>
 #include <string>
+#include <algorithm>
 
 enum PieceType { DOOR, WALL, LOOKOUT };
 
@@ -42,12 +44,12 @@ class Puzzle3DNA : public DNA {
 public:
 	Puzzle3DNA(){}
 
-	TowerPiece GetPieceAt(int in_index) { return m_pieces[in_index];}
+	TowerPiece GetPieceAt(int in_index) const { return m_pieces[in_index];}
 
-	int GetTowerHeight() {return m_pieces.size();}
+	int GetTowerHeight() const {return m_pieces.size();}
 
 	// Returns tower's total cost
-	int GetTowerCost() {
+	int GetTowerCost() const {
 		int cost = 0;
 		for (auto p : m_pieces) {
 			cost += p.m_cost;
@@ -56,19 +58,19 @@ public:
 	}
 
 	// checks if the bottom TowerPiece is a Door
-	bool IsDoorOnBottom() {
+	bool IsDoorOnBottom() const {
 		if (m_pieces.front().m_type == DOOR)
 			return true;
 		return false;
 	}
 	// checks if the top TowerPiece is a Lookout
-	bool IsLookoutOnTop() {
+	bool IsLookoutOnTop() const {
 		if (m_pieces.back().m_type == LOOKOUT)
 			return true;
 		return false;
 	}
 	// checks if the middle TowerPieces are Walls
-	bool AreWallsInMiddle() {
+	bool AreWallsInMiddle() const {
 		for (int i = 1; i < m_pieces.size() - 1; i++) { // skips the top and bottom
 			if (m_pieces[i].m_type != WALL)
 				return false;
@@ -76,7 +78,7 @@ public:
 		return true;
 	}
 	// checks that the widths are valid
-	bool VerifyWidths() {
+	bool VerifyWidths() const {
 		int cur_width = m_pieces.front().m_width;
 		for (auto p : m_pieces) {
 			if (p.m_width < cur_width)
@@ -87,7 +89,7 @@ public:
 		return true;
 	}
 	// checks that the strengths are valid
-	bool VerifyStrength() {
+	bool VerifyStrength() const {
 		int remainingSize = m_pieces.size();
 		for (auto p : m_pieces) {
 			remainingSize--;
@@ -111,6 +113,13 @@ private:
 	static bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) {
 		return p1.m_width + p1.m_strength + p1.m_cost < p2.m_width + p2.m_strength + p2.m_cost;
 	}
+
+	//Called when there are no parents, generates a random DNA
+	void Generate();
+	//Called when there are parents, splices the parent DNA toghether
+	void Splice();
+	//Called when there are parents, mutates the current dna
+	void Mutate();
 };
 
 #endif

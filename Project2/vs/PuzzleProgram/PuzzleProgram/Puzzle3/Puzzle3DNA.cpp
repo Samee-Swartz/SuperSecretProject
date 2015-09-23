@@ -1,4 +1,3 @@
-#include "DNA.h"
 #include <string>
 #include <time.h>
 #include "Puzzle3DNA.h"
@@ -24,25 +23,27 @@ void Puzzle3DNA::Generate() {
 	or not to to take that index's TowerPiece.
 */
 void Puzzle3DNA::Splice() {
+	const Puzzle3DNA* parent1 = static_cast<const Puzzle3DNA*>(GetParent1());
+	const Puzzle3DNA* parent2 = static_cast<const Puzzle3DNA*>(GetParent2());
 	int i, coinFlip;
-	for (i = 0; i < GetParent1().size() && i < GetParent2().size(); i++) {
+	for (i = 0; i < parent1->GetTowerHeight() && i < parent2->GetTowerHeight(); i++) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0) {
-			m_pieces.push_back(GetParent1().GetPieceAt(i));
+			m_pieces.push_back(parent1->GetPieceAt(i));
 		} else {
-			m_pieces.push_back(GetParent2().GetPieceAt(i));
+			m_pieces.push_back(parent2->GetPieceAt(i));
 		}
 	}
-	while (i < GetParent1().size()) {
+	while (i < parent1->GetTowerHeight()) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0)
-			m_pieces.push_back(GetParent1().GetPieceAt(i));
+			m_pieces.push_back(parent1->GetPieceAt(i));
 		i++;
 	}
-	while (i < GetParent2().size()) {
+	while (i < parent2->GetTowerHeight()) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0)
-			m_pieces.push_back(GetParent2().GetPieceAt(i));
+			m_pieces.push_back(parent2->GetPieceAt(i));
 		i++;
 	}
 }

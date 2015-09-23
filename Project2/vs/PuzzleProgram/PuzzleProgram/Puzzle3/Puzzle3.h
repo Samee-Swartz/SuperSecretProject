@@ -10,6 +10,8 @@ public:
 
 private:
 	Creature* CreateCreature() const { return new Puzzle3Creature(); }
+	void Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount);
+
 };
 
 #endif
