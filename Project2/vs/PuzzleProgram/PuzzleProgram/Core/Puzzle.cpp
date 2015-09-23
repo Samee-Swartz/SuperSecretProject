@@ -192,6 +192,8 @@ void Puzzle::BreedingThread()
 		AddToNext(*all[0]);
 		AddToNext(*all[1]);
 
+		delete all[2];
+
 		boost::this_thread::interruption_point();
 	}
 }

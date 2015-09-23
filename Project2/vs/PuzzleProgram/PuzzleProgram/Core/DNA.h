@@ -14,8 +14,11 @@ public:
 protected:
 	friend class Creature;
 
+	//Called when there are no parents, generates a random DNA
 	virtual void Generate() = 0;
+	//Called when there are parents, splices the parent DNA toghether
 	virtual void Splice() = 0;
+	//Called when there are parents, mutates the current dna
 	virtual void Mutate() = 0;
 
 	const DNA* GetParent1() const { return m_parent1; }

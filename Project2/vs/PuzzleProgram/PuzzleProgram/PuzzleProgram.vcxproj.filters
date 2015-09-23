@@ -36,6 +36,9 @@
     <ClInclude Include="Core\GenerationWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestPuzzle\TestPuzzle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Puzzle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPuzzle\TestPuzzle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
