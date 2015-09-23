@@ -1,6 +1,5 @@
 #include "Puzzle.h"
 #include <boost/chrono/duration.hpp>
-#include <filesystem>
 
 Puzzle::Puzzle()
 	: m_polulation(new std::vector<Creature*>),
