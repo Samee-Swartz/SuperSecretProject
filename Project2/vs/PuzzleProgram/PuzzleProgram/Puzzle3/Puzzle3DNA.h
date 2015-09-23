@@ -1,7 +1,7 @@
 #ifndef _PUZZLE_3_DNA
 #define _PUZZLE_3_DNA
 
-#include "DNA.h"
+#include "../Core/DNA.h"
 #include <string>
 
 enum PieceType { DOOR, WALL, LOOKOUT };
@@ -34,21 +34,19 @@ struct TowerPiece {
 
 	bool operator==(const TowerPiece& other) const {
 		return m_type == other.m_type && m_width == other.m_width &&
-			m_strength == other.m_strenth && m_cost == other.m_cost;
+			m_strength == other.m_strength && m_cost == other.m_cost;
 	}
 };
 
 class Puzzle3DNA : public DNA {
 public:
-	Puzzle3DNA(const Puzzle3DNA& in_source1, const Puzzle3DNA& in_source2);
-	Puzzle3DNA();
+	Puzzle3DNA(){}
 
-	void Splice();
-
-	void Mutate();
 	TowerPiece GetPieceAt(int in_index) { return m_pieces[in_index];}
 
 	int GetTowerHeight() {return m_pieces.size();}
+
+	// Returns tower's total cost
 	int GetTowerCost() {
 		int cost = 0;
 		for (auto p : m_pieces) {
@@ -57,16 +55,19 @@ public:
 		return cost;
 	}
 
+	// checks if the bottom TowerPiece is a Door
 	bool IsDoorOnBottom() {
 		if (m_pieces.front().m_type == DOOR)
 			return true;
 		return false;
 	}
+	// checks if the top TowerPiece is a Lookout
 	bool IsLookoutOnTop() {
 		if (m_pieces.back().m_type == LOOKOUT)
 			return true;
 		return false;
 	}
+	// checks if the middle TowerPieces are Walls
 	bool AreWallsInMiddle() {
 		for (int i = 1; i < m_pieces.size() - 1; i++) { // skips the top and bottom
 			if (m_pieces[i].m_type != WALL)
@@ -74,6 +75,7 @@ public:
 		}
 		return true;
 	}
+	// checks that the widths are valid
 	bool VerifyWidths() {
 		int cur_width = m_pieces.front().m_width;
 		for (auto p : m_pieces) {
@@ -84,6 +86,7 @@ public:
 		}
 		return true;
 	}
+	// checks that the strengths are valid
 	bool VerifyStrength() {
 		int remainingSize = m_pieces.size();
 		for (auto p : m_pieces) {
@@ -93,19 +96,19 @@ public:
 		}
 		return true;
 	}
-
-	static void SetValidPieces(vector<TowerPiece> in_pieces) {
+	// static setter for the valid pieces list
+	static void SetValidPieces(std::vector<TowerPiece> in_pieces) {
 		std::sort(m_validPieces.begin(), m_validPieces.end(), compareTowerPieces);
 		m_validPieces = in_pieces;
 	}
 
 private:
 	// element at index 0 is bottom of tower.
-	vector<TowerPiece> m_pieces;
+	std::vector<TowerPiece> m_pieces;
 	// sorted list of valid Tower Pieces
-	static vector<TowerPiece> m_validPieces;
-
-	static bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) const {
+	static std::vector<TowerPiece> m_validPieces;
+	// comparator for TowerPieces
+	static bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) {
 		return p1.m_width + p1.m_strength + p1.m_cost < p2.m_width + p2.m_strength + p2.m_cost;
 	}
 };

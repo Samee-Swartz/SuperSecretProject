@@ -3,14 +3,8 @@
 #include <time.h>
 #include "Puzzle3DNA.h"
 
-Puzzle3DNA::Puzzle3DNA(const Puzzle3DNA& in_source1, const Puzzle3DNA& in_source2)
-		: DNA(in_source1, in_source2) {
-	Splice();
-	Mutate();
-}
-
 // randomly creates DNA
-Puzzle3DNA() {
+void Puzzle3DNA::Generate() {
 	std::vector<TowerPiece> copyValidDNA = m_validPieces;
 	// randomly chooses how many blocks to contain. Must be 2 < x < m_validPieces.size()
 	int pieces = (rand() % (m_validPieces.size()-2)) +2;

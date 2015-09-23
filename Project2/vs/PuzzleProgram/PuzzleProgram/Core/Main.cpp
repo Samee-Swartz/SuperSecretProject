@@ -1,6 +1,9 @@
 #include <iostream>
 #include <time.h>
 
+#include "Puzzle.h"
+#include "../Puzzle3/Puzzle3.h"
+
 #define POPULATION_SIZE 1000
 #define WORKERS_SIZE 64
 
@@ -34,13 +37,13 @@ int main(int argc, char** argv) {
 			usage();
 			return 1;
 		case 1:
-			p = new Puzzle1Rules(argv[2], atoi(argv[3]));
+			// p = new Puzzle1(argv[2], atoi(argv[3]));
 			break;
 		case 2:
-			p = new Puzzle2Rules(argv[2], atoi(argv[3]));
+			// p = new Puzzle2(argv[2], atoi(argv[3]));
 			break;
 		case 3:
-			p = new Puzzle3Rules(argv[2], atoi(argv[3]));
+			p = new Puzzle3(argv[2], atoi(argv[3]));
 			break;
 		case default:
 			usage();

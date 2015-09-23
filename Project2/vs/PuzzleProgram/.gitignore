@@ -2,3 +2,4 @@ ipch/
 Debug/
 *.sdf
 boost/
+**/obj/*
