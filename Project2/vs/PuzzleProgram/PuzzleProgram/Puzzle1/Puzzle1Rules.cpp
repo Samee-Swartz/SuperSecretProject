@@ -1,7 +1,7 @@
 #include "Puzzle1.h"
 
-Puzzle1Ruls::Puzzle1Rules(std::string in_file, int seconds): m_secondsToRun(seconds){
-
+void Puzzle3::Setup(std::string in_file, unsigned int& out_populationSize, unsig$
+ 
 	std::ifstream givenFile(in_file.c_str());
 
 	if(!givenFile){ //there's a problem

@@ -7,23 +7,18 @@
 
 class Puzzle1 : public Puzzle {
 public:
-        Puzzle1(std::string in_file, int seconds);
+        Puzzle1();
 
 private:
-        vector<int> m_validDNA;
-        vector<Puzzle1Creature> m_population;
-        time_t m_initTime;
-        int m_secondsToRun;
-
-        void CheckBestCreature() {
-                for (auto c : population) {
-                        if (c.getScore() > bestChild.getScore())
-                                bestChild = c;
-                }
-        }
+//        void CheckBestCreature() {
+//                for (auto c : population) {
+//                        if (c.getScore() > bestChild.getScore())
+//                                bestChild = c;
+//                }
+//        }
 
         Creature* CreateCreature() const {
-                Puzzle1Creature(m_validDNA);
+                Puzzle1Creature();
         }
 
         Creature* CreateCreature(const Creature& in_parent1, const Creature& in_parent2) const {

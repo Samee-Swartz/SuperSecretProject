@@ -6,15 +6,22 @@
 
 class Puzzle1DNA : public DNA {
 public:
-	Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_source2,
-	        const vector<int> in_validPieces);
+	Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_sources);
 	int GetPieceAt(int i){
 		return m_pieces[i];
 	}
 
+	Puzzle1DNA();
+
 	void Splice();
 
 	void Mutate();
+
+	static void SetValidPieces(vector<int> in_pieces){
+	        std::sort(m_validPieces.begin(), m_validPieces.end());
+		m_validPieces = in_pieces;
+	}
+
 
 private:
 	// list of numbers in DNA

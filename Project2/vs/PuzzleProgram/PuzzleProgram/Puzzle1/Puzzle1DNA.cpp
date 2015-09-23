@@ -7,10 +7,22 @@ Puzzle1DNA::Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_source
 		const vector<int> in_validPieces)
 		: DNA(in_source1, in_source2), m_validPieces(in_validPieces) {
 	std::sort(m_validPieces.begin(), m_validPieces.end());
-	std::sort(m_pieces.begin(), m_pieces.end());
 
 	Splice();
 	Mutate();
+	std::sort(m_pieces.begin(), m_pieces.end());
+}
+
+Puzzle1DNA(){
+	std:vector<int> copyValidDNA = m_validPieces;
+	
+	int pieces = ((rand() % m_validPieces.size() - 2) + 2);
+
+	while(pieces > 0){
+		int index = rand() % m_validPieces.size();
+		m_pieces.push_back(m_validPieces[index]);
+		pieces--;
+	}
 }
 
 void Puzzle1DNA::Splice() {
