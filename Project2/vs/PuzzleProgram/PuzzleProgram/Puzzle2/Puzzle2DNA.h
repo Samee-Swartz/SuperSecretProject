@@ -6,8 +6,7 @@
 
 class Puzzle2DNA : public DNA {
 public:
-	Puzzle2DNA(const Puzzle2DNA& in_source1, const Puzzle2DNA& in_source2, 
-			const vector<int> in_validPieces);
+	
 	Puzzle2DNA();
 	
 	void Generate();
@@ -17,18 +16,19 @@ public:
 	int getBin1Val();
 	int getBin2Val();
 	
-	static void SetValidPieces(vector<int> in_pieces);
+	static void SetValidPieces(std::vector<int> in_pieces);
 	
 private:
 	
-	vector<int> m_bin1;
-	vector<int> m_bin2;
-	vector<int> m_bin3;
+	std::vector<int> m_bin1;
+	std::vector<int> m_bin2;
+	std::vector<int> m_bin3;
 	
-	vector<int> m_validPieces;
-	vector<int> m_invalidPieces;
+	std::vector<int> m_validPieces;
+	std::vector<int> m_invalidPieces;
 	
 	void swapValues();
+	bool binAtIndexFull(int);
 	
 protected:
 	bool isValid();

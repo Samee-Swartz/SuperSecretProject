@@ -5,16 +5,16 @@
 
 class Puzzle2Creature : public Creature {
 public:
-	// Used to reproduce creatures from parents
-	Puzzle2Creature(const Puzzle2Creature& in_parent1, const Puzzle2Creature& in_parent2);
-	// Used to randomly generate first generation of creatures
+	
+	//Default Puzzle2Creature constructor
 	Puzzle2Creature();
-	// Scoring function specified in puzzle instructions
-	float GetScore();
+	
 
 private:
 	// Utility function
 	float CalculateFitness();
+	// Scoring function specified in puzzle instructions
+	float CalculateScore();
 };
 
 #endif

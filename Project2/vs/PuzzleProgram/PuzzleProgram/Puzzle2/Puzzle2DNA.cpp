@@ -1,16 +1,56 @@
 #include "Puzzle2DNA.h"
 #include <stdlib.h>
 #include <string>
-
-
-	Puzzle2DNA::Puzzle2DNA(){
-		//TODO
-		
-	}
 	
+	//Constructor
+	Puzzle2DNA::Puzzle2DNA() {}
+	
+	
+	//Generate the DNA data for this particular creature
 	void Puzzle2DNA::Generate(){
+		//generate random DNA from the given m_validPieces
+
+		int i;
+		int index;
 		
-		//TODO
+		for(i = 0; i < 30; i++){
+			 if(i < 10)
+				 m_bin1[i] = 0;
+			 else if(i < 20)
+				 m_bin2[i-10] = 0;
+			 else
+				 m_bin3[i-20] = 0;
+		}
+		
+		//for each value in m_validPieces(30), find an empty bin position and place it there. 
+		for(i = 0; i < 30; i ++){
+			index = rand() % 30;
+			
+			if(!binAtIndexFull(index)){
+				if(index < 10)
+					m_bin1[index] = m_validPieces[i];
+				else if(index < 20)
+					m_bin2[index - 10] = m_validPieces[i];
+				else 
+					m_bin3[index - 20] = m_validPieces[i];
+			}
+			else{
+				while(binValAtIndexFull(index)){
+					index = rand % 30;
+				}
+				
+				//we now have a valid index, place the value in the available position
+				if(index < 10)
+					m_bin1[index] = m_validPieces[i];
+				else if(index < 20)
+					m_bin2[index - 10] = m_validPieces[i];
+				else 
+					m_bin3[index - 20] = m_validPieces[i];
+			}
+			
+			
+		}
+		
 	}
 
 	void Puzzle2DNA::Splice() {
@@ -97,7 +137,7 @@
 		}
 	}
 	
-	static void Puzzle2DNA::SetValidPieces(vector<int> in_pieces) {
+	static void Puzzle2DNA::SetValidPieces(std::vector<int> in_pieces) {
 		m_validPieces = in_pieces;
 	}
 	
@@ -194,6 +234,18 @@
 			}//end outer for
 			
 		}//end swapValues
+	bool Puzzle2DNA::binAtIndexFull(int index){
+		if(index > 20){
+			index = index - 20;
+			return (m_bin1[index] != 0);
+		}
+		else if(index > 10){
+			index = index - 10;
+			return (m_bin2[index] != 0);
+		}
+		else
+			return (m_bin3[index] !=0);
+	}
 	
 	bool Puzzle2DNA::isValid(){
 		
