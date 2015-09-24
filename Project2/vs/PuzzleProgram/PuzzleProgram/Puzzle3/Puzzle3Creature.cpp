@@ -1,6 +1,11 @@
 #include "Puzzle3Creature.h"
 #include "Puzzle3DNA.h"
 
+DNA* Puzzle3Creature::CreateDNA() const
+{
+	return new Puzzle3DNA();
+}
+
 // Scoring function specified in puzzle instructions
 float Puzzle3Creature::CalculateScore() {
 	const Puzzle3DNA& dna = static_cast<const Puzzle3DNA&>(GetDNA());

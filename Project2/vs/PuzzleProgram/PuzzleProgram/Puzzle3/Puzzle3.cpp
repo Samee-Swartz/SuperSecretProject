@@ -2,6 +2,7 @@
 #include <fstream>
 #include <time.h>
 #include "Puzzle3.h"
+#include "Puzzle3DNA.h"
 
 #define WORKER_COUNT 10
 #define POPULATION_SIZE 1000
