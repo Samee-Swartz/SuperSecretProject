@@ -1,19 +1,21 @@
-#include "DNA.h"
+//#include "DNA.h"
 #include <string>
 #include <time.h>
 #include "Puzzle1DNA.h"
 
-Puzzle1DNA::Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_source2,
-		const vector<int> in_validPieces)
-		: DNA(in_source1, in_source2), m_validPieces(in_validPieces) {
-	std::sort(m_validPieces.begin(), m_validPieces.end());
+std::vector<int> Puzzle1DNA::m_validPieces;
 
-	Splice();
-	Mutate();
-	std::sort(m_pieces.begin(), m_pieces.end());
-}
+//Puzzle1DNA::Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_source2,
+//		const vector<int> in_validPieces)
+//		: DNA(in_source1, in_source2), m_validPieces(in_validPieces) {
+//	std::sort(m_validPieces.begin(), m_validPieces.end());
+//
+//	Splice();
+//	Mutate();
+//	std::sort(m_pieces.begin(), m_pieces.end());
+//}
 
-Puzzle1DNA(){
+void Puzzle1DNA::Generate(){
 	std:vector<int> copyValidDNA = m_validPieces;
 	
 	int pieces = ((rand() % m_validPieces.size() - 2) + 2);

@@ -1,4 +1,12 @@
-#include "Puzzle1.h"
+#include <string>
+#include <fstream>
+#include <time.h>
+#include "Puzzle3.h"
+#include "Puzzle3DNA.h"
+
+#define WORKER_COUNT 10
+#define POPULATION_SIZE 1000
+
 
 void Puzzle3::Setup(std::string in_file, unsigned int& out_populationSize, unsig$
  
@@ -24,5 +32,9 @@ void Puzzle3::Setup(std::string in_file, unsigned int& out_populationSize, unsig
 
 		m_validDNA.push_back(temp);
 	}
+
+	Puzzle1DNA::SetValidPieces(validPieces);
+	out_populationSize = POPULATION_SIZE;
+	out_workerCount = WORKER_COUNT;
 }
 

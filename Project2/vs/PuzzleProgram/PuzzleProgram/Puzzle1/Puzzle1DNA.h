@@ -3,10 +3,14 @@
 
 #include "DNA.h"
 #include <string>
+#include <vector>
+#include <algorithm>
+
 
 class Puzzle1DNA : public DNA {
 public:
 	Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_sources);
+
 	int GetPieceAt(int i){
 		return m_pieces[i];
 	}
@@ -29,6 +33,14 @@ private:
 
 	// list of valid numbers for DNA
 	vector<intt> m_validPieces;
+
+        //Called when there are no parents, generates a random DNA
+        void Generate();
+        //Called when there are parents, splices the parent DNA toghether
+        void Splice();
+        //Called when there are parents, mutates the current dna
+        void Mutate();
+
 
 };
 
