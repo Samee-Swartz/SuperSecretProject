@@ -1,4 +1,4 @@
-SRC_FILES := $(wildcard Core/*.cpp) $(wildcard Puzzle3/*.cpp)
+SRC_FILES := $(wildcard Core/*.cpp) $(wildcard Puzzle3/*.cpp) $(wildcard Puzzle2/*.cpp) $(wildcard Puzzle1/*.cpp)
 OBJ_FILES := $(addprefix obj/,$(notdir $(SRC_FILES:.cpp=.o)))
 
 CC_FLAGS := -c -std=c++11
@@ -21,4 +21,10 @@ obj/%.o: Core/%.cpp
 	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread
 
 obj/%.o: Puzzle3/%.cpp
+	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread
+
+obj/%.o: Puzzle2/%.cpp
+	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread
+
+obj/%.o: Puzzle1/%.cpp
 	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread

@@ -4,21 +4,14 @@
 #include "Puzzle1DNA.h"
 
 std::vector<int> Puzzle1DNA::m_validPieces;
+int Puzzle1DNA::m_target = 0;
 
-//Puzzle1DNA::Puzzle1DNA(const Puzzle1DNA& in_source1, const Puzzle1DNA& in_source2,
-//		const vector<int> in_validPieces)
-//		: DNA(in_source1, in_source2), m_validPieces(in_validPieces) {
-//	std::sort(m_validPieces.begin(), m_validPieces.end());
-//
-//	Splice();
-//	Mutate();
-//	std::sort(m_pieces.begin(), m_pieces.end());
-//}
+Puzzle1DNA::Puzzle1DNA(){}
 
 void Puzzle1DNA::Generate(){
-	std:vector<int> copyValidDNA = m_validPieces;
-	
-	int pieces = ((rand() % m_validPieces.size() - 2) + 2);
+	std::vector<int> copyValidDNA = m_validPieces;
+
+	int pieces = ((rand() % (m_validPieces.size() - 2)) + 2);
 
 	while(pieces > 0){
 		int index = rand() % m_validPieces.size();
@@ -28,25 +21,28 @@ void Puzzle1DNA::Generate(){
 }
 
 void Puzzle1DNA::Splice() {
+	const Puzzle1DNA* parent1 = static_cast<const Puzzle1DNA*>(GetParent1());
+	const Puzzle1DNA* parent2 = static_cast<const Puzzle1DNA*>(GetParent2());
+
 	int i, coinFlip;
-	for (i = 0; i < GetParent1().size() && i < GetParent2().size(); i++) {
+	for (i = 0; i < parent1->GetSize() && i < parent2->GetSize(); i++) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0) {
-			m_pieces.push_back(GetParent1().GetPieceAt(i));
+			m_pieces.push_back(parent1->GetPieceAt(i));
 		} else {
-			m_pieces.push_back(GetParent2().GetPieceAt(i));
+			m_pieces.push_back(parent2->GetPieceAt(i));
 		}
 	}
-	while (i < GetParent1().size()) {
+	while (i < parent1->GetSize()) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0)
-			m_pieces.push_back(GetParent1().GetPieceAt(i));
+			m_pieces.push_back(parent1->GetPieceAt(i));
 		i++;
 	}
-	while (i < GetParent2().size()) {
+	while (i < parent2->GetSize()) {
 		coinFlip = rand() % 2;
 		if (coinFlip == 0)
-			m_pieces.push_back(GetParent2().GetPieceAt(i));
+			m_pieces.push_back(parent2->GetPieceAt(i));
 		i++;
 	}
 }
@@ -84,4 +80,14 @@ void Puzzle1DNA::Mutate() {
 	// could add extra mutate here
 }
 
+int Puzzle1DNA::GetSum() const {
+	int sum = 0;
 
+	for(int i=0; i < m_pieces.size(); i++)
+		sum += m_pieces[i];
+
+	if(sum <= m_target)
+		return sum;
+
+	return 0;
+}

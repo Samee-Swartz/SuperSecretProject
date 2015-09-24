@@ -1,7 +1,7 @@
 #ifndef _PUZZLE_1_CREATURE
 #define _PUZZLE_1_CREATURE
 
-#include ../Core/"Creature.h"
+#include "../Core/Creature.h"
 #include "Puzzle1DNA.h"
 
 class Puzzle1Creature : public Creature {
@@ -13,13 +13,11 @@ public:
   //      float GetScore();
 
 private:
-        // Utility function
-        float CalculateFitness();
+    // Utility function
+    float CalculateFitness();
 
 	DNA* CreateDNA() const;
 	float CalculateScore();
-
-//	int m_target;
 };
 
 #endif
