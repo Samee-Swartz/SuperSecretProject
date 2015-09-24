@@ -2,6 +2,8 @@
 #include <time.h>
 #include "Puzzle3DNA.h"
 
+std::vector<TowerPiece> Puzzle3DNA::m_validPieces;
+
 // randomly creates DNA
 void Puzzle3DNA::Generate() {
 	std::vector<TowerPiece> copyValidDNA = m_validPieces;

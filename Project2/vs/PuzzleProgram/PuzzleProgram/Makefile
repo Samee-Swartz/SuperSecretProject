@@ -12,13 +12,13 @@ clean:
 	rm -f $(OBJ_FILES) $(PROGRAM_NAME)
 
 ga: $(OBJ_FILES)
-	g++ -o $(PROGRAM_NAME) $(OBJ_FILES)
+	g++ -o $(PROGRAM_NAME) $(OBJ_FILES) -lboost_system -lboost_thread -lpthread
 
 obj/%.o: %.cpp
-	g++ $(CC_FLAGS) -o $@ $<
+	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread
 
 obj/%.o: Core/%.cpp
-	g++ $(CC_FLAGS) -o $@ $<
+	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread
 
 obj/%.o: Puzzle3/%.cpp
-	g++ $(CC_FLAGS) -o $@ $<
+	g++ $(CC_FLAGS) -o $@ $< -lboost_system -lboost_thread -lpthread

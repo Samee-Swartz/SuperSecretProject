@@ -99,9 +99,9 @@ public:
 		return true;
 	}
 	// static setter for the valid pieces list
-	static void SetValidPieces(std::vector<TowerPiece> in_pieces) {
-		std::sort(m_validPieces.begin(), m_validPieces.end(), compareTowerPieces);
+	static void SetValidPieces(const std::vector<TowerPiece> in_pieces) {
 		m_validPieces = in_pieces;
+		std::sort(m_validPieces.begin(), m_validPieces.end(), compareTowerPieces);
 	}
 
 private:
