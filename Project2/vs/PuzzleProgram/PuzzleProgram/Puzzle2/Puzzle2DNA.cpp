@@ -139,22 +139,23 @@ void Puzzle2DNA::Mutate() {
 	}
 }
 
-//
-bool Puzzle2DNA::BinarySearch(std::vector<int>& in_validDNA, std::vector<int>::iterator it) {
+// searches for (*it) in out_validDNA. If found, it removes it from out_validDNA and returns true
+// else returns false
+bool Puzzle2DNA::BinarySearch(std::vector<int>& out_validDNA, std::vector<int>::iterator it) {
 	// binary search
 	int first = 0;
-	int last = in_validDNA.size();
+	int last = out_validDNA.size();
 	int mid = (last - first)/2;
 	bool found = false;
 	while (true) {
-		if (in_validDNA[mid] == (*it)) {
-			in_validDNA.erase(in_validDNA.begin()+mid);
+		if (out_validDNA[mid] == (*it)) {
+			out_validDNA.erase(out_validDNA.begin()+mid);
 			found = true;
 			break;
 		}
 		if ((last - first) < 2) // not found
 			break;
-		if ((*it) < in_validDNA[mid]) {
+		if ((*it) < out_validDNA[mid]) {
 			last = mid;
 		} else {
 			first = mid;
