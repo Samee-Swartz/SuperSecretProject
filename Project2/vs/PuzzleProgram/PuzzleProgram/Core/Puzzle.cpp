@@ -3,7 +3,8 @@
 
 Puzzle::Puzzle()
 	: m_polulation(new std::vector<Creature*>),
-	m_nextPopulation(new std::vector<Creature*>)
+	m_nextPopulation(new std::vector<Creature*>),
+	m_jobCount(0)
 {
 }
 
@@ -29,6 +30,8 @@ void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime)
 
 	mainThread.interrupt();
 	mainThread.join();
+
+	std::cout << "BEST CREATURE:" << std::endl << (*m_polulation)[0]->ToString();
 }
 
 void Puzzle::CreatePopulation(unsigned int in_populationSize)
@@ -58,7 +61,7 @@ void Puzzle::SelectNextParents(unsigned int& out_parent1, unsigned int& out_pare
 
 void Puzzle::AddToNext(Creature& in_creature)
 {
-	boost::unique_lock<boost::mutex> lock(m_nextPopulationLock);
+	boost::unique_lock<boost::recursive_mutex> lock(m_nextPopulationLock);
 
 	float fitness = in_creature.GetFitness();
 
@@ -71,17 +74,41 @@ void Puzzle::AddToNext(Creature& in_creature)
 			break;
 	}
 
+	in_creature.m_generation++;
+
 	m_nextPopulation->insert(m_nextPopulation->begin() + i, &in_creature);
+}
+
+void Puzzle::Cull()
+{
+	boost::unique_lock<boost::recursive_mutex> populationLock(m_populationLock);
+
+	int count = m_polulation->size() - m_populationSize;
+
+	int i = 0;
+	for (auto itr = m_polulation->rbegin(); itr != m_polulation->rend() && i < count; ++itr, ++i)
+	{
+		delete *itr;
+	}
+
+	m_polulation->resize(m_populationSize);
 }
 
 void Puzzle::SwapPopulations()
 {
-	boost::unique_lock<boost::mutex> populationLock(m_populationLock);
-	boost::unique_lock<boost::mutex> nextLock(m_nextPopulationLock);
+	boost::unique_lock<boost::recursive_mutex> populationLock(m_populationLock);
+	boost::unique_lock<boost::recursive_mutex> nextLock(m_nextPopulationLock);
 
-	auto& temp = m_polulation;
+	for(Creature* creature : (*m_polulation))
+	{
+		AddToNext(*creature);
+	}
+
+	m_polulation->clear();
+
+	auto temp = m_polulation;
 	m_polulation = m_nextPopulation;
-	m_nextPopulation = m_polulation;
+	m_nextPopulation = temp;
 }
 
 void Puzzle::StopWorkers()
@@ -101,8 +128,11 @@ void Puzzle::WorkerGenerator()
 {
 	CreatePopulation(m_populationSize);
 
+	unsigned int generation = 0;
+
 	while(true)
 	{
+		std::cout << "Starting Generation " << generation << std::endl;
 		try
 		{
 			//Check to see if the main thread has signled us to stop
@@ -112,18 +142,18 @@ void Puzzle::WorkerGenerator()
 		{
 			//If we have been signled to stop then shutdown all worker threads and wait
 			StopWorkers();
-			throw;
+			return;
 		}
 
 		int lastSize = m_polulation->size();
 
-		while (m_polulation->size() != 0)
+		while (m_polulation->size() >= 2)
 		{
 			Creature* c1;
 			Creature* c2;
 
 			{
-				boost::unique_lock<boost::mutex> lock(m_populationLock);
+				boost::unique_lock<boost::recursive_mutex> lock(m_populationLock);
 
 				unsigned int creature1Index = 0, creature2Index = 0;
 
@@ -131,6 +161,9 @@ void Puzzle::WorkerGenerator()
 
 				c1 = (*m_polulation)[creature1Index];
 				c2 = (*m_polulation)[creature2Index];
+
+				if (c1 == c2)
+					break;
 
 				m_polulation->erase(m_polulation->begin() + creature1Index);
 				if (creature1Index < creature2Index)
@@ -140,20 +173,24 @@ void Puzzle::WorkerGenerator()
 
 
 			{
-				boost::unique_lock<boost::mutex> lock(m_pairsAccess);
+				boost::unique_lock<boost::mutex> pairLock(m_pairsAccess);
+				boost::unique_lock<boost::recursive_mutex> jobCountLock(m_jobCountAccess);
 
 				m_pairs.push(std::pair<Creature*, Creature*>(c1, c2));
+				m_jobCount++;
 			}
 
 			m_workerTrigger.notify_one();
 		}
 
-		while(m_nextPopulation->size() != lastSize || m_pairs.size() != 0)
+		while(m_jobCount != 0)
 		{
 			boost::this_thread::yield();
 		}
 
 		SwapPopulations();
+		Cull();
+		generation++;
 	}
 }
 
@@ -163,36 +200,33 @@ void Puzzle::BreedingThread()
 	{
 		boost::unique_lock<boost::mutex> lock(m_pairsAccess);
 
-		while (m_pairs.size() == 0)
-		{
+		while(m_pairs.size() == 0)
 			m_workerTrigger.wait(lock);
-		}
 
-		std::pair<Creature*, Creature*>& pair = m_pairs.front();
+		std::pair<Creature*, Creature*> pair = m_pairs.front();
 		m_pairs.pop();
 
-		lock.release();
+		lock.unlock();
 
 		Creature* const baby = CreateCreature();
 		baby->SetParents(*pair.first, *pair.second);
 		baby->OnInit();
 
-		std::array<Creature*, 3> all;
-		all[0] = pair.first;
-		all[1] = pair.second;
-		all[2] = baby;
-
-		std::sort(all.begin(), all.end(), [](Creature* a, Creature* b)
+		//AddToNext(*baby);
+		AddToNext(*pair.first);
+		AddToNext(*pair.second);
 		{
-			return b->GetFitness() < a->GetFitness();
-		});
+			boost::unique_lock<boost::recursive_mutex> jobCountLock(m_jobCountAccess);
+			m_jobCount--;
+		}
 
-		
-		AddToNext(*all[0]);
-		AddToNext(*all[1]);
-
-		delete all[2];
-
-		boost::this_thread::interruption_point();
+		try
+		{
+			boost::this_thread::interruption_point();
+		}
+		catch(boost::exception&)
+		{
+			return;
+		}
 	}
 }

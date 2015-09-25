@@ -1,6 +1,7 @@
 #include "Puzzle2DNA.h"
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 std::vector<int> Puzzle2DNA::m_validPieces;
 
@@ -13,46 +14,29 @@ void Puzzle2DNA::Generate(){
 	//generate random DNA from the given m_validPieces
 
 	int i;
-	int index;
 
-	for(i = 0; i < 30; i++){
-		 if(i < 10)
-			 m_bin1[i] = 0;
-		 else if(i < 20)
-			 m_bin2[i-10] = 0;
-		 else
-			 m_bin3[i-20] = 0;
+	std::vector<int> validCopy = std::vector<int>(m_validPieces);
+
+	for(i = 0; i < 10; i ++)
+	{
+		int index = rand() % validCopy.size();
+		m_bin1.push_back(validCopy[index]);
+		validCopy.erase(validCopy.begin() + index);
 	}
 
-	//for each value in m_validPieces(30), find an empty bin position and place it there.
-	for(i = 0; i < 30; i ++){
-		index = rand() % 30;
-
-		if(!binAtIndexFull(index)){
-			if(index < 10)
-				m_bin1[index] = m_validPieces[i];
-			else if(index < 20)
-				m_bin2[index - 10] = m_validPieces[i];
-			else
-				m_bin3[index - 20] = m_validPieces[i];
-		}
-		else{
-			while(binAtIndexFull(index)){
-				index = rand() % 30;
-			}
-
-			//we now have a valid index, place the value in the available position
-			if(index < 10)
-				m_bin1[index] = m_validPieces[i];
-			else if(index < 20)
-				m_bin2[index - 10] = m_validPieces[i];
-			else
-				m_bin3[index - 20] = m_validPieces[i];
-		}
-
-
+	for (i = 0; i < 10; i++)
+	{
+		int index = rand() % validCopy.size();
+		m_bin2.push_back(validCopy[index]);
+		validCopy.erase(validCopy.begin() + index);
 	}
 
+	for (i = 0; i < 10; i++)
+	{
+		int index = rand() % validCopy.size();
+		m_bin3.push_back(validCopy[index]);
+		validCopy.erase(validCopy.begin() + index);
+	}
 }
 
 void Puzzle2DNA::Splice() {
@@ -69,31 +53,31 @@ void Puzzle2DNA::Splice() {
 	int i;
 	for(i = 0; i < bin1Index; i++){
 		//grab the first bin1Index items from bin1 of parent1
-		m_bin1[i] = p1->getBin1At(i);
+		m_bin1.push_back(p1->getBin1At(i));
 	}
 	for(i = bin1Index; i < 10; i++){
 		//grab 10 - bin1Index items from bin1 of parent2
-		m_bin1[i] = p2->getBin1At(i);
+		m_bin1.push_back(p2->getBin1At(i));
 	}
 
 	//Bin2
 	for(i = 0; i < bin2Index; i++){
 		//grab the first bin2Index items from bin2 of parent1
-		m_bin2[i] = p1->getBin2At(i);
+		m_bin2.push_back(p1->getBin2At(i));
 	}
 	for(i = bin2Index; i < 10; i++){
 		//grab 10 - bin2Index items from bin2 of parent2
-		m_bin2[i] = p2->getBin2At(i);
+		m_bin2.push_back(p2->getBin2At(i));
 	}
 
 	//Bin3
 	for(i = 0; i < bin3Index; i++){
 		//grab the first bin3Index items from bin3 of parent1
-		m_bin3[i] = p1->getBin3At(i);
+		m_bin3.push_back(p1->getBin3At(i));
 		}
 	for(i = bin3Index; i < 10; i++){
 		//grab 10 - bin3Index items from bin3 of parent2
-		m_bin3[i] = p2->getBin3At(i);
+		m_bin3.push_back(p2->getBin3At(i));
 	}
 }
 
@@ -109,48 +93,76 @@ int Puzzle2DNA::getBin3At(int i) const {
 
 void Puzzle2DNA::Mutate() {
 	std::vector<int> copyValidDNA = m_validPieces;
-	int numDups = 0;
 
-	for (std::vector<int>::iterator it = m_bin1.begin(); it != m_bin1.end(); ++it) {
-		// binary search
-		int first = 0;
-		int last = m_validPieces.size();
-		int mid = (last - first)/2;
-		bool found = false;
-		while (true) {
-			if (copyValidDNA[mid] == (*it)) {
-				copyValidDNA.erase(copyValidDNA.begin()+mid);
-				found = true;
-				break;
-			}
-			if ((last - first) < 2) // not found
-				break;
-			// <
-			if (compareTowerPieces((*it), copyValidDNA[mid])) {
-				last = mid;
-			} else {  // >
-				first = mid;
-			}
-			int temp = mid;
-			mid = first + ((last - first)/2);
+	for (size_t i = 0; i < m_bin1.size(); i++) {
+		auto it = m_bin1.begin() + i;
+		if (!BinarySearch(copyValidDNA, it)) {
+            m_bin1.erase(it);
+			i--;
 		}
-		if (!found) {
-            m_pieces.erase(it);
-            numDups++;
-            --it; // used to compensate for removing in the middle of the for loop
+	}
+
+	for (size_t i = 0; i < m_bin2.size(); i++) {
+		auto it = m_bin2.begin() + i;
+		if (!BinarySearch(copyValidDNA, it)) {
+            m_bin2.erase(it);
+			i--;
+		}
+	}
+
+	for (size_t i = 0; i < m_bin3.size(); i++) {
+		auto it = m_bin3.begin() + i;
+		if (!BinarySearch(copyValidDNA, it)) {
+            m_bin3.erase(it);
+			i--;
 		}
 	}
 	// could add extra mutate here
-
-	if (numDups > 0) {
-		int numAdds = rand() % numDups;
-		while (numAdds > 0) {
-			int validIndex = rand() % copyValidDNA.size();
-			int piecesIndex = rand() % m_pieces.size();
-			m_pieces.insert(m_pieces.begin()+piecesIndex, copyValidDNA[validIndex]);
-			numAdds--;
+	int newDNA;
+	if (copyValidDNA.size() > 0) {
+		while (m_bin1.size() < 10) {
+			newDNA = rand() % copyValidDNA.size();
+			m_bin1.push_back(copyValidDNA[newDNA]);
 		}
 	}
+	if (copyValidDNA.size() > 0) {
+		while (m_bin2.size() < 10) {
+			newDNA = rand() % copyValidDNA.size();
+			m_bin2.push_back(copyValidDNA[newDNA]);
+		}
+	}
+	if (copyValidDNA.size() > 0) {
+		while (m_bin3.size() < 10) {
+			newDNA = rand() % copyValidDNA.size();
+			m_bin3.push_back(copyValidDNA[newDNA]);
+		}
+	}
+}
+
+//
+bool Puzzle2DNA::BinarySearch(std::vector<int>& in_validDNA, std::vector<int>::iterator it) {
+	// binary search
+	int first = 0;
+	int last = in_validDNA.size();
+	int mid = (last - first)/2;
+	bool found = false;
+	while (true) {
+		if (in_validDNA[mid] == (*it)) {
+			in_validDNA.erase(in_validDNA.begin()+mid);
+			found = true;
+			break;
+		}
+		if ((last - first) < 2) // not found
+			break;
+		if ((*it) < in_validDNA[mid]) {
+			last = mid;
+		} else {
+			first = mid;
+		}
+		int temp = mid;
+		mid = first + ((last - first)/2);
+	}
+	return found;
 }
 
 //score the bin2 by multiplying its values
@@ -170,6 +182,8 @@ int Puzzle2DNA::getBin2Val() const {
 	for(int a: m_bin2){
 		score += a;
 	}
+
+	return score;
 }
 
 void Puzzle2DNA::swapValues(int validIndex1, int validIndex2){

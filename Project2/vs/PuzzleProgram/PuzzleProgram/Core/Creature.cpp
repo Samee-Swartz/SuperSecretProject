@@ -3,12 +3,17 @@
 #include <algorithm>
 
 Creature::Creature()
+	: m_parent1(nullptr),
+	m_parent2(nullptr)
 {
+	static unsigned int globalIdCounter = 0;
+	globalIdCounter++;
+	m_id = globalIdCounter;
 }
 
 Creature::~Creature()
 {
-	
+	delete m_dna;
 }
 
 void Creature::SetParents(const Creature& in_parent1, const Creature& in_parent2)
@@ -17,30 +22,21 @@ void Creature::SetParents(const Creature& in_parent1, const Creature& in_parent2
 	m_parent2 = &in_parent2;
 }
 
-void Creature::Lock()
+std::string Creature::ToString() const
 {
-	m_mutex.lock();
-}
-
-bool Creature::TryLock()
-{
-	return m_mutex.try_lock();
-}
-
-void Creature::Unlock()
-{
-	m_mutex.unlock();
+	return  "Generation: " + std::to_string(m_generation) + "\n"
+		+ "Score: " + std::to_string(m_score) + "\n"
+		+ "Fitness: " + std::to_string(m_fitness) + "\n"
+		+ "DNA: " + m_dna->ToString() + "\n";
 }
 
 void Creature::OnInit()
 {
-	boost::unique_lock<boost::mutex> lock(m_mutex);
-
 	m_dna = CreateDNA();
 
 	if(m_parent1 == nullptr || m_parent2 == nullptr)
 	{
-		m_generation = -1;
+		m_generation = 0;
 		m_dna->Generate();
 	}
 	else
@@ -50,5 +46,6 @@ void Creature::OnInit()
 		m_dna->Mutate();
 	}
 
-	CalculateFitness();
+	m_fitness = CalculateFitness();
+	m_score = CalculateScore();
 }

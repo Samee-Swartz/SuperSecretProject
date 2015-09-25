@@ -47,6 +47,8 @@ struct TowerPiece {
 				return "wall";
 			case LOOKOUT:
 				return "lookout";
+			default:
+				throw;
 		}
 	}
 };
@@ -59,7 +61,7 @@ public:
 
 	int GetTowerHeight() const {return m_pieces.size();}
 
-	std::string ToString();
+	std::string ToString()const;
 
 	// Returns tower's total cost
 	int GetTowerCost() const {

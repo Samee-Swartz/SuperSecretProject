@@ -39,6 +39,30 @@
     <ClInclude Include="TestPuzzle\TestPuzzle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestPuzzle\TestCreature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPuzzle\TestDNA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle3\Puzzle3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle3\Puzzle3Creature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle3\Puzzle3DNA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle2\Puzzle2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle2\Puzzle2Creature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle2\Puzzle2DNA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +84,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestPuzzle\TestPuzzle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPuzzle\TestCreature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPuzzle\TestDNA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle3\Puzzle3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle3\Puzzle3Creature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle3\Puzzle3DNA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle2\Puzzle2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle2\Puzzle2Creature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle2\Puzzle2DNA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

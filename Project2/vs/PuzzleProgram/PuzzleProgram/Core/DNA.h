@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class Creature;
 
@@ -23,6 +24,8 @@ protected:
 
 	const DNA* GetParent1() const { return m_parent1; }
 	const DNA* GetParent2() const { return m_parent2; }
+
+	virtual std::string ToString() const;
 
 private:
 	void InternalSplice(const DNA& in_parent1, const DNA& in_parent2);

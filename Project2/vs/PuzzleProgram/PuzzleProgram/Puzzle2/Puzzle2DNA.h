@@ -41,6 +41,7 @@ private:
 
 	void swapValues(int validIndex1, int validIndex2);
 	bool binAtIndexFull(int);
+	bool BinarySearch(std::vector<int>& in_validDNA, std::vector<int>::iterator it);
 
 protected:
 	bool isValid();

@@ -10,6 +10,11 @@ DNA::~DNA()
 {
 }
 
+std::string DNA::ToString() const
+{
+	return "";
+}
+
 void DNA::InternalSplice(const DNA& in_parent1, const DNA& in_parent2)
 {
 	m_parent1 = &in_parent1;
