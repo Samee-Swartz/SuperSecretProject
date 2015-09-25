@@ -108,23 +108,47 @@ int Puzzle2DNA::getBin3At(int i) const {
 }
 
 void Puzzle2DNA::Mutate() {
-	// mutates kid
-	// validates kid
+	std::vector<int> copyValidDNA = m_validPieces;
+	int numDups = 0;
 
-	//checks if is valid
-	//if valid, nothing needs to be done
-	//if not valid, move values to make it valid
-	while(!isValid()){
-		int i;
-		int temp;
-		int pos;
-		for(i = 0; i < (m_invalidPieces.size() / 2); i++){
+	for (std::vector<int>::iterator it = m_bin1.begin(); it != m_bin1.end(); ++it) {
+		// binary search
+		int first = 0;
+		int last = m_validPieces.size();
+		int mid = (last - first)/2;
+		bool found = false;
+		while (true) {
+			if (copyValidDNA[mid] == (*it)) {
+				copyValidDNA.erase(copyValidDNA.begin()+mid);
+				found = true;
+				break;
+			}
+			if ((last - first) < 2) // not found
+				break;
+			// <
+			if (compareTowerPieces((*it), copyValidDNA[mid])) {
+				last = mid;
+			} else {  // >
+				first = mid;
+			}
+			int temp = mid;
+			mid = first + ((last - first)/2);
+		}
+		if (!found) {
+            m_pieces.erase(it);
+            numDups++;
+            --it; // used to compensate for removing in the middle of the for loop
+		}
+	}
+	// could add extra mutate here
 
-			pos = rand() % m_invalidPieces.size();
-
-			//swaps the invalid pieces
-			swapValues(m_invalidPieces[i], m_invalidPieces[pos]);
-
+	if (numDups > 0) {
+		int numAdds = rand() % numDups;
+		while (numAdds > 0) {
+			int validIndex = rand() % copyValidDNA.size();
+			int piecesIndex = rand() % m_pieces.size();
+			m_pieces.insert(m_pieces.begin()+piecesIndex, copyValidDNA[validIndex]);
+			numAdds--;
 		}
 	}
 }
