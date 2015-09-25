@@ -108,8 +108,7 @@ std::string Puzzle3DNA::ToString() {
 	std::stringstream s;
 	s << "Type\twidth\tstrength\tcost" << std::endl;
 	for ( auto p : m_pieces) {
-		s << p.m_type << "\t" << p.m_width << "\t" << p.m_strength << "\t" << p.m_cost << std::endl;
+		s << p.GetType() << "\t" << p.m_width << "\t" << p.m_strength << "\t" << p.m_cost << std::endl;
 	}
 	return s.str();
 }
-

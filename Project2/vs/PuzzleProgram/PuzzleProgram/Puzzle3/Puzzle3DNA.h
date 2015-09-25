@@ -38,6 +38,17 @@ struct TowerPiece {
 		return m_type == other.m_type && m_width == other.m_width &&
 			m_strength == other.m_strength && m_cost == other.m_cost;
 	}
+
+	std::string GetType() {
+		switch(m_type) {
+			case DOOR:
+				return "door";
+			case WALL:
+				return "wall";
+			case LOOKOUT:
+				return "lookout";
+		}
+	}
 };
 
 class Puzzle3DNA : public DNA {
