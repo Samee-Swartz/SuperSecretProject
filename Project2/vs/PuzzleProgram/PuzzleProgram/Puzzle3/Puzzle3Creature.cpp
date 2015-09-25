@@ -28,6 +28,9 @@ float Puzzle3Creature::CalculateFitness() {
 		fitnessScore += 5;
 	if (dna.VerifyStrength())
 		fitnessScore += 5;
+
+	// CalculateScore will return 0 until all is good.
+	fitnessScore += CalculateScore();
 	return fitnessScore;
 }
 

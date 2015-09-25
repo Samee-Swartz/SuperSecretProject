@@ -61,7 +61,7 @@ void Puzzle2DNA::Splice() {
 
 	// splices parents into kid
 
-	int bin1Index = rand()&10;
+	int bin1Index = rand()%10;
 	int bin2Index = rand()%10;
 	int bin3Index = rand()%10;
 

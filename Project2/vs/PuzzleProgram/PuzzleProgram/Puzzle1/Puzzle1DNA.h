@@ -11,9 +11,7 @@ class Puzzle1DNA : public DNA {
 public:
 	Puzzle1DNA();
 
-	int GetPieceAt(int i) const {
-		return m_pieces[i];
-	}
+	int GetPieceAt(int i) const { return m_pieces[i]; }
 
  	//Called when there are no parents, generates a random DNA
     void Generate();
@@ -25,6 +23,7 @@ public:
 
 	static void SetValidPieces(std::vector<int> in_pieces, int in_target) {
 		m_validPieces = in_pieces;
+		m_target = in_target;
         std::sort(m_validPieces.begin(), m_validPieces.end());
 	}
 

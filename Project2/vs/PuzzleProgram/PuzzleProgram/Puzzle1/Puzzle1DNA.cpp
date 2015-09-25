@@ -9,8 +9,6 @@ int Puzzle1DNA::m_target = 0;
 Puzzle1DNA::Puzzle1DNA(){}
 
 void Puzzle1DNA::Generate(){
-	std::vector<int> copyValidDNA = m_validPieces;
-
 	int pieces = ((rand() % (m_validPieces.size() - 2)) + 2);
 
 	while(pieces > 0){
@@ -63,10 +61,9 @@ void Puzzle1DNA::Mutate() {
 			}
 			if ((last - first) < 2) // not found
 				break;
-			// <
 			if ((*it) < copyValidDNA[mid]) {
 				last = mid;
-			} else {  // >
+			} else {
 				first = mid;
 			}
 			int temp = mid;
@@ -78,6 +75,7 @@ void Puzzle1DNA::Mutate() {
 		}
 	}
 	// could add extra mutate here
+	// add or remove
 }
 
 int Puzzle1DNA::GetSum() const {

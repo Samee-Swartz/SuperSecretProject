@@ -1,5 +1,6 @@
 #include "Puzzle2.h"
 #include <fstream>
+#include "Puzzle2DNA.h"
 /*
 holds vector Creatures - current population
 current best offspring found
@@ -8,6 +9,8 @@ final generation #
 Selection rule - how to choose parents
 runs crossover
 */
+#define WORKER_COUNT 10
+#define POPULATION_SIZE 1000
 
 void Puzzle2::Setup(std::string in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount){
 	std::ifstream givenWorld(in_fileName.c_str());
@@ -29,4 +32,8 @@ void Puzzle2::Setup(std::string in_fileName, unsigned int& out_populationSize, u
 
 		validPieces.push_back(temp);
 	}
+
+	Puzzle2DNA::SetValidPieces(validPieces);
+	out_populationSize = POPULATION_SIZE;
+	out_workerCount = WORKER_COUNT;
 }

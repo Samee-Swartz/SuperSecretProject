@@ -9,9 +9,7 @@ public:
     Puzzle1();
 
 private:
-    Creature* CreateCreature() const {
-            Puzzle1Creature();
-    }
+    Creature* CreateCreature() const { return new Puzzle1Creature();}
 
 	void Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount);
 };
