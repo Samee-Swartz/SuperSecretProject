@@ -22,9 +22,7 @@ public:
 	const Creature* GetParent1() const { return m_parent1; }
 	const Creature* GetParent2() const { return m_parent2; }
 
-	void Lock();
-	bool TryLock();
-	void Unlock();
+	void IncGeneration() { m_generation++; }
 
 protected:
 	friend class Puzzle;
@@ -32,6 +30,8 @@ protected:
 	virtual DNA* CreateDNA() const = 0;
 	virtual float CalculateFitness() = 0;
 	virtual float CalculateScore() = 0;
+
+	virtual std::string ToString() const;
 private:
 	void OnInit();
 
@@ -45,6 +45,6 @@ private:
 
 	bool m_isFree;
 
-	boost::mutex m_mutex;
+	unsigned int m_id;
 };
 

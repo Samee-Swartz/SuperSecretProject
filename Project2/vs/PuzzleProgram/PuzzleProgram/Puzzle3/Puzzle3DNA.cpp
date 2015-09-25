@@ -2,6 +2,7 @@
 #include <time.h>
 #include "Puzzle3DNA.h"
 #include <sstream>
+#include <vector>
 
 std::vector<TowerPiece> Puzzle3DNA::m_validPieces;
 
@@ -62,10 +63,11 @@ void Puzzle3DNA::Mutate() {
 	std::vector<TowerPiece> copyValidDNA = m_validPieces;
 	int numDups = 0;
 
-	for (std::vector<TowerPiece>::iterator it = m_pieces.begin(); it != m_pieces.end(); ++it) {
+	for (size_t i = 0; i < m_pieces.size(); i++) {
+		auto it = m_pieces.begin() + i;
 		// binary search
 		int first = 0;
-		int last = m_validPieces.size();
+		int last = copyValidDNA.size();
 		int mid = (last - first)/2;
 		bool found = false;
 		while (true) {
@@ -88,7 +90,7 @@ void Puzzle3DNA::Mutate() {
 		if (!found) {
             m_pieces.erase(it);
             numDups++;
-            --it; // used to compensate for removing in the middle of the for loop
+			i--;
 		}
 	}
 	// could add extra mutate here
@@ -104,7 +106,7 @@ void Puzzle3DNA::Mutate() {
 	}
 }
 
-std::string Puzzle3DNA::ToString() {
+std::string Puzzle3DNA::ToString() const {
 	std::stringstream s;
 	s << "Type\twidth\tstrength\tcost" << std::endl;
 	for ( auto p : m_pieces) {

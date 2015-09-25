@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	srand(time(NULL));
+	srand(39458);
 
 	Puzzle* p;
 
@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
 			return 1;
 	}
 	p->Run(argv[2], atoi(argv[3]));
+	system("pause");
 	std::cout << "TODO: ADD THE FUNCTIONS FOR THE BEST SHIT HERE" << std::endl;
 	// Creature best = p->GetBestCreature();
 	// std::cout << "Ran " << p->GetFinalGeneration() << " generations." << std::endl;

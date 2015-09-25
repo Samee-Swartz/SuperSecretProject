@@ -1,7 +1,7 @@
 #ifndef _PUZZLE_3
 #define _PUZZLE_3
 
-#include "../Core/Puzzle.h"
+#include "Core/Puzzle.h"
 #include "Puzzle3Creature.h"
 
 class Puzzle3 : public Puzzle {

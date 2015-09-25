@@ -148,15 +148,24 @@
     <ClInclude Include="Core\DNA.h" />
     <ClInclude Include="Core\GenerationWorker.h" />
     <ClInclude Include="Core\Puzzle.h" />
+    <ClInclude Include="Puzzle3\Puzzle3.h" />
+    <ClInclude Include="Puzzle3\Puzzle3Creature.h" />
+    <ClInclude Include="Puzzle3\Puzzle3DNA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestPuzzle\TestCreature.h" />
+    <ClInclude Include="TestPuzzle\TestDNA.h" />
     <ClInclude Include="TestPuzzle\TestPuzzle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Creature.cpp" />
     <ClCompile Include="Core\DNA.cpp" />
     <ClCompile Include="Core\GenerationWorker.cpp" />
+    <ClCompile Include="Core\Main.cpp" />
     <ClCompile Include="Core\Puzzle.cpp" />
+    <ClCompile Include="Puzzle3\Puzzle3.cpp" />
+    <ClCompile Include="Puzzle3\Puzzle3Creature.cpp" />
+    <ClCompile Include="Puzzle3\Puzzle3DNA.cpp" />
     <ClCompile Include="PuzzleProgram.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -164,6 +173,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TestPuzzle\TestCreature.cpp" />
+    <ClCompile Include="TestPuzzle\TestDNA.cpp" />
     <ClCompile Include="TestPuzzle\TestPuzzle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -4,8 +4,11 @@
 #include "Puzzle3.h"
 #include "Puzzle3DNA.h"
 
-#define WORKER_COUNT 10
+#define WORKER_COUNT 8
 #define POPULATION_SIZE 1000
+#include <vector>
+#include <iostream>
+#include <sstream>
 
 void Puzzle3::Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount) {
 	std::ifstream givenWorld(in_fileName.c_str());

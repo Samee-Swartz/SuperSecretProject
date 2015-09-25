@@ -2,6 +2,7 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 #include "Creature.h"
 #include "GenerationWorker.h"
 #include <stack>
@@ -31,6 +32,8 @@ private:
 
 	void AddToNext(Creature& in_creature);
 
+	void Cull();
+
 	void SwapPopulations();
 
 	void StopWorkers();
@@ -45,13 +48,15 @@ private:
 	std::vector<Creature*>* m_nextPopulation;
 
 	std::queue<std::pair<Creature*, Creature*>> m_pairs;
+	volatile unsigned int m_jobCount;
 
 	std::vector<boost::thread*> m_workers;
 
 	boost::condition_variable m_workerTrigger;
 
-	boost::mutex m_populationLock;
-	boost::mutex m_nextPopulationLock;
+	boost::recursive_mutex m_populationLock;
+	boost::recursive_mutex m_nextPopulationLock;
 	boost::mutex m_pairsAccess;
+	boost::recursive_mutex m_jobCountAccess;
 };
 
