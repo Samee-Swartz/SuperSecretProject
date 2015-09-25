@@ -3,6 +3,7 @@
 #include <time.h>
 #include "Puzzle1DNA.h"
 #include <sstream>
+#include <algorithm>
 
 std::vector<int> Puzzle1DNA::m_validPieces;
 int Puzzle1DNA::m_target = 0;
@@ -48,7 +49,8 @@ void Puzzle1DNA::Splice() {
 
 void Puzzle1DNA::Mutate() {
 	std::vector<int> copyValidDNA = m_validPieces;
-	for (std::vector<int>::iterator it = m_pieces.begin(); it != m_pieces.end(); ++it) {
+	for (size_t i = 0; i < m_pieces.size(); i++) {
+		auto it = m_pieces.begin() + i;
 		// binary search
 		int first = 0;
 		int last = m_validPieces.size();
@@ -72,11 +74,27 @@ void Puzzle1DNA::Mutate() {
 		}
 		if (!found) {
             m_pieces.erase(it);
-            --it; // used to compensate for removing in the middle of the for loop
+            i--; // used to compensate for removing in the middle of the for loop
 		}
 	}
 	// could add extra mutate here
-	// add or remove
+	// add or
+
+	if (copyValidDNA.size() > 0) {
+		int numAdds = rand() % copyValidDNA.size()-1;
+		while (numAdds > 0) {
+			m_pieces.push_back(copyValidDNA[rand() % copyValidDNA.size()]);
+			numAdds--;
+		}
+
+		int numRm = rand() % std::min(5, (int)m_pieces.size());
+		while (numRm > 0) {
+			int i = rand() % m_pieces.size();
+			m_pieces.erase(m_pieces.begin()+i);
+			numRm--;
+		}
+
+	}
 }
 
 int Puzzle1DNA::GetSum() const {

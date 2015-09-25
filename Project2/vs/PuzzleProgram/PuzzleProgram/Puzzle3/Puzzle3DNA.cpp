@@ -93,7 +93,6 @@ void Puzzle3DNA::Mutate() {
 			i--;
 		}
 	}
-	// could add extra mutate here
 
 	if (numDups > 0) {
 		int numAdds = rand() % numDups;
