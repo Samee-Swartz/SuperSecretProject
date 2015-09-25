@@ -13,8 +13,9 @@ void Puzzle3DNA::Generate() {
 	int pieces = (rand() % (m_validPieces.size()-2)) +2;
 
 	while (pieces > 0) {
-		int index = rand() % m_validPieces.size();
-		m_pieces.push_back(m_validPieces[index]);
+		int index = rand() % copyValidDNA.size();
+		m_pieces.push_back(copyValidDNA[index]);
+		copyValidDNA.erase(copyValidDNA.begin()+index);
 		pieces--;
 	}
 }
