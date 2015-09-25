@@ -6,6 +6,7 @@
 
 #define POPULATION_SIZE 1000
 #define WORKERS_SIZE 64
+#include <Puzzle2/Puzzle2.h>
 
 void usage() {
 	std::cout << "This program will run a genetic algorithm on one of "
@@ -40,7 +41,7 @@ int main(int argc, char** argv) {
 			// p = new Puzzle1();
 			break;
 		case 2:
-			// p = new Puzzle2();
+			p = new Puzzle2();
 			break;
 		case 3:
 			p = new Puzzle3();

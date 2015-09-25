@@ -148,6 +148,9 @@
     <ClInclude Include="Core\DNA.h" />
     <ClInclude Include="Core\GenerationWorker.h" />
     <ClInclude Include="Core\Puzzle.h" />
+    <ClInclude Include="Puzzle2\Puzzle2.h" />
+    <ClInclude Include="Puzzle2\Puzzle2Creature.h" />
+    <ClInclude Include="Puzzle2\Puzzle2DNA.h" />
     <ClInclude Include="Puzzle3\Puzzle3.h" />
     <ClInclude Include="Puzzle3\Puzzle3Creature.h" />
     <ClInclude Include="Puzzle3\Puzzle3DNA.h" />
@@ -163,6 +166,9 @@
     <ClCompile Include="Core\GenerationWorker.cpp" />
     <ClCompile Include="Core\Main.cpp" />
     <ClCompile Include="Core\Puzzle.cpp" />
+    <ClCompile Include="Puzzle2\Puzzle2.cpp" />
+    <ClCompile Include="Puzzle2\Puzzle2Creature.cpp" />
+    <ClCompile Include="Puzzle2\Puzzle2DNA.cpp" />
     <ClCompile Include="Puzzle3\Puzzle3.cpp" />
     <ClCompile Include="Puzzle3\Puzzle3Creature.cpp" />
     <ClCompile Include="Puzzle3\Puzzle3DNA.cpp" />

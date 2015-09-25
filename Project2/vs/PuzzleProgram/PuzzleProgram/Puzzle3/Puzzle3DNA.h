@@ -47,6 +47,8 @@ struct TowerPiece {
 				return "wall";
 			case LOOKOUT:
 				return "lookout";
+			default:
+				throw;
 		}
 	}
 };

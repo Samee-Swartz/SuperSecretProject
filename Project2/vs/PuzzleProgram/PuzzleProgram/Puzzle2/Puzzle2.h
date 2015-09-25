@@ -5,13 +5,10 @@
 #include "Puzzle2Creature.h"
 
 class Puzzle2 : public Puzzle {
-public:
-	Puzzle2();
-
 private:
-	void Setup(std::string in_file, unsigned int& out_populationSize, unsigned int& out_workerCount);
+	void Setup(const std::string& in_file, unsigned int& out_populationSize, unsigned int& out_workerCount);
 
-	Creature* CreateCreature() const { return new Puzzle2Creature(); }
+	virtual Creature* CreateCreature() const override;
 };
 
 #endif
