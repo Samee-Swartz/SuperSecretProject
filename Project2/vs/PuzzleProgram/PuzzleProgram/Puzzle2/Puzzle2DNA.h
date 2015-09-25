@@ -43,9 +43,6 @@ private:
 	bool binAtIndexFull(int);
 	bool BinarySearch(std::vector<int>& in_validDNA, std::vector<int>::iterator it);
 
-protected:
-	bool isValid();
-
 };
 
 #endif

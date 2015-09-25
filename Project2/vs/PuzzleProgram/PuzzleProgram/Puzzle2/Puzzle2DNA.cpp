@@ -293,51 +293,6 @@ bool Puzzle2DNA::binAtIndexFull(int index){
 		return (m_bin3[index] !=0);
 }
 
-bool Puzzle2DNA::isValid(){
-
-	int i, j;
-	bool isValid = true;
-	bool isMarked[30];
-
-	if(!m_invalidPieces.empty()){
-		m_invalidPieces.erase(m_invalidPieces.begin(), m_invalidPieces.end());
-	}
-
-
-	for(i = 0; i < 30; i++)
-	{
-		isMarked[i] = false;
-
-		for(j = 0; j < 30; j++){
-
-			if(!isMarked[i] && j < 10){
-				if(m_bin1[j] == m_validPieces[i]){
-					isMarked[i] = true;
-				}
-
-			}
-			else if(!isMarked[i] && j < 20){
-				if(m_bin2[j - 10] == m_validPieces[i]){
-					isMarked[i] = true;
-				}
-
-			}
-			else if(!isMarked[i] && j < 30){
-				if(m_bin3[j - 20] == m_validPieces[i]){
-					isMarked[i] = true;
-				}
-			}
-
-		}
-
-		if(isMarked[i] == false){
-			isValid = false;
-			m_invalidPieces.push_back(m_validPieces[i]);
-		}
-	}
-	return isValid;
-}
-
 std::string Puzzle2DNA::ToString() {
 	std::stringstream s;
 	s << "bin 1:" << std::endl;
