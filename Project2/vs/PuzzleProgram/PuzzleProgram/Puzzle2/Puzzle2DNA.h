@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 class Puzzle2DNA : public DNA {
 public:
@@ -14,6 +15,8 @@ public:
 	void Generate();
 	void Splice();
 	void Mutate();
+
+	std::string ToString();
 
 	int getBin1Val() const;
 	int getBin2Val() const;

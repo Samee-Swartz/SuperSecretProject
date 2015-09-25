@@ -17,6 +17,7 @@ public:
     void Generate();
 	void Splice();
 	void Mutate();
+	std::string ToString();
 
 	int GetSum() const;
 	int GetSize() const {return m_pieces.size();}

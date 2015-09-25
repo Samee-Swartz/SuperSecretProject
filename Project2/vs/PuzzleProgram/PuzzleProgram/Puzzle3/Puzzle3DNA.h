@@ -48,6 +48,8 @@ public:
 
 	int GetTowerHeight() const {return m_pieces.size();}
 
+	std::string ToString();
+
 	// Returns tower's total cost
 	int GetTowerCost() const {
 		int cost = 0;

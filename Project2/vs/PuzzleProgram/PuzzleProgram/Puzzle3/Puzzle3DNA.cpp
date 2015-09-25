@@ -1,6 +1,7 @@
 #include <string>
 #include <time.h>
 #include "Puzzle3DNA.h"
+#include <sstream>
 
 std::vector<TowerPiece> Puzzle3DNA::m_validPieces;
 
@@ -103,4 +104,12 @@ void Puzzle3DNA::Mutate() {
 	}
 }
 
+std::string Puzzle3DNA::ToString() {
+	std::stringstream s;
+	s << "Type\twidth\tstrength\tcost" << std::endl;
+	for ( auto p : m_pieces) {
+		s << p.m_type << "\t" << p.m_width << "\t" << p.m_strength << "\t" << p.m_cost << std::endl;
+	}
+	return s.str();
+}
 

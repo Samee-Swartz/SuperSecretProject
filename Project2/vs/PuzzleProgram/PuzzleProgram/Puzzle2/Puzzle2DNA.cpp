@@ -299,3 +299,21 @@ bool Puzzle2DNA::isValid(){
 	return isValid;
 }
 
+std::string Puzzle2DNA::ToString() {
+	std::stringstream s;
+	s << "bin 1:" << std::endl;
+	for ( auto p : m_bin1) {
+		s << p << "  ";
+	}
+
+	s << "bin 2:" << std::endl;
+	for ( auto p : m_bin2) {
+		s << p << "  ";
+	}
+
+	s << "bin 3:" << std::endl;
+	for ( auto p : m_bin3) {
+		s << p << "  ";
+	}
+	return s.str();
+}

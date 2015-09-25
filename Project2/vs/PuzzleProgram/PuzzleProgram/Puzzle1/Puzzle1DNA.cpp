@@ -2,6 +2,7 @@
 #include <string>
 #include <time.h>
 #include "Puzzle1DNA.h"
+#include <sstream>
 
 std::vector<int> Puzzle1DNA::m_validPieces;
 int Puzzle1DNA::m_target = 0;
@@ -88,4 +89,12 @@ int Puzzle1DNA::GetSum() const {
 		return sum;
 
 	return 0;
+}
+
+std::string Puzzle1DNA::ToString() {
+	std::stringstream s;
+	for ( auto p : m_pieces) {
+		s << p << "  ";
+	}
+	return s.str();
 }
