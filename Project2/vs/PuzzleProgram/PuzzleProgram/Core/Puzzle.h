@@ -42,10 +42,15 @@ private:
 
 	void BreedingThread();
 
+	void DestroyerThread();
+
 private:
+	unsigned int m_generation;
+
 	unsigned int m_populationSize;
 	std::vector<Creature*>* m_polulation;
 	std::vector<Creature*>* m_nextPopulation;
+	std::vector<Creature*> m_murderPopulation;
 
 	std::queue<std::pair<Creature*, Creature*>> m_pairs;
 	volatile unsigned int m_jobCount;
@@ -53,10 +58,12 @@ private:
 	std::vector<boost::thread*> m_workers;
 
 	boost::condition_variable m_workerTrigger;
+	boost::condition_variable m_murderTrigger;
 
 	boost::recursive_mutex m_populationLock;
 	boost::recursive_mutex m_nextPopulationLock;
 	boost::mutex m_pairsAccess;
+	boost::mutex m_murderAccess;
 	boost::recursive_mutex m_jobCountAccess;
 };
 

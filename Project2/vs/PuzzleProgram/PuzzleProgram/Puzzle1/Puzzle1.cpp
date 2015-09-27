@@ -5,8 +5,8 @@
 #include "Puzzle1DNA.h"
 #include "Puzzle1.h"
 
-#define WORKER_COUNT 10
-#define POPULATION_SIZE 1000
+#define WORKER_COUNT 8
+#define POPULATION_SIZE 10
 
 
 void Puzzle1::Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount){

@@ -4,6 +4,7 @@
 #include "Puzzle1DNA.h"
 #include <sstream>
 #include <algorithm>
+#include <vector>
 
 std::vector<int> Puzzle1DNA::m_validPieces;
 int Puzzle1DNA::m_target = 0;
@@ -55,7 +56,7 @@ void Puzzle1DNA::Mutate() {
 		auto it = m_pieces.begin() + i;
 		// binary search
 		int first = 0;
-		int last = m_validPieces.size();
+		int last = copyValidDNA.size();
 		int mid = (last - first)/2;
 		bool found = false;
 		while (true) {
@@ -111,7 +112,7 @@ int Puzzle1DNA::GetSum() const {
 	return 0;
 }
 
-std::string Puzzle1DNA::ToString() {
+std::string Puzzle1DNA::ToString() const {
 	std::stringstream s;
 	for ( auto p : m_pieces) {
 		s << p << "  ";

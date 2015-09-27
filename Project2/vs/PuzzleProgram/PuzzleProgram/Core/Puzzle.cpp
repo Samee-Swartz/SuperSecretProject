@@ -24,12 +24,16 @@ void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime)
 
 	boost::chrono::seconds runTimeSeconds(in_runtime);
 
+	boost::thread deleteThread = boost::thread(boost::bind(&Puzzle::DestroyerThread, this));
 	boost::thread mainThread = boost::thread(boost::bind(&Puzzle::WorkerGenerator, this));
 
 	boost::this_thread::sleep_for(runTimeSeconds);
 
 	mainThread.interrupt();
 	mainThread.join();
+
+	deleteThread.interrupt();
+	deleteThread.join();
 
 	std::cout << "BEST CREATURE:" << std::endl << (*m_polulation)[0]->ToString();
 }
@@ -40,6 +44,7 @@ void Puzzle::CreatePopulation(unsigned int in_populationSize)
 	{
 		Creature* newCreature = CreateCreature();
 		newCreature->OnInit();
+		newCreature->m_generation = 0;
 		m_polulation->push_back(newCreature);
 	}
 }
@@ -63,33 +68,27 @@ void Puzzle::AddToNext(Creature& in_creature)
 {
 	boost::unique_lock<boost::recursive_mutex> lock(m_nextPopulationLock);
 
-	float fitness = in_creature.GetFitness();
-
-	int i;
-	for (i = 0; i < m_nextPopulation->size(); i++)
-	{
-		Creature* creature = (*m_nextPopulation)[i];
-		
-		if (creature->GetFitness() < fitness)
-			break;
-	}
-
-	in_creature.m_generation++;
-
-	m_nextPopulation->insert(m_nextPopulation->begin() + i, &in_creature);
+	m_nextPopulation->insert(m_nextPopulation->begin(), &in_creature);
 }
 
 void Puzzle::Cull()
 {
 	boost::unique_lock<boost::recursive_mutex> populationLock(m_populationLock);
 
-	int count = m_polulation->size() - m_populationSize;
+	int cullIndex = m_populationSize;;
 
-	int i = 0;
-	for (auto itr = m_polulation->rbegin(); itr != m_polulation->rend() && i < count; ++itr, ++i)
+	if(cullIndex < m_polulation->size())
 	{
-		delete *itr;
+		boost::unique_lock<boost::mutex> murderLock(m_murderAccess);
+		m_murderPopulation.clear();
+
+		for (int i = cullIndex; i < m_polulation->size(); i++)
+		{
+			m_murderPopulation.push_back((*m_polulation)[i]);
+		}
 	}
+
+	m_murderTrigger.notify_one();
 
 	m_polulation->resize(m_populationSize);
 }
@@ -105,6 +104,11 @@ void Puzzle::SwapPopulations()
 	}
 
 	m_polulation->clear();
+
+	std::sort(m_nextPopulation->begin(), m_nextPopulation->end(), [](const Creature* const a, const Creature* const b)
+	{
+		return a->GetFitness() > b->GetFitness();
+	});
 
 	auto temp = m_polulation;
 	m_polulation = m_nextPopulation;
@@ -128,11 +132,11 @@ void Puzzle::WorkerGenerator()
 {
 	CreatePopulation(m_populationSize);
 
-	unsigned int generation = 0;
+	m_generation = 1;
 
 	while(true)
 	{
-		std::cout << "Starting Generation " << generation << std::endl;
+		std::cout << "Starting Generation " << m_generation << std::endl;
 		try
 		{
 			//Check to see if the main thread has signled us to stop
@@ -190,7 +194,7 @@ void Puzzle::WorkerGenerator()
 
 		SwapPopulations();
 		Cull();
-		generation++;
+		m_generation++;
 	}
 }
 
@@ -211,8 +215,9 @@ void Puzzle::BreedingThread()
 		Creature* const baby = CreateCreature();
 		baby->SetParents(*pair.first, *pair.second);
 		baby->OnInit();
+		baby->m_generation = m_generation;
 
-		//AddToNext(*baby);
+		AddToNext(*baby);
 		AddToNext(*pair.first);
 		AddToNext(*pair.second);
 		{
@@ -228,5 +233,34 @@ void Puzzle::BreedingThread()
 		{
 			return;
 		}
+	}
+}
+
+void Puzzle::DestroyerThread()
+{
+	while(true)
+	{
+		try
+		{
+			boost::this_thread::interruption_point();
+		}
+		catch(boost::exception&)
+		{
+			return;
+		}
+
+		boost::unique_lock<boost::mutex> lock(m_murderAccess);
+
+		while(m_murderPopulation.size() == 0)
+		{
+			m_murderTrigger.wait(lock);
+		}
+
+		for(Creature* c : m_murderPopulation)
+		{
+			delete c;
+		}
+
+		m_murderPopulation.clear();
 	}
 }

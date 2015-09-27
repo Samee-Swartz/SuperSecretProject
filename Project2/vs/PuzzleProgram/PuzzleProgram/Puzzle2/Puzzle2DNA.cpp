@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-std::vector<int> Puzzle2DNA::m_validPieces;
+std::vector<float> Puzzle2DNA::m_validPieces;
 
 //Constructor
 Puzzle2DNA::Puzzle2DNA() {}
@@ -15,7 +15,7 @@ void Puzzle2DNA::Generate(){
 
 	int i;
 
-	std::vector<int> validCopy = std::vector<int>(m_validPieces);
+	std::vector<float> validCopy = std::vector<float>(m_validPieces);
 
 	for(i = 0; i < 10; i ++)
 	{
@@ -81,18 +81,18 @@ void Puzzle2DNA::Splice() {
 	}
 }
 
-int Puzzle2DNA::getBin1At(int i) const {
+float Puzzle2DNA::getBin1At(int i) const {
 	return m_bin1[i];
 }
-int Puzzle2DNA::getBin2At(int i) const {
+float Puzzle2DNA::getBin2At(int i) const {
 	return m_bin2[i];
 }
-int Puzzle2DNA::getBin3At(int i) const {
+float Puzzle2DNA::getBin3At(int i) const {
 	return m_bin3[i];
 }
 
 void Puzzle2DNA::Mutate() {
-	std::vector<int> copyValidDNA = m_validPieces;
+	std::vector<float> copyValidDNA = m_validPieces;
 
 	for (size_t i = 0; i < m_bin1.size(); i++) {
 		auto it = m_bin1.begin() + i;
@@ -141,7 +141,7 @@ void Puzzle2DNA::Mutate() {
 
 // searches for (*it) in out_validDNA. If found, it removes it from out_validDNA and returns true
 // else returns false
-bool Puzzle2DNA::BinarySearch(std::vector<int>& out_validDNA, std::vector<int>::iterator it) {
+bool Puzzle2DNA::BinarySearch(std::vector<float>& out_validDNA, std::vector<float>::iterator it) {
 	// binary search
 	int first = 0;
 	int last = out_validDNA.size();
@@ -167,10 +167,10 @@ bool Puzzle2DNA::BinarySearch(std::vector<int>& out_validDNA, std::vector<int>::
 }
 
 //score the bin2 by multiplying its values
-int Puzzle2DNA::getBin1Val() const {
-	int score = 1;
+float Puzzle2DNA::getBin1Val() const {
+	float score = 1;
 
-	for(int a: m_bin1){
+	for(float a: m_bin1){
 		score *= a;
 	}
 
@@ -178,9 +178,9 @@ int Puzzle2DNA::getBin1Val() const {
 }
 
 //score the bin1 by adding its values
-int Puzzle2DNA::getBin2Val() const {
-	int score = 0;
-	for(int a: m_bin2){
+float Puzzle2DNA::getBin2Val() const {
+	float score = 0;
+	for(float a: m_bin2){
 		score += a;
 	}
 
@@ -188,9 +188,9 @@ int Puzzle2DNA::getBin2Val() const {
 }
 
 void Puzzle2DNA::swapValues(int validIndex1, int validIndex2){
-	int val1 = m_validPieces[validIndex1];
-	int val2 = m_validPieces[validIndex2];
-	int temp;
+	float val1 = m_validPieces[validIndex1];
+	float val2 = m_validPieces[validIndex2];
+	float temp;
 
 	int i,j;
 	for(i = 0; i < 30; i++){
@@ -293,19 +293,19 @@ bool Puzzle2DNA::binAtIndexFull(int index){
 		return (m_bin3[index] !=0);
 }
 
-std::string Puzzle2DNA::ToString() {
+std::string Puzzle2DNA::ToString() const {
 	std::stringstream s;
-	s << "bin 1:" << std::endl;
+	s << std::endl << "bin 1: ";
 	for ( auto p : m_bin1) {
 		s << p << "  ";
 	}
 
-	s << "bin 2:" << std::endl;
+	s << std::endl << "bin 2: ";
 	for ( auto p : m_bin2) {
 		s << p << "  ";
 	}
 
-	s << "bin 3:" << std::endl;
+	s << std::endl << "bin 3: ";
 	for ( auto p : m_bin3) {
 		s << p << "  ";
 	}

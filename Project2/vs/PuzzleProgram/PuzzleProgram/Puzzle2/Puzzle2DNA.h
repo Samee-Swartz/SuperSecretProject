@@ -16,32 +16,32 @@ public:
 	void Splice();
 	void Mutate();
 
-	std::string ToString();
+	std::string ToString() const;
 
-	int getBin1Val() const;
-	int getBin2Val() const;
+	float getBin1Val() const;
+	float getBin2Val() const;
 
-	int getBin1At(int) const;
-	int getBin2At(int) const;
-	int getBin3At(int) const;
+	float getBin1At(int) const;
+	float getBin2At(int) const;
+	float getBin3At(int) const;
 
-	static void SetValidPieces(const std::vector<int> in_pieces) {
+	static void SetValidPieces(const std::vector<float> in_pieces) {
 		m_validPieces = in_pieces;
 		std::sort(m_validPieces.begin(), m_validPieces.end());
 	}
 
 private:
 
-	std::vector<int> m_bin1;
-	std::vector<int> m_bin2;
-	std::vector<int> m_bin3;
+	std::vector<float> m_bin1;
+	std::vector<float> m_bin2;
+	std::vector<float> m_bin3;
 
-	static std::vector<int> m_validPieces;
-	std::vector<int> m_invalidPieces;
+	static std::vector<float> m_validPieces;
+	std::vector<float> m_invalidPieces;
 
 	void swapValues(int validIndex1, int validIndex2);
 	bool binAtIndexFull(int);
-	bool BinarySearch(std::vector<int>& in_validDNA, std::vector<int>::iterator it);
+	bool BinarySearch(std::vector<float>& in_validDNA, std::vector<float>::iterator it);
 
 };
 

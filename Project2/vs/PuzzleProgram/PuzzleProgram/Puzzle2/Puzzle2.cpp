@@ -9,12 +9,12 @@ final generation #
 Selection rule - how to choose parents
 runs crossover
 */
-#define WORKER_COUNT 1
+#define WORKER_COUNT 8
 #define POPULATION_SIZE 1000
 
 void Puzzle2::Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount){
 	std::ifstream givenWorld(in_fileName.c_str());
-	std::vector<int> validPieces;
+	std::vector<float> validPieces;
 
 	if(!givenWorld){
 		std::cout << "Given input file is invalid." << std::endl;
@@ -22,9 +22,9 @@ void Puzzle2::Setup(const std::string& in_fileName, unsigned int& out_population
 
 	std::string line;
 
-	int temp;
+	float temp;
 	while(std::getline(givenWorld, line)){
-		temp = atoi(line.c_str());
+		temp = atof(line.c_str());
 
 		if(temp > 10 || temp < -10){
 			std::cout << "Invalid value for Puzzle2 validPieces:" << temp << std::endl;

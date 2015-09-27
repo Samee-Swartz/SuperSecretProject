@@ -5,9 +5,6 @@
 #include "Puzzle1Creature.h"
 
 class Puzzle1 : public Puzzle {
-public:
-    Puzzle1();
-
 private:
     Creature* CreateCreature() const { return new Puzzle1Creature();}
 

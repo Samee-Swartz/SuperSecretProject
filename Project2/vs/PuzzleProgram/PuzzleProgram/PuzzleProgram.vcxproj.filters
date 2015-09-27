@@ -63,6 +63,15 @@
     <ClInclude Include="Puzzle2\Puzzle2DNA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Puzzle1\Puzzle1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle1\Puzzle1Creature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Puzzle1\Puzzle1DNA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -111,6 +120,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Puzzle2\Puzzle2DNA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle1\Puzzle1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle1\Puzzle1Creature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Puzzle1\Puzzle1DNA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
