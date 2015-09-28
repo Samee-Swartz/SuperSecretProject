@@ -7,6 +7,7 @@
 #include "GenerationWorker.h"
 #include <stack>
 #include <queue>
+#include <random>
 
 class Puzzle
 {
@@ -16,7 +17,7 @@ public:
 
 	virtual ~Puzzle();
 
-	void Run(const std::string& in_fileName, unsigned int in_runtime);
+	void Run(const std::string& in_fileName, unsigned int in_runtime, const std::string& in_saveFileName = "Data.csv");
 
 protected:
 	virtual void Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount) = 0;
@@ -33,13 +34,13 @@ private:
 	void AddToNext(Creature& in_creature);
 
 	void Cull();
-
+	void Elite();
 	void SwapPopulations();
 
 	void StopWorkers();
 
 	void WorkerGenerator();
-
+	Creature* CreateBaby(const Creature* in_parent1, const Creature* in_parent2) const;
 	void BreedingThread();
 
 	void DestroyerThread();
@@ -65,5 +66,9 @@ private:
 	boost::mutex m_pairsAccess;
 	boost::mutex m_murderAccess;
 	boost::recursive_mutex m_jobCountAccess;
+
+	std::default_random_engine m_randEngine;
+
+	std::string m_saveFileName;
 };
 

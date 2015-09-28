@@ -4,8 +4,8 @@
 #include "Puzzle3.h"
 #include "Puzzle3DNA.h"
 
-#define WORKER_COUNT 4
-#define POPULATION_SIZE 1000
+#define WORKER_COUNT 8
+#define POPULATION_SIZE 500
 #include <vector>
 #include <iostream>
 #include <sstream>

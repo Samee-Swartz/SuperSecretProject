@@ -1,5 +1,5 @@
 #include <string>
-#include <time.h>
+#include <algorithm>
 #include "Puzzle3DNA.h"
 #include <sstream>
 #include <vector>
@@ -85,7 +85,6 @@ void Puzzle3DNA::Mutate() {
 			} else {  // >
 				first = mid;
 			}
-			int temp = mid;
 			mid = first + ((last - first)/2);
 		}
 		if (!found) {
@@ -96,7 +95,7 @@ void Puzzle3DNA::Mutate() {
 	}
 
 	if (numDups > 0) {
-		int numAdds = rand() % numDups;
+		int numAdds = std::min((rand() % numDups) + 2, (int)copyValidDNA.size());
 		while (numAdds > 0) {
 			int validIndex = rand() % copyValidDNA.size();
 			int piecesIndex = rand() % m_pieces.size();

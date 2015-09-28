@@ -1,10 +1,13 @@
 #include "Puzzle.h"
 #include <boost/chrono/duration.hpp>
+#include <fstream>
+#include <random>
 
 Puzzle::Puzzle()
 	: m_polulation(new std::vector<Creature*>),
 	m_nextPopulation(new std::vector<Creature*>),
-	m_jobCount(0)
+	m_jobCount(0),
+	m_saveFileName("Data.csv")
 {
 }
 
@@ -14,8 +17,12 @@ Puzzle::~Puzzle()
 	delete m_nextPopulation;
 }
 
-void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime)
+void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime, const std::string& in_saveFilename)
 {
+	m_saveFileName = in_saveFilename;
+
+	m_randEngine.seed(rand());
+
 	unsigned int workerCount;
 
 	Setup(in_fileName, m_populationSize, workerCount);
@@ -40,11 +47,11 @@ void Puzzle::Run(const std::string& in_fileName, unsigned int in_runtime)
 
 void Puzzle::CreatePopulation(unsigned int in_populationSize)
 {
-	for (unsigned int i = 0; i < in_populationSize; i++)
+	for (unsigned int i = m_polulation->size(); i < in_populationSize; i++)
 	{
 		Creature* newCreature = CreateCreature();
 		newCreature->OnInit();
-		newCreature->m_generation = 0;
+		newCreature->m_generation = m_generation;
 		m_polulation->push_back(newCreature);
 	}
 }
@@ -61,7 +68,9 @@ void Puzzle::CreateWorkers(unsigned int in_workerSize)
 void Puzzle::SelectNextParents(unsigned int& out_parent1, unsigned int& out_parent2)
 {
 	out_parent1 = 0;
-	out_parent2 = rand() % 5 % (m_polulation->size() - 1) + 1;
+
+	std::geometric_distribution<size_t> nextSelector(1.f / (static_cast<float>(m_populationSize) / 2.f));
+	out_parent2 = std::min(nextSelector(m_randEngine) + 1, m_polulation->size() - 1);
 }
 
 void Puzzle::AddToNext(Creature& in_creature)
@@ -91,6 +100,30 @@ void Puzzle::Cull()
 	m_murderTrigger.notify_one();
 
 	m_polulation->resize(m_populationSize);
+}
+
+void Puzzle::Elite()
+{
+	boost::unique_lock<boost::recursive_mutex> populationLock(m_populationLock);
+
+	int cullIndex = m_populationSize / 3;
+
+	if (cullIndex < m_polulation->size())
+	{
+		boost::unique_lock<boost::mutex> murderLock(m_murderAccess);
+		m_murderPopulation.clear();
+
+		for (int i = cullIndex; i < m_polulation->size(); i++)
+		{
+			m_murderPopulation.push_back((*m_polulation)[i]);
+		}
+	}
+
+	m_murderTrigger.notify_one();
+
+	m_polulation->resize(m_populationSize / 3);
+
+	CreatePopulation(m_populationSize);
 }
 
 void Puzzle::SwapPopulations()
@@ -130,9 +163,13 @@ void Puzzle::StopWorkers()
 
 void Puzzle::WorkerGenerator()
 {
+	m_generation = 0;
 	CreatePopulation(m_populationSize);
 
 	m_generation = 1;
+
+	std::ofstream file;
+	file.open(m_saveFileName);
 
 	while(true)
 	{
@@ -142,12 +179,15 @@ void Puzzle::WorkerGenerator()
 			//Check to see if the main thread has signled us to stop
 			boost::this_thread::interruption_point();
 		}
-		catch(boost::exception&)
+		catch(boost::thread_interrupted&)
 		{
 			//If we have been signled to stop then shutdown all worker threads and wait
 			StopWorkers();
+			file.close();
 			return;
 		}
+
+		boost::this_thread::disable_interruption disableInterruption;
 
 		int lastSize = m_polulation->size();
 
@@ -193,9 +233,38 @@ void Puzzle::WorkerGenerator()
 		}
 
 		SwapPopulations();
+#ifdef USE_ELITE
+		Elite();
+#elif !USE_BASELINE
 		Cull();
+#endif
+
+		if(m_generation % 5 == 0)
+		{
+			int half = m_polulation->size() / 2;
+			auto& popRef = *m_polulation;
+
+			Creature* best = popRef[0];
+			Creature* worst = popRef[popRef.size() - 1];
+			Creature* med = popRef[half];
+
+			file << m_generation << "," << best->GetScore() << "," << worst->GetScore() << "," << med->GetScore() << std::endl;
+		}
+
 		m_generation++;
+
+		boost::this_thread::restore_interruption enableInterruption(disableInterruption);
 	}
+}
+
+Creature* Puzzle::CreateBaby(const Creature* in_parent1, const Creature* in_parent2) const
+{
+	Creature* const baby = CreateCreature();
+	baby->SetParents(*in_parent1, *in_parent2);
+	baby->OnInit();
+	baby->m_generation = m_generation;
+
+	return baby;
 }
 
 void Puzzle::BreedingThread()
@@ -212,14 +281,33 @@ void Puzzle::BreedingThread()
 
 		lock.unlock();
 
-		Creature* const baby = CreateCreature();
-		baby->SetParents(*pair.first, *pair.second);
-		baby->OnInit();
-		baby->m_generation = m_generation;
+		Creature* const baby = CreateBaby(pair.first, pair.second);
 
+#ifndef USE_BASELINE
 		AddToNext(*baby);
 		AddToNext(*pair.first);
 		AddToNext(*pair.second);
+#else
+		Creature* const baby2 = CreateBaby(pair.first, pair.second);
+
+		std::array<Creature*, 4> creatures;
+		creatures[0] = pair.first;
+		creatures[1] = pair.second;
+		creatures[2] = baby;
+		creatures[3] = baby2;
+
+		std::sort(creatures.begin(), creatures.end(), [](const Creature* const a, const Creature* const b)
+		{
+			return a->GetFitness() > b->GetFitness();
+		});
+
+		AddToNext(*creatures[0]);
+		AddToNext(*creatures[1]);
+
+		delete creatures[2];
+		delete creatures[3];
+#endif
+
 		{
 			boost::unique_lock<boost::recursive_mutex> jobCountLock(m_jobCountAccess);
 			m_jobCount--;

@@ -126,7 +126,19 @@ private:
 	static std::vector<TowerPiece> m_validPieces;
 	// comparator for TowerPieces
 	static bool compareTowerPieces(const TowerPiece& p1, const TowerPiece& p2) {
-		return p1.m_width + p1.m_strength + p1.m_cost < p2.m_width + p2.m_strength + p2.m_cost;
+		int sum1 = p1.m_width + p1.m_strength + p1.m_cost;
+		int sum2 = p2.m_width + p2.m_strength + p2.m_cost;
+		if (sum1 != sum2)
+			return sum1 < sum2;
+		if (p1.m_width != p2.m_width)
+			return p1.m_width < p2.m_width;
+		if (p1.m_strength != p2.m_strength)
+			return p1.m_strength < p2.m_strength;
+		if (p1.m_cost != p2.m_cost)
+			return p1.m_cost < p2.m_cost;
+		if (p1.m_type != p2.m_type)
+			return p1.m_type < p2.m_type;
+		return true; // both are exactly the same
 	}
 
 	//Called when there are no parents, generates a random DNA

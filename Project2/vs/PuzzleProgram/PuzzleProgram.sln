@@ -7,16 +7,28 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PuzzleProgram", "PuzzleProg
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
+		Debug-Baseline|x64 = Debug-Baseline|x64
+		Debug-Baseline|x86 = Debug-Baseline|x86
+		Debug-Culling|x64 = Debug-Culling|x64
+		Debug-Culling|x86 = Debug-Culling|x86
+		Debug-Elite|x64 = Debug-Elite|x64
+		Debug-Elite|x86 = Debug-Elite|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1F65E018-000C-4D72-A954-35612708AB33}.Debug|x64.ActiveCfg = Debug|x64
-		{1F65E018-000C-4D72-A954-35612708AB33}.Debug|x64.Build.0 = Debug|x64
-		{1F65E018-000C-4D72-A954-35612708AB33}.Debug|x86.ActiveCfg = Debug|Win32
-		{1F65E018-000C-4D72-A954-35612708AB33}.Debug|x86.Build.0 = Debug|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Baseline|x64.ActiveCfg = Debug-Baseline|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Baseline|x64.Build.0 = Debug-Baseline|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Baseline|x86.ActiveCfg = Debug-Baseline|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Baseline|x86.Build.0 = Debug-Baseline|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Culling|x64.ActiveCfg = Debug|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Culling|x64.Build.0 = Debug|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Culling|x86.ActiveCfg = Debug|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Culling|x86.Build.0 = Debug|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Elite|x64.ActiveCfg = Debug-Elite|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Elite|x64.Build.0 = Debug-Elite|x64
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Elite|x86.ActiveCfg = Debug-Elite|Win32
+		{1F65E018-000C-4D72-A954-35612708AB33}.Debug-Elite|x86.Build.0 = Debug-Elite|Win32
 		{1F65E018-000C-4D72-A954-35612708AB33}.Release|x64.ActiveCfg = Release|x64
 		{1F65E018-000C-4D72-A954-35612708AB33}.Release|x64.Build.0 = Release|x64
 		{1F65E018-000C-4D72-A954-35612708AB33}.Release|x86.ActiveCfg = Release|Win32

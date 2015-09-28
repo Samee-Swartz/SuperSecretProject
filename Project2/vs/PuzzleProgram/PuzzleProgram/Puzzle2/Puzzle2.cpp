@@ -10,7 +10,7 @@ Selection rule - how to choose parents
 runs crossover
 */
 #define WORKER_COUNT 8
-#define POPULATION_SIZE 1000
+#define POPULATION_SIZE 500
 
 void Puzzle2::Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount){
 	std::ifstream givenWorld(in_fileName.c_str());

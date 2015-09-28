@@ -20,7 +20,7 @@ void usage() {
 
 
 int main(int argc, char** argv) {
-	if (argc != 4) {
+	if (argc < 4) {
 		usage();
 		return 1;
 	}
@@ -51,7 +51,12 @@ int main(int argc, char** argv) {
 			usage();
 			return 1;
 	}
-	p->Run(argv[2], atoi(argv[3]));
+
+	if (argc == 4)
+		p->Run(argv[2], atoi(argv[3]));
+	else
+		p->Run(argv[2], atoi(argv[3]), argv[4]);
+
 	system("pause");
 	std::cout << "TODO: ADD THE FUNCTIONS FOR THE BEST SHIT HERE" << std::endl;
 	// Creature best = p->GetBestCreature();

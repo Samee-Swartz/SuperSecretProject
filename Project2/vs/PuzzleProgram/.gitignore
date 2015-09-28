@@ -3,3 +3,7 @@ Debug/
 *.sdf
 boost/
 **/obj/*
+/.vs/
+/Debug-Baseline/
+/Debug-Elite/
+/x64/
