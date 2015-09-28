@@ -6,7 +6,7 @@
 #include "Puzzle1.h"
 
 #define WORKER_COUNT 8
-#define POPULATION_SIZE 500
+#define POPULATION_SIZE 100
 
 
 void Puzzle1::Setup(const std::string& in_fileName, unsigned int& out_populationSize, unsigned int& out_workerCount){

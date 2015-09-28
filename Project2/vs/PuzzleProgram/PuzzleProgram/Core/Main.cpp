@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	srand(39458);
+	srand(time(NULL));
 
 	Puzzle* p;
 
