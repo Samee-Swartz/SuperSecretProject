@@ -7,3 +7,5 @@ boost/
 /Debug-Baseline/
 /Debug-Elite/
 /x64/
+*.zip
+*.pdf
