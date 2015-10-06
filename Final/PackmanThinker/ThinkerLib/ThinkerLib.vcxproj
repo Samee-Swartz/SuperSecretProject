@@ -153,11 +153,11 @@
     <ClInclude Include="Clyde.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Inky.h" />
-    <ClInclude Include="Packman.h" />
+    <ClInclude Include="Pacman.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Pinky.h" />
     <ClInclude Include="ThinkerLib.h" />
-    <ClInclude Include="Vector2D.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +178,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Inky.cpp" />
-    <ClCompile Include="Packman.cpp" />
+    <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Pinky.cpp" />
     <ClCompile Include="World.cpp" />

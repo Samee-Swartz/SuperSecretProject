@@ -1,21 +1,23 @@
-#include "Packman.h"
+#include "Pacman.h"
 #include "Direction.h"
+#include "Pawn.h"
+#include "World.h"
 
 /*
 enum Enum
-		{
-			Dot,
-			SuperDot,
-			Fruit
-		};
-		*/
+{
+Dot,
+SuperDot,
+Fruit
+};
+*/
 
 
 // A* with goal of most points - heuristic is distance from ghosts
 
 // google pacman strategies
 
-Vector2 OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in_deltaTime, float in_totalTime) {
+Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in_deltaTime, float in_totalTime) {
 	int itemScore;
 	float north = 0;
 	float south = 0;
@@ -27,14 +29,14 @@ Vector2 OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in
 
 	for (auto pt : points) {
 		switch (pt.GetType()) {
-			case SuperDot:
-				itemScore -= (in_ourPawn.GetPosition() - pt.GetPosition()).MagnitudeSqr();
-				break;
-			case Fruit:
-				itemScore -= (in_ourPawn.GetPosition() - pt.GetPosition()).MagnitudeSqr();
-			case Dot:
+		case PointObj::Type::SuperDot:
+			itemScore -= (in_ourPawn.GetPosition() - pt.GetPosition()).MagnitudeSqr();
+			break;
+		case PointObj::Type::Fruit:
+			itemScore -= (in_ourPawn.GetPosition() - pt.GetPosition()).MagnitudeSqr();
+		case PointObj::Type::Dot:
 
-			default:
+		default:
 			break;
 		}
 		// if regular dot
@@ -45,32 +47,32 @@ Vector2 OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in
 		// 		itemScore = -5
 
 		switch (WhichDirection(curPosition, item.GetPosition())) {
-			case Up:
+		case Direction::Up:
 			north += itemScore;
 			break;
-			case Right:
+		case Direction::Right:
 			east += itemScore;
 			break;
-			case Down:
+		case Direction::Down:
 			south += itemScore;
 			break;
-			case Left:
+		case Direction::Left:
 			west += itemScore;
 			break;
-			default:
+		default:
 			break;
 		}
 	}
 	return // highest scoring direction;
 }
 
-Direction WhichDirection(Position in_pacmanPos, Position in_itemPos) {
+Direction::Enum WhichDirection(Vector2 in_pacmanPos, Vector2 in_itemPos) {
 	if (in_itemPos.y >= (in_pacmanPos.x + in_pacmanPos.y - in_itemPos.x)) {
 		if (in_itemPos.y >= (in_pacmanPos.x + in_pacmanPos.y + in_itemPos.x))
-			return North;
-		return East
+			return Direction::Up;
+		return Direction::Right;
 	}
 	if (in_itemPos.y >= (in_pacmanPos.x + in_pacmanPos.y + in_itemPos.x))
-		return West;
-	return South;
+		return Direction::Left;
+	return Direction::Down;
 }
