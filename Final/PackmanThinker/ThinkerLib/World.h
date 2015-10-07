@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "Vector2D.h"
+#include "Vector2.h"
 #include "Direction.h"
 #include "Pawn.h"
 
@@ -12,6 +12,10 @@ public:
 	explicit PathNodeConnection(int in_otherNode, float in_cost);
 public:
 	bool IsValid() const { return m_otherNode > -1; }
+
+	float GetCost() const { return m_cost; }
+
+	int GetOtherNodeId() const { return m_otherNode; }
 private:
 	int m_otherNode;
 	float m_cost;

@@ -27,9 +27,6 @@
     <ClInclude Include="ThinkerLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Packman.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
     <ClInclude Include="Blinky.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
@@ -45,22 +42,22 @@
     <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Pawn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Pacman.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Packman.cpp">
-      <Filter>Source Files\AI</Filter>
     </ClCompile>
     <ClCompile Include="Blinky.cpp">
       <Filter>Source Files\AI</Filter>
@@ -79,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="Pawn.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pacman.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
