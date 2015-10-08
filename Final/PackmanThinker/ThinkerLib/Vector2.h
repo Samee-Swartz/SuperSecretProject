@@ -23,7 +23,7 @@ typedef struct Vector2
 	{
 		switch(in_direction)
 		{
-		case Direction::Up: 
+		case Direction::Up:
 			x = 0;
 			y = 1;
 			break;
@@ -88,5 +88,9 @@ typedef struct Vector2
 	Vector2 operator *(float b) const
 	{
 		return Vector2(x * b, y * b);
+	}
+
+	Vector2 operator ==(const Vector2& b) const {
+		return x == b.x && y == b.y;
 	}
 } Vector2;

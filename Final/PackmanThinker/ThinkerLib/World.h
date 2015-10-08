@@ -26,6 +26,8 @@ class PathNode
 public:
 	Vector2 GetPosition() const { return m_position; }
 	int GetId() const { return m_id; }
+	PointObj* GetObject() const { return m_object; }
+	bool Equals(PathNode* in_node);
 
 	const PathNodeConnection& GetConnection(Direction::Enum in_direction) const { return m_connections[in_direction]; }
 protected:
@@ -38,6 +40,7 @@ private:
 	Vector2 m_position;
 	PathNodeConnection m_connections[4];
 	int m_id;
+	PointObj* m_object;
 };
 
 class PointObj

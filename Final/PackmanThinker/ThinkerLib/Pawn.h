@@ -19,6 +19,8 @@ struct Pawn
 
 	Direction::Enum GetFacingDirection() const { return m_facingDirection; }
 
+	// ghosts -1 is frightened (blue), 1 is chase, 2 is scatter (not chasing)
+	// pacman 1 is alive, 0 is dead
 	int GetState() const { return m_state; }
 
 	bool CanSee() const { return m_canSee; }
