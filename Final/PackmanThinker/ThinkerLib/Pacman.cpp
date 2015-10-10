@@ -2,16 +2,17 @@
 #include "Direction.h"
 #include "Pawn.h"
 #include "World.h"
+#include <queue>
 
 #define GHOST_SCORE 200*2
 #define OBJECT_WEIGHT 5
 
 // the ghost pawns and a vector of blueGhosts. There are global because most functions
 // use them and/or they only need to be filled in once.
-Pawn* inky;
-Pawn* pinky;
-Pawn* blinky;
-Pawn* clyde;
+Pawn inky;
+Pawn pinky;
+Pawn blinky;
+Pawn clyde;
 std::vector<PathNode*> blueGhosts;
 
 // Keeps track of node information during A* computation.
@@ -29,13 +30,19 @@ struct ScoredNode {
 		totalScore = m_aanc + m_heuristic;
 	}
 
-	bool operator <(const ScoredNode& in_other) {
+	ScoredNode() {}
+
+	bool operator <(const ScoredNode& in_other) const {
 		return totalScore < in_other.totalScore;
 	}
-	bool operator >(const ScoredNode& in_other) {
+	bool operator >(const ScoredNode& in_other) const {
 		return totalScore > in_other.totalScore;
 	}
 };
+
+void FindBlueGhosts(const World& in_world);
+void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<ScoredNode>& out_frontier);
+
 
 // Takes in world information, computes A* with a finite depth, and chooses a direction to move
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
@@ -45,10 +52,10 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 	pinky = in_ourWorld.GetBlinky();
 	blinky = in_ourWorld.GetPinky();
 	clyde = in_ourWorld.GetClyde();
-	FindBlueGhosts();
+	FindBlueGhosts(in_ourWorld);
 	// A*
-	std::PriorityQueue<ScoredNode> frontier;
-	ScoredNode curNode = ScoredNode(in_ourWorld.GetNode(in_ourPawn->GetClosestNode()),
+	std::priority_queue<ScoredNode> frontier;
+	ScoredNode curNode = ScoredNode(in_ourWorld.GetNode(in_ourPawn.GetClosestNode()),
 	                                0, 0, Direction::Invalid);
 	// only search 30 moves ahead
 	for (int i=0; i < 30; i++) {
@@ -63,39 +70,39 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 float CalculateHeuristic(const PathNode* in_node) {
 	float score = 0;
 	// doesn't calculate for blue ghosts
-	if (inky.GetState > 0)
+	if (inky.GetState() > 0)
 		score += (inky.GetPosition() - in_node->GetPosition()).MagnitudeSqr();
 
-	if (blinky.GetState > 0)
+	if (blinky.GetState() > 0)
 		score += (blinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr();
 
-	if (pinky.GetState > 0)
+	if (pinky.GetState() > 0)
 		score += (pinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr();
 
-	if (clyde.GetState > 0)
+	if (clyde.GetState() > 0)
 		score += (clyde.GetPosition() - in_node->GetPosition()).MagnitudeSqr();
 
 	return score;
 }
 
 // adds any blue ghosts' locations to the vector
-void FindBlueGhosts() {
-	if (inky.GetState < 0)
-		blueGhosts.push_back(inky.GetClosestNode());
+void FindBlueGhosts(const World& in_world) {
+	if (inky.GetState() < 0)
+		blueGhosts.push_back(in_world.GetNode(inky.GetClosestNode()));
 
-	if (blinky.GetState < 0)
-		blueGhosts.push_back(blinky.GetClosestNode());
+	if (blinky.GetState() < 0)
+		blueGhosts.push_back(in_world.GetNode(blinky.GetClosestNode()));
 
-	if (pinky.GetState < 0)
-		blueGhosts.push_back(pinky.GetClosestNode());
+	if (pinky.GetState() < 0)
+		blueGhosts.push_back(in_world.GetNode(pinky.GetClosestNode()));
 
-	if (clyde.GetState < 0)
-		blueGhosts.push_back(clyde.GetClosestNode());
+	if (clyde.GetState() < 0)
+		blueGhosts.push_back(in_world.GetNode(clyde.GetClosestNode()));
 }
 
 // check's if a blue ghost is at the given location
 bool FoundBlueGhost(const PathNode* in_node) {
-	for (auto n : blueGhosts) {
+	for (PathNode* n : blueGhosts) {
 		if (in_node->Equals(n))
 			return true;
 	}
@@ -103,7 +110,7 @@ bool FoundBlueGhost(const PathNode* in_node) {
 }
 
 // expands the current node in all four directions. Adds valid expansions to the frontier list
-void Expand(const World& in_world, ScoredNode* in_curNode, std::PriorityQueue<ScoredNode>& out_frontier) {
+void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<ScoredNode>& out_frontier) {
 	PathNodeConnection up = in_curNode.node->GetConnection(Direction::Up);
 	PathNodeConnection down = in_curNode.node->GetConnection(Direction::Down);
 	PathNodeConnection left = in_curNode.node->GetConnection(Direction::Left);
@@ -113,15 +120,15 @@ void Expand(const World& in_world, ScoredNode* in_curNode, std::PriorityQueue<Sc
 	if (up.IsValid()) {
 		ScoredNode newNode;
 		PathNode* p = in_world.GetNode(up.GetOtherNodeId());
-		float score = up.GetCost() + CalculateHeuristic(p) + in_curNode.arrivalAndNodeCost;
+		float score = up.GetCost() + in_curNode.arrivalAndNodeCost;
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT; // make it really desirable to get points
 		if (FoundBlueGhost(p))
 			score += GHOST_SCORE;
 		if (in_curNode.origDirection == Direction::Invalid)
-			newNode = ScoredNode(p, score, Direction::Up);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Up);
 		else
-			newNode = ScoredNode(p, score, in_curNode.origDirection);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), in_curNode.origDirection);
 
 		out_frontier.push(newNode);
 	}
@@ -129,15 +136,15 @@ void Expand(const World& in_world, ScoredNode* in_curNode, std::PriorityQueue<Sc
 	if (down.IsValid()) {
 		ScoredNode newNode;
 		PathNode* p = in_world.GetNode(down.GetOtherNodeId());
-		float score = down.GetCost() + CalculateHeuristic(p) + in_curNode.arrivalAndNodeCost;
+		float score = down.GetCost() + in_curNode.arrivalAndNodeCost;
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
 			score += GHOST_SCORE;
 		if (in_curNode.origDirection == Direction::Invalid)
-			newNode = ScoredNode(p, score, Direction::Down);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Down);
 		else
-			newNode = ScoredNode(p, score, in_curNode.origDirection);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), in_curNode.origDirection);
 
 		out_frontier.push(newNode);
 	}
@@ -145,15 +152,15 @@ void Expand(const World& in_world, ScoredNode* in_curNode, std::PriorityQueue<Sc
 	if (left.IsValid()) {
 		ScoredNode newNode;
 		PathNode* p = in_world.GetNode(left.GetOtherNodeId());
-		float score = left.GetCost() + CalculateHeuristic(p) + in_curNode.arrivalAndNodeCost;
+		float score = left.GetCost() + in_curNode.arrivalAndNodeCost;
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
 			score += GHOST_SCORE;
 		if (in_curNode.origDirection == Direction::Invalid)
-			newNode = ScoredNode(p, score, Direction::Left);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Left);
 		else
-			newNode = ScoredNode(p, score, in_curNode.origDirection);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), in_curNode.origDirection);
 
 		out_frontier.push(newNode);
 	}
@@ -161,15 +168,15 @@ void Expand(const World& in_world, ScoredNode* in_curNode, std::PriorityQueue<Sc
 	if (right.IsValid()) {
 		ScoredNode newNode;
 		PathNode* p = in_world.GetNode(right.GetOtherNodeId());
-		float score = right.GetCost() + CalculateHeuristic(p) + in_curNode.arrivalAndNodeCost;
+		float score = right.GetCost() + in_curNode.arrivalAndNodeCost;
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
 			score += GHOST_SCORE;
 		if (in_curNode.origDirection == Direction::Invalid)
-			newNode = ScoredNode(p, score, Direction::Right);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Right);
 		else
-			newNode = ScoredNode(p, score, in_curNode.origDirection);
+			newNode = ScoredNode(p, score, CalculateHeuristic(p), in_curNode.origDirection);
 
 		out_frontier.push(newNode);
 	}

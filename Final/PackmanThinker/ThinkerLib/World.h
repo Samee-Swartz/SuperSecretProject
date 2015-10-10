@@ -21,28 +21,6 @@ private:
 	float m_cost;
 };
 
-class PathNode
-{
-public:
-	Vector2 GetPosition() const { return m_position; }
-	int GetId() const { return m_id; }
-	PointObj* GetObject() const { return m_object; }
-	bool Equals(PathNode* in_node);
-
-	const PathNodeConnection& GetConnection(Direction::Enum in_direction) const { return m_connections[in_direction]; }
-protected:
-	friend class World;
-
-	PathNode(int in_id, const Vector2& m_position);
-
-	PathNodeConnection& GetEditableConnection(Direction::Enum in_direction);
-private:
-	Vector2 m_position;
-	PathNodeConnection m_connections[4];
-	int m_id;
-	PointObj* m_object;
-};
-
 class PointObj
 {
 public:
@@ -66,6 +44,28 @@ private:
 	int m_worth;
 	Type::Enum m_type;
 	int m_nodeId;
+};
+
+class PathNode
+{
+public:
+	Vector2 GetPosition() const { return m_position; }
+	int GetId() const { return m_id; }
+	PointObj* GetObject() const { return m_object; }
+	bool Equals(PathNode* in_node) const;
+
+	const PathNodeConnection& GetConnection(Direction::Enum in_direction) const { return m_connections[in_direction]; }
+protected:
+	friend class World;
+
+	PathNode(int in_id, const Vector2& m_position);
+
+	PathNodeConnection& GetEditableConnection(Direction::Enum in_direction);
+private:
+	Vector2 m_position;
+	PathNodeConnection m_connections[4];
+	int m_id;
+	PointObj* m_object;
 };
 
 class World

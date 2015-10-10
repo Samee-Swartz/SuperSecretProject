@@ -18,8 +18,8 @@ PathNode::PathNode(int in_id,const Vector2& in_postion)
 {
 }
 
-bool PathNode::Equals(PathNode* in_node) {
-	return m_id == in_node.GetID() && m_position == in_node.GetPosition();
+bool PathNode::Equals(PathNode* in_node) const {
+	return m_id == in_node->GetId() && m_position == in_node->GetPosition();
 }
 
 PathNodeConnection& PathNode::GetEditableConnection(Direction::Enum in_direction)

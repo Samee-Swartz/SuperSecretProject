@@ -90,7 +90,7 @@ typedef struct Vector2
 		return Vector2(x * b, y * b);
 	}
 
-	Vector2 operator ==(const Vector2& b) const {
-		return x == b.x && y == b.y;
+	bool operator ==(const Vector2& b) const {
+		return (x == b.x) && (y == b.y);
 	}
 } Vector2;
