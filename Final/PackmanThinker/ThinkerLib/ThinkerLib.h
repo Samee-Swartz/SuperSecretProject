@@ -6,11 +6,11 @@
 // defined with this macro as being exported.
 
 
-#ifdef THINKERLIB_EXPORTS
-#define THINKERLIB_API __declspec(dllexport)
-#else
-#define THINKERLIB_API __declspec(dllimport)
-#endif
+// #ifdef THINKERLIB_EXPORTS
+// #define THINKERLIB_API __declspec(dllexport)
+// #else
+// #define THINKERLIB_API __declspec(dllimport)
+// #endif
 
 #include <math.h>
 #include "Vector2.h"
@@ -19,4 +19,4 @@
 class World;
 struct Pawn;
 
-THINKERLIB_API int GenerateWorld();
+// THINKERLIB_API int GenerateWorld();

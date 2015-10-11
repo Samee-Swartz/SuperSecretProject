@@ -40,11 +40,12 @@ struct ScoredNode {
 void FindBlueGhosts(const World& in_world);
 void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<ScoredNode>& out_frontier);
 
-
 // Takes in world information, computes A* with a finite depth, and chooses a direction to move
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
                               float in_deltaTime, float in_totalTime) {
 	// setup
+	ghosts.clear();
+	blueGhosts.clear();
 	ghosts.push_back(in_ourWorld.GetInky());
 	ghosts.push_back(in_ourWorld.GetBlinky());
 	ghosts.push_back(in_ourWorld.GetPinky());
@@ -52,7 +53,8 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 	FindBlueGhosts(in_ourWorld);
 	// A*
 	std::priority_queue<ScoredNode> frontier;
-	ScoredNode curNode = ScoredNode(in_ourWorld.GetNode(in_ourPawn.GetClosestNode()),
+	ScoredNode curNode = ScoredNode(in_ourWorld.GetNode((in_ourPawn.GetCurrentNode() == -1 ?
+                                    in_ourPawn.GetClosestNode() : in_ourPawn.GetCurrentNode())),
 	                                0, 0, Direction::Invalid);
 	// only search 30 moves ahead
 	for (int i=0; i < 30; i++) {
@@ -60,8 +62,33 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 		curNode = frontier.top();
 		frontier.pop();
 	}
-	// before sending out direction you need to check which direction you're facing
-	return curNode.origDirection;
+
+	// Which direction is the closest node in, from pacman
+	Direction::Enum dirToPacman;
+	Vector2 toPacman = Vector2((curNode.node->GetPosition() - in_ourPawn.GetPosition()).x /
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).Magnitude(),
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).y /
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).Magnitude());
+
+	if (toPacman.x < .5 && toPacman.x > -.5) { // x == 0
+		if (toPacman.y > .5)
+			dirToPacman = Direction::Up;
+		else
+			dirToPacman = Direction::Down;
+	} else if (toPacman.x > .5) {
+		dirToPacman = Direction::Right;
+	} else {
+		dirToPacman = Direction::Left;
+	}
+	// may have to turn around to face correct direction
+	if (dirToPacman - in_ourPawn.GetFacingDirection() != 0) { // pacman is facing away from closest node
+		if (in_ourPawn.GetFacingDirection() - curNode.origDirection == 0) // move in pacman's direction
+			return curNode.origDirection;
+		else
+			return dirToPacman;
+	} else {
+		return curNode.origDirection;
+	}
 }
 
 // calculates the heuristic for the given node based on distance to all non-blue ghosts
@@ -75,7 +102,7 @@ float CalculateHeuristic(const PathNode* in_node) {
 	return score;
 }
 
-// adds any blue ghosts' locations to the vector
+// adds any blue ghosts' locations (and surrounding nodes) to the vector
 void FindBlueGhosts(const World& in_world) {
 	for (auto g : ghosts) {
 		if (g.GetState() < 0) {
@@ -110,13 +137,13 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 			ScoredNode newNode;
 			PathNode* p = in_world.GetNode(con.GetOtherNodeId());
 			float score = con.GetCost() + in_curNode.arrivalAndNodeCost;
-			if (p->GetObject() != NULL)
+			if (p->GetObject() != NULL) // found an object
 				score += p->GetObject()->GetWorth()*OBJECT_WEIGHT; // make it really desirable to get points
-			if (FoundBlueGhost(p))
+			if (FoundBlueGhost(p)) // found a blueghost
 				score += pow(2, 5 - blueGhosts.size()) * 100;
-			if (in_curNode.origDirection == Direction::Invalid)
+			if (in_curNode.origDirection == Direction::Invalid) // first expansion
 				newNode = ScoredNode(p, score, CalculateHeuristic(p), (Direction::Enum)i);
-			else
+			else // use the same origDirection
 				newNode = ScoredNode(p, score, CalculateHeuristic(p), in_curNode.origDirection);
 
 			out_frontier.push(newNode);

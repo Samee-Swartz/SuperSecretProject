@@ -27,6 +27,8 @@ float CalculateHeuristic(const PathNode* in_node);
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 							  float in_deltaTime, float in_totalTime) {
 	// setup
+	ghosts.clear();
+	blueGhosts.clear();
 	ghosts.push_back(in_ourWorld.GetInky());
 	ghosts.push_back(in_ourWorld.GetBlinky());
 	ghosts.push_back(in_ourWorld.GetPinky());
@@ -35,7 +37,9 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 	// explore
 	// depth search in each direction and choose based on which has the shortest path to
 	// a pointObj and highest ghost heuristic (on the next node from pacman)
-	PathNode* curNode = in_ourWorld.GetNode(in_ourPawn.GetClosestNode());
+	PathNode* curNode = in_ourWorld.GetNode((in_ourPawn.GetCurrentNode() == -1 ?
+	                                        in_ourPawn.GetClosestNode() :
+	                                        in_ourPawn.GetCurrentNode()));
 	std::set<PathNode*> nodes;
 	std::vector<std::pair<int, Direction::Enum> > counts;
 	PathNodeConnection con;
@@ -57,7 +61,33 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 		return Direction::Invalid;
 	}
 	std::sort(counts.begin(), counts.end(), func);
-	return counts[0].second;
+
+	// Which direction is the closest node in, from pacman
+	Direction::Enum dirToPacman;
+	Vector2 toPacman = Vector2((curNode->GetPosition() - in_ourPawn.GetPosition()).x /
+					   (curNode->GetPosition() - in_ourPawn.GetPosition()).Magnitude(),
+					   (curNode->GetPosition() - in_ourPawn.GetPosition()).y /
+					   (curNode->GetPosition() - in_ourPawn.GetPosition()).Magnitude());
+
+	if (toPacman.x < .5 && toPacman.x > -.5) { // x == 0
+		if (toPacman.y > .5)
+			dirToPacman = Direction::Up;
+		else
+			dirToPacman = Direction::Down;
+	} else if (toPacman.x > .5) {
+		dirToPacman = Direction::Right;
+	} else {
+		dirToPacman = Direction::Left;
+	}
+	// may have to turn around to face correct direction
+	if (dirToPacman - in_ourPawn.GetFacingDirection() != 0) { // pacman is facing away from closest node
+		if (in_ourPawn.GetFacingDirection() - counts[0].second == 0) // move in pacman's direction
+			return counts[0].second;
+		else
+			return dirToPacman;
+	} else {
+		return counts[0].second;
+	}
 }
 
 // calculates the heuristic for the given node based on distance to all non-blue ghosts
