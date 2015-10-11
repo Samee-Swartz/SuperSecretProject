@@ -125,7 +125,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT; // make it really desirable to get points
 		if (FoundBlueGhost(p))
-			score += std::pow(2, 5 - blueGhosts.size()) * 100;
+			score += pow(2, 5 - blueGhosts.size()) * 100;
 		if (in_curNode.origDirection == Direction::Invalid)
 			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Up);
 		else
@@ -141,7 +141,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
-			score += std::pow(2, 5 - blueGhosts.size()) * 100;
+			score += pow(2, 5 - blueGhosts.size()) * 100;
 		if (in_curNode.origDirection == Direction::Invalid)
 			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Down);
 		else
@@ -157,7 +157,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
-			score += std::pow(2, 5 - blueGhosts.size()) * 100;
+			score += pow(2, 5 - blueGhosts.size()) * 100;
 		if (in_curNode.origDirection == Direction::Invalid)
 			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Left);
 		else
@@ -173,7 +173,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 		if (p->GetObject() != NULL)
 			score += p->GetObject()->GetWorth()*OBJECT_WEIGHT;
 		if (FoundBlueGhost(p))
-			score += std::pow(2, 5 - blueGhosts.size()) * 100;
+			score += pow(2, 5 - blueGhosts.size()) * 100;
 		if (in_curNode.origDirection == Direction::Invalid)
 			newNode = ScoredNode(p, score, CalculateHeuristic(p), Direction::Right);
 		else

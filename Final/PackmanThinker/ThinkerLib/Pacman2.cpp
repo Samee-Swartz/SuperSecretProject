@@ -5,6 +5,7 @@
 #include <set>
 #include <algorithm>
 #include <climits>
+#include <math.h>
 
 #define Ks 1600
 #define Kd 1096 // may need to adjust this. not straight line...
@@ -24,6 +25,7 @@ std::set<PathNode*> exploredNodes;
 void FindBlueGhosts(const World& in_world);
 int DepthFirst(const World& in_world, PathNode* in_curNode,
                   std::set<PathNode*> in_exploredNodes);
+float CalculateHeuristic(const PathNode* in_node);
 
 // Takes in world information, computes A* with a finite depth, and chooses a direction to move
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
@@ -88,16 +90,16 @@ float CalculateHeuristic(const PathNode* in_node) {
 	float score = 0;
 	// doesn't calculate for blue ghosts
 	if (inky.GetState() > 0)
-		score += (std::exp(inky.GetPosition() - in_node->GetPosition()))/ Kg;
+		score += (std::exp((inky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
 
 	if (blinky.GetState() > 0)
-		score += (std::exp(blinky.GetPosition() - in_node->GetPosition()))/ Kg;
+		score += (std::exp((blinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
 
 	if (pinky.GetState() > 0)
-		score += (std::exp(pinky.GetPosition() - in_node->GetPosition()))/ Kg;
+		score += (std::exp((pinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
 
 	if (clyde.GetState() > 0)
-		score += (std::exp(clyde.GetPosition() - in_node->GetPosition()))/ Kg;
+		score += (std::exp((clyde.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
 
 	return score;
 }
@@ -133,10 +135,10 @@ int DepthFirst(const World& in_world, PathNode* in_curNode,
 		return INT_MAX; // hit a cycle
 	}
 	if (in_curNode->GetObject() != NULL) {
-		return in_curNode->GetObject()->GetWeight()/Ks; // found a point object
+		return in_curNode->GetObject()->GetWorth()/Ks; // found a point object
 	}
 	if (FoundBlueGhost(in_curNode)) {
-		return (std::pow(2, 5 - blueGhosts.size()) * 100)/Ks; // found a blue ghost
+		return (pow(2, 5 - blueGhosts.size()) * 100)/Ks; // found a blue ghost
 	}
 	int count = INT_MAX;
 	in_exploredNodes.insert(in_curNode); // add cur node to explored and keep looking
@@ -149,25 +151,25 @@ int DepthFirst(const World& in_world, PathNode* in_curNode,
 		int c = DepthFirst(in_world, in_world.GetNode(up.GetOtherNodeId()),
 		                   in_exploredNodes);
 		if (c > 0)
-			count = std::min(count, c - (std::exp(up.GetCost())/Kd));
+			count = std::min((float)count, c - (std::exp(up.GetCost())/Kd));
 	}
 	if (down.IsValid()) {
 		int c = DepthFirst(in_world, in_world.GetNode(down.GetOtherNodeId()),
 		                   in_exploredNodes);
 		if (c > 0)
-			count = std::min(count, c - (std::exp(down.GetCost())/Kd));
+			count = std::min((float)count, c - (std::exp(down.GetCost())/Kd));
 	}
 	if (right.IsValid()) {
 		int c = DepthFirst(in_world, in_world.GetNode(right.GetOtherNodeId()),
 		                   in_exploredNodes);
 		if (c > 0)
-			count = std::min(count, c - (std::exp(right.GetCost())/Kd));
+			count = std::min((float)count, c - (std::exp(right.GetCost())/Kd));
 	}
 	if (left.IsValid()) {
 		int c = DepthFirst(in_world, in_world.GetNode(left.GetOtherNodeId()),
 		                   in_exploredNodes);
 		if (c > 0)
-			count = std::min(count, c - (std::exp(left.GetCost())/Kd));
+			count = std::min((float)count, c - (std::exp(left.GetCost())/Kd));
 	}
 	return count;
 }
