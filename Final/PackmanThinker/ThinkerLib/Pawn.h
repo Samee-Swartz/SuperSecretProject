@@ -13,6 +13,8 @@ struct Pawn
 
 	int GetClosestNode() const { return m_closestNode; }
 
+	int GetCurrentNode() const { return m_atNode; }
+
 	void GetNextNodes(int* out_nodes) const;
 
 	float GetSpeed() const { return m_speed; }
@@ -27,6 +29,8 @@ struct Pawn
 private:
 	//The position the pawn is in
 	Vector2 m_position;
+
+	int m_atNode;
 
 	//The node that we are closest too
 	int m_closestNode;
