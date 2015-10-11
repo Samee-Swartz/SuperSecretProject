@@ -1,4 +1,7 @@
 #include "World.h"
+#include <mutex>
+
+std::map<int, World*> World::m_worlds;
 
 PathNodeConnection::PathNodeConnection()
 	: m_otherNode(-1),
@@ -45,6 +48,35 @@ PathNode* World::CreateNode(int in_id, const Vector2& in_position)
 	m_nodes.insert(std::pair<int, PathNode*>(in_id, newNode));
 
 	return newNode;
+}
+
+int World::CreateWorld()
+{
+	static int worldCount = 0;
+	static std::mutex creationLock;
+
+	std::lock_guard<std::mutex> lock(creationLock);
+	
+	World* world = new World();
+	m_worlds.insert(std::pair<int, World*>(worldCount, world));
+	int assignedWorldId = worldCount;
+
+	worldCount++;
+
+	return assignedWorldId;
+}
+
+World* World::GetWorld(int id)
+{
+	return m_worlds[id];
+}
+
+void World::DestroyWorld(int id)
+{
+	World* world = m_worlds[id];
+	
+	std::lock_guard<std::recursive_mutex> lock(world->m_lock);
+	delete world;
 }
 
 PathNode* World::GetNode(int in_nodeId) const

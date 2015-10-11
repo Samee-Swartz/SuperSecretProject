@@ -181,6 +181,7 @@
     <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Pinky.cpp" />
+    <ClCompile Include="ThinkerLib.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

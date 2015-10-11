@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "Direction.h"
 #include "Pawn.h"
+#include <mutex>
 
 class PathNodeConnection
 {
@@ -70,10 +71,10 @@ private:
 
 class World
 {
+	static int CreateWorld();
+	static World* GetWorld(int id);
+	static void DestroyWorld(int id);
 public:
-	World();
-	~World();
-
 	PathNode* GetNode(int in_nodeId) const;
 	PointObj* GetPointObject(int in_nodeId) const;
 
@@ -88,8 +89,15 @@ public:
 protected:
 	PathNode* CreateNode(int in_id, const Vector2& in_position);
 private:
+	World();
+	~World();
+
 	std::map<int, PathNode*> m_nodes;
 	std::map<int, PointObj*> m_pointObjs;
 
+	static std::map<int, World*> m_worlds;
+
 	Pawn m_pacman, m_inky, m_pinky, m_blinky, m_clyde;
+
+	std::recursive_mutex m_lock;
 };
