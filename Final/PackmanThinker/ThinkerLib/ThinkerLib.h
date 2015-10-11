@@ -19,4 +19,4 @@
 class World;
 struct Pawn;
 
-// THINKERLIB_API int GenerateWorld();
+THINKERLIB_API int GenerateWorld();

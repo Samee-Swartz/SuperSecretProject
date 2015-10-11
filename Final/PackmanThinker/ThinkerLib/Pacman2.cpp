@@ -15,63 +15,38 @@
 
 // the ghost pawns and a vector of blueGhosts. There are global because most functions
 // use them and/or they only need to be filled in once.
-Pawn inky;
-Pawn pinky;
-Pawn blinky;
-Pawn clyde;
+std::vector<Pawn> ghosts;
 std::vector<PathNode*> blueGhosts;
-std::set<PathNode*> exploredNodes;
 
 void FindBlueGhosts(const World& in_world);
 int DepthFirst(const World& in_world, PathNode* in_curNode,
-                  std::set<PathNode*> in_exploredNodes);
+				  std::set<PathNode*> in_exploredNodes);
 float CalculateHeuristic(const PathNode* in_node);
 
 // Takes in world information, computes A* with a finite depth, and chooses a direction to move
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
-                              float in_deltaTime, float in_totalTime) {
+							  float in_deltaTime, float in_totalTime) {
 	// setup
-	inky = in_ourWorld.GetInky();
-	pinky = in_ourWorld.GetBlinky();
-	blinky = in_ourWorld.GetPinky();
-	clyde = in_ourWorld.GetClyde();
+	ghosts.push_back(in_ourWorld.GetInky());
+	ghosts.push_back(in_ourWorld.GetBlinky());
+	ghosts.push_back(in_ourWorld.GetPinky());
+	ghosts.push_back(in_ourWorld.GetClyde());
 	FindBlueGhosts(in_ourWorld);
-	if (in_ourWorld.GetNode(in_ourPawn.GetClosestNode())->GetObject() == NULL)
-		exploredNodes.insert(in_ourWorld.GetNode(in_ourPawn.GetClosestNode()));
 	// explore
 	// depth search in each direction and choose based on which has the shortest path to
 	// a pointObj and highest ghost heuristic (on the next node from pacman)
 	PathNode* curNode = in_ourWorld.GetNode(in_ourPawn.GetClosestNode());
-	PathNodeConnection up = curNode->GetConnection(Direction::Up);
-	PathNodeConnection down = curNode->GetConnection(Direction::Down);
-	PathNodeConnection left = curNode->GetConnection(Direction::Left);
-	PathNodeConnection right = curNode->GetConnection(Direction::Right);
 	std::set<PathNode*> nodes;
 	std::vector<std::pair<int, Direction::Enum> > counts;
-	std::pair<int, Direction::Enum> countUp, countDown, countRight, countLeft;
-	if (up.IsValid()) {
-		int s = CalculateHeuristic(in_ourWorld.GetNode(up.GetOtherNodeId()));
-		counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
-		                 in_ourWorld.GetNode(up.GetOtherNodeId()), nodes) - s,
-						Direction::Up));
-	}
-	if (down.IsValid()) {
-		int s = CalculateHeuristic(in_ourWorld.GetNode(down.GetOtherNodeId()));
-		counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
-		                 in_ourWorld.GetNode(down.GetOtherNodeId()), nodes) - s,
-						Direction::Down));
-	}
-	if (right.IsValid()) {
-		int s = CalculateHeuristic(in_ourWorld.GetNode(right.GetOtherNodeId()));
-		counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
-		                 in_ourWorld.GetNode(right.GetOtherNodeId()), nodes) - s,
-						Direction::Right));
-	}
-	if (left.IsValid()) {
-		int s = CalculateHeuristic(in_ourWorld.GetNode(left.GetOtherNodeId()));
-		counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
-		                 in_ourWorld.GetNode(left.GetOtherNodeId()), nodes) - s,
-						Direction::Left));
+	PathNodeConnection con;
+	// depth first in all four directions
+	for (int i=0; i < 4; i++) {
+		con = curNode->GetConnection((Direction::Enum)i);
+		if (con.IsValid()) {
+			int s = CalculateHeuristic(in_ourWorld.GetNode(con.GetOtherNodeId()));
+			counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
+							 in_ourWorld.GetNode(con.GetOtherNodeId()), nodes) - s, (Direction::Enum)i));
+		}
 	}
 
 	auto func = [](const std::pair<int, Direction::Enum> a, const std::pair<int, Direction::Enum> b) {
@@ -89,34 +64,28 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 float CalculateHeuristic(const PathNode* in_node) {
 	float score = 0;
 	// doesn't calculate for blue ghosts
-	if (inky.GetState() > 0)
-		score += (std::exp((inky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
-
-	if (blinky.GetState() > 0)
-		score += (std::exp((blinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
-
-	if (pinky.GetState() > 0)
-		score += (std::exp((pinky.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
-
-	if (clyde.GetState() > 0)
-		score += (std::exp((clyde.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
-
+	for (auto g : ghosts) {
+		if (g.GetState() > 0)
+			score += (std::exp((g.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
+	}
 	return score;
 }
 
 // adds any blue ghosts' locations to the vector
 void FindBlueGhosts(const World& in_world) {
-	if (inky.GetState() < 0)
-		blueGhosts.push_back(in_world.GetNode(inky.GetClosestNode()));
-
-	if (blinky.GetState() < 0)
-		blueGhosts.push_back(in_world.GetNode(blinky.GetClosestNode()));
-
-	if (pinky.GetState() < 0)
-		blueGhosts.push_back(in_world.GetNode(pinky.GetClosestNode()));
-
-	if (clyde.GetState() < 0)
-		blueGhosts.push_back(in_world.GetNode(clyde.GetClosestNode()));
+	for (auto g : ghosts) {
+		if (g.GetState() < 0) {
+			int nodes[5] = {-1,-1,-1,-1,-1};
+			g.GetNextNodes(nodes);
+			if (g.GetCurrentNode() != -1) {
+				nodes[4] = g.GetCurrentNode();
+			}
+			for (int i = 0; i < 5; i++) {
+				if (nodes[i] != -1)
+					blueGhosts.push_back(in_world.GetNode(nodes[i]));
+			}
+		}
+	}
 }
 
 // check's if a blue ghost is at the given location
@@ -130,7 +99,7 @@ bool FoundBlueGhost(const PathNode* in_node) {
 
 // expands the current node in all four directions. Adds valid expansions to the frontier list
 int DepthFirst(const World& in_world, PathNode* in_curNode,
-                  std::set<PathNode*> in_exploredNodes) {
+				  std::set<PathNode*> in_exploredNodes) {
 	if (in_exploredNodes.find(in_curNode) != in_exploredNodes.end()) {
 		return INT_MAX; // hit a cycle
 	}
@@ -142,34 +111,16 @@ int DepthFirst(const World& in_world, PathNode* in_curNode,
 	}
 	int count = INT_MAX;
 	in_exploredNodes.insert(in_curNode); // add cur node to explored and keep looking
-	// check all directions
-	PathNodeConnection up = in_curNode->GetConnection(Direction::Up);
-	PathNodeConnection down = in_curNode->GetConnection(Direction::Down);
-	PathNodeConnection left = in_curNode->GetConnection(Direction::Left);
-	PathNodeConnection right = in_curNode->GetConnection(Direction::Right);
-	if (up.IsValid()) {
-		int c = DepthFirst(in_world, in_world.GetNode(up.GetOtherNodeId()),
-		                   in_exploredNodes);
-		if (c > 0)
-			count = std::min((float)count, c - (std::exp(up.GetCost())/Kd));
-	}
-	if (down.IsValid()) {
-		int c = DepthFirst(in_world, in_world.GetNode(down.GetOtherNodeId()),
-		                   in_exploredNodes);
-		if (c > 0)
-			count = std::min((float)count, c - (std::exp(down.GetCost())/Kd));
-	}
-	if (right.IsValid()) {
-		int c = DepthFirst(in_world, in_world.GetNode(right.GetOtherNodeId()),
-		                   in_exploredNodes);
-		if (c > 0)
-			count = std::min((float)count, c - (std::exp(right.GetCost())/Kd));
-	}
-	if (left.IsValid()) {
-		int c = DepthFirst(in_world, in_world.GetNode(left.GetOtherNodeId()),
-		                   in_exploredNodes);
-		if (c > 0)
-			count = std::min((float)count, c - (std::exp(left.GetCost())/Kd));
+
+	PathNodeConnection con;
+	for (int i=0; i < 4; i++) {
+		con = in_curNode->GetConnection((Direction::Enum)i);
+		if (con.IsValid()) {
+			int c = DepthFirst(in_world, in_world.GetNode(con.GetOtherNodeId()),
+							   in_exploredNodes);
+			if (c > 0)
+				count = std::min((float)count, c - (std::exp(con.GetCost())/Kd));
+		}
 	}
 	return count;
 }
