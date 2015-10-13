@@ -106,23 +106,26 @@ float CalculateHeuristic(const PathNode* in_node) {
 	// doesn't calculate for blue ghosts
 	for (auto g : ghosts) {
 		if (g.GetState() > 0)
+			/*
+				sum of exp(distance)/Kg for each ghost
+			*/
 			score += (std::exp((g.GetPosition() - in_node->GetPosition()).MagnitudeSqr()))/ Kg;
 	}
 	return score;
 }
 
-// adds any blue ghosts' locations to the vector
+// adds any blue ghosts' locations (and surrounding nodes) to the vector
 void FindBlueGhosts(const World& in_world) {
-	for (auto g : ghosts) {
-		if (g.GetState() < 0) {
+	for (auto g : ghosts) {	// loop through ghosts
+		if (g.GetState() < 0) {		// if a ghost is blue
 			int nodes[5] = {-1,-1,-1,-1,-1};
-			g.GetNextNodes(nodes);
-			if (g.GetCurrentNode() != -1) {
-				nodes[4] = g.GetCurrentNode();
+			g.GetNextNodes(nodes);	// fill the closest nodes
+			if (g.GetCurrentNode() != -1) { // if there is a current node
+				nodes[4] = g.GetCurrentNode();	// add that too
 			}
-			for (int i = 0; i < 5; i++) {
-				if (nodes[i] != -1)
-					blueGhosts.push_back(in_world.GetNode(nodes[i]));
+			for (int i = 0; i < 5; i++) {	// for all of the positions we got
+				if (nodes[i] != -1)	// if they aren't invalid
+					blueGhosts.push_back(in_world.GetNode(nodes[i]));	// add the node to blueGhosts
 			}
 		}
 	}
@@ -130,35 +133,40 @@ void FindBlueGhosts(const World& in_world) {
 
 // check's if a blue ghost is at the given location
 bool FoundBlueGhost(const PathNode* in_node) {
-	for (PathNode* n : blueGhosts) {
-		if (in_node->Equals(n))
+	for (PathNode* n : blueGhosts) {	// loop through blue ghost nodes
+		if (in_node->Equals(n))	// check if the node matches the current node
 			return true;
 	}
 	return false;
 }
 
-// expands the current node in all four directions. Adds valid expansions to the frontier list
+// does a depth first search on the current node, looking for a point object
+// returns the score of the shortest path to a point object
+// Final equation of score is
+// points/Ks - (sum of connection costs)/Kd
 int DepthFirst(const World& in_world, PathNode* in_curNode,
 				  std::set<PathNode*> in_exploredNodes) {
-	if (in_exploredNodes.find(in_curNode) != in_exploredNodes.end()) {
+	if (in_exploredNodes.find(in_curNode) != in_exploredNodes.end()) { // if curNode is in explored
 		return INT_MAX; // hit a cycle
 	}
-	if (in_curNode->GetObject() != NULL) {
-		return in_curNode->GetObject()->GetWorth()/Ks; // found a point object
+	if (FoundBlueGhost(in_curNode)) {	// found a blue ghost!
+		return (pow(2, 5 - blueGhosts.size()) * 100)/Ks; // score of ghost/Ks
 	}
-	if (FoundBlueGhost(in_curNode)) {
-		return (pow(2, 5 - blueGhosts.size()) * 100)/Ks; // found a blue ghost
+	if (in_curNode->GetObject() != NULL) {	// we found a point object
+		// how much the point is worth/Ks
+		return in_curNode->GetObject()->GetWorth()/Ks;
 	}
 	int count = INT_MAX;
 	in_exploredNodes.insert(in_curNode); // add cur node to explored and keep looking
 
 	PathNodeConnection con;
-	for (int i=0; i < 4; i++) {
+	for (int i=0; i < 4; i++) {	// in all four directions
 		con = in_curNode->GetConnection((Direction::Enum)i);
-		if (con.IsValid()) {
+		if (con.IsValid()) {	// if connection is valid
 			int c = DepthFirst(in_world, in_world.GetNode(con.GetOtherNodeId()),
-							   in_exploredNodes);
-			if (c > 0)
+							   in_exploredNodes);	// recursively depth search!
+			if (c < INT_MAX)	// if we found something
+				// take the shortest path. between current total and ( depthScore - cost of that connection/Kd)
 				count = std::min((float)count, c - (std::exp(con.GetCost())/Kd));
 		}
 	}
