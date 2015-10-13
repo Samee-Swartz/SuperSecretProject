@@ -8,12 +8,12 @@
 #include <math.h>
 
 #define Ks 1600
-#define Kd 1096 // may need to adjust this. not straight line...
+#define Kd 1096 // may need to adjust this. try making it bigger
 #define Kg 1096
 
 // keep track of explored nodes and give high reward to unexplored nodes
 
-// the ghost pawns and a vector of blueGhosts. There are global because most functions
+// the ghost pawns and a vector of blueGhosts. These are global because most functions
 // use them and/or they only need to be filled in once.
 std::vector<Pawn> ghosts;
 std::vector<PathNode*> blueGhosts;
@@ -44,49 +44,59 @@ Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
 	std::vector<std::pair<int, Direction::Enum> > counts;
 	PathNodeConnection con;
 	// depth first in all four directions
-	for (int i=0; i < 4; i++) {
-		con = curNode->GetConnection((Direction::Enum)i);
-		if (con.IsValid()) {
-			int s = CalculateHeuristic(in_ourWorld.GetNode(con.GetOtherNodeId()));
+	for (int i=0; i < 4; i++) {	// loop through directions
+		con = curNode->GetConnection((Direction::Enum)i); // get connection in that direction
+		if (con.IsValid()) {	// is it valid?
+			int s = CalculateHeuristic(in_ourWorld.GetNode(con.GetOtherNodeId())); // calculate heuristic of the node on the other end
+			// run depthfirst on this new node. it will return a score for that node. add it to counts with the direction the node was in
 			counts.push_back(std::make_pair(DepthFirst(in_ourWorld,
 							 in_ourWorld.GetNode(con.GetOtherNodeId()), nodes) - s, (Direction::Enum)i));
 		}
 	}
 
+	// how to rank. highest score is better
 	auto func = [](const std::pair<int, Direction::Enum> a, const std::pair<int, Direction::Enum> b) {
 		return a.first > b.first;
 	};
 
+	// if none of the directions worked... Shouldn't happen
 	if (counts.size() < 1) {
 		return Direction::Invalid;
 	}
+	// sort based on best direction
 	std::sort(counts.begin(), counts.end(), func);
 
-	// Which direction is the closest node in, from pacman
-	Direction::Enum dirToPacman;
-	Vector2 toPacman = Vector2((curNode->GetPosition() - in_ourPawn.GetPosition()).x /
-					   (curNode->GetPosition() - in_ourPawn.GetPosition()).Magnitude(),
-					   (curNode->GetPosition() - in_ourPawn.GetPosition()).y /
-					   (curNode->GetPosition() - in_ourPawn.GetPosition()).Magnitude());
+		// Which direction is the closest node in, from pacman
+	Direction::Enum dirFromPacman;
+	// unit vector from pacman to closest node
+	Vector2 fromPacman = Vector2((curNode.node->GetPosition() - in_ourPawn.GetPosition()).x /
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).Magnitude(),
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).y /
+					   (curNode.node->GetPosition() - in_ourPawn.GetPosition()).Magnitude());
 
-	if (toPacman.x < .5 && toPacman.x > -.5) { // x == 0
-		if (toPacman.y > .5)
-			dirToPacman = Direction::Up;
-		else
-			dirToPacman = Direction::Down;
-	} else if (toPacman.x > .5) {
-		dirToPacman = Direction::Right;
-	} else {
-		dirToPacman = Direction::Left;
+	// This is to determine if pacman is facing the closest node. This affects how he should move
+	if (fromPacman.x < .5 && fromPacman.x > -.5) { // unit vector's x is ~0
+		if (fromPacman.y > .5)	// unit vector's y is ~1
+			dirFromPacman = Direction::Up;
+		else					// unit vector's y is ~ -1
+			dirFromPacman = Direction::Down;
+	} else if (fromPacman.x > .5) {	// unit vector's x is ~1
+		dirFromPacman = Direction::Right;
+	} else {					// unit vector's x is ~ -1
+		dirFromPacman = Direction::Left;
 	}
-	// may have to turn around to face correct direction
-	if (dirToPacman - in_ourPawn.GetFacingDirection() != 0) { // pacman is facing away from closest node
-		if (in_ourPawn.GetFacingDirection() - counts[0].second == 0) // move in pacman's direction
-			return counts[0].second;
-		else
-			return dirToPacman;
-	} else {
-		return counts[0].second;
+	// This decides if pacman needs to turn around first.
+	/* the issue is that if he's facing left, the closest node is to the right of pacman, and
+		the algorithm determines the next move should be down (from closest node), pacman first needs
+		to turn toward closest node, before he can start heading down.
+	*/
+	if (dirFromPacman - in_ourPawn.GetFacingDirection() != 0) { // pacman is facing away from closest node
+		if (in_ourPawn.GetFacingDirection() - counts[0].second == 0) // algorthims wants pacman to continue in his direction
+			return counts[0].second; // do what algortihm said
+		else	// algorithm wants pacman to move in a direction besides his current direction
+			return dirFromPacman;	// turn toward the closest node
+	} else {	// pacman is facing the closest node
+		return counts[0].second;	// do what algorithm said
 	}
 }
 
