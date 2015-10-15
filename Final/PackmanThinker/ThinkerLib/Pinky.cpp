@@ -70,7 +70,7 @@ Direction::Enum OnPinkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, f
 			randDir = rand() % possibleDirs.size();
 			return possibleDirs[randDir];
 		}
-}
+	}
 	
 	/* Chase Mode. Determine the point which is 2 spaces in front of Pacman. If there are not 2 open spaces available in front of Pacman,
 	 * then use the furthest (up to 2) connected node in that direction as the goal node. Then, use greedy first to decide which node to move towards next,
@@ -228,5 +228,5 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 
 // calculates the heuristic for the given node based on distance to the goal node
 float CalculateHeuristic(const PathNode* in_node) {
-	return sqrt(in_node->getPosition().x * pacNode.node->getPosition().x + in_node->getPosition().y * pacNode.node->getPosition().y
+	return sqrt(in_node->getPosition().x * pacNode.node->getPosition().x + in_node->getPosition().y * pacNode.node->getPosition().y;
 }
