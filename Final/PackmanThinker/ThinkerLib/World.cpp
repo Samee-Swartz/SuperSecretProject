@@ -21,12 +21,23 @@ PathNode::PathNode(int in_id,const Vector2& in_postion)
 {
 }
 
+PointObj::PointObj(int in_nodeId, Type::Enum in_type, int in_worth, const Vector2& in_location)
+	: m_location(in_location),
+	m_worth(in_worth),
+	m_type(in_type),
+	m_nodeId(in_nodeId)
+{
+}
+
 bool PathNode::Equals(PathNode* in_node) const {
 	return m_id == in_node->GetId() && m_position == in_node->GetPosition();
 }
 
 PathNodeConnection& PathNode::GetEditableConnection(Direction::Enum in_direction)
 {
+	if (in_direction > Direction::Left)
+		throw std::out_of_range("Invalid direction specified");
+
 	return m_connections[in_direction];
 }
 
@@ -48,6 +59,60 @@ PathNode* World::CreateNode(int in_id, const Vector2& in_position)
 	m_nodes.insert(std::pair<int, PathNode*>(in_id, newNode));
 
 	return newNode;
+}
+
+PointObj* World::CreatePointObj(int in_nodeId, PointObj::Type::Enum in_type, int in_worth)
+{
+	PathNode* node = GetNode(in_nodeId);
+	if (!node)
+		return nullptr;
+
+	PointObj* newPointObj = new PointObj(in_nodeId, in_type, in_worth, node->m_position);
+	m_pointObjs.insert(std::pair<int, PointObj*>(in_nodeId, newPointObj));
+
+	return newPointObj;
+}
+
+void World::DestroyPointObj(int in_nodeId)
+{
+	auto itr = m_pointObjs.find(in_nodeId);
+	if (itr == m_pointObjs.end())
+		return;
+
+	auto pair = *itr;
+
+	m_pointObjs.erase(itr);
+
+	PathNode* node = GetNode(in_nodeId);
+	if(node)
+		node->m_object = nullptr;
+
+	delete pair.second;
+}
+
+void World::SetPacman(const Pawn& in_pawn)
+{
+	m_pacman = in_pawn;
+}
+
+void World::SetInky(const Pawn& in_pawn)
+{
+	m_inky = in_pawn;
+}
+
+void World::SetPinky(const Pawn& in_pawn)
+{
+	m_pinky = in_pawn;
+}
+
+void World::SetBlinky(const Pawn& in_pawn)
+{
+	m_blinky = in_pawn;
+}
+
+void World::SetClyde(const Pawn& in_pawn)
+{
+	m_clyde = in_pawn;
 }
 
 int World::CreateWorld()

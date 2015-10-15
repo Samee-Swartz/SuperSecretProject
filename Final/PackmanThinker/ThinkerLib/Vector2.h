@@ -2,7 +2,13 @@
 #include <math.h>
 #include "Direction.h"
 
-typedef struct Vector2
+struct NativeVector2
+{
+	float x;
+	float y;
+};
+
+struct Vector2
 {
 	float x;
 	float y;
@@ -14,6 +20,12 @@ typedef struct Vector2
 	}
 
 	Vector2(const Vector2& in_other)
+		: x(in_other.x),
+		  y(in_other.y)
+	{
+	}
+
+	Vector2(const NativeVector2& in_other)
 		: x(in_other.x),
 		  y(in_other.y)
 	{
@@ -49,7 +61,7 @@ typedef struct Vector2
 
 	float Magnitude()
 	{
-		return sqrt(x * x + y * y);
+		return static_cast<float>(sqrt(x * x + y * y));
 	}
 
 	float MagnitudeSqr()
@@ -93,4 +105,4 @@ typedef struct Vector2
 	bool operator ==(const Vector2& b) const {
 		return (x == b.x) && (y == b.y);
 	}
-} Vector2;
+};
