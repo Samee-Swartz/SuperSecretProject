@@ -2,12 +2,49 @@
 #include "Vector2.h"
 #include "Direction.h"
 
+struct PawnId
+{
+	enum Enum
+	{
+		None = -1,
+		Pacman,
+		Blinky,
+		Pinky,
+		Inky,
+		Clyde
+	};
+};
+
+struct NativePawn
+{
+	//The position the pawn is in
+	NativeVector2 m_position;
+
+	int m_atNode;
+
+	//The node that we are closest too
+	int m_closestNode;
+
+	//The nodes we are closest
+	int m_nextNodes[4];
+
+	//Speed that the pawn is traveling at
+	float m_speed;
+
+	//The direction this pawn is facing in (also traveling in)
+	int m_facingDirection;
+
+	//The state code that this pawn is in
+	int m_state;
+};
 
 struct Pawn
 {
 	Pawn();
 
-	Pawn(const Vector2& in_position, int in_closestNode, float in_speed, Direction::Enum in_facingDirection, int in_state, bool in_canSsee);
+	Pawn(const Vector2& in_position,int in_atNode , int in_closestNode, int in_nextNodes[4], float in_speed, Direction::Enum in_facingDirection, int in_state, bool in_canSsee);
+
+	Pawn(const NativePawn& in_other);
 
 	Vector2 GetPosition() const { return m_position; }
 

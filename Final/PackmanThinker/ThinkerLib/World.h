@@ -40,6 +40,10 @@ public:
 	Type::Enum GetType() const { return m_type; }
 	int GetNode() const { return m_nodeId; }
 
+protected:
+	friend class World;
+
+	PointObj(int in_nodeId, Type::Enum in_type, int in_worth, const Vector2& in_location);
 private:
 	Vector2 m_location;
 	int m_worth;
@@ -58,6 +62,7 @@ public:
 	const PathNodeConnection& GetConnection(Direction::Enum in_direction) const { return m_connections[in_direction]; }
 protected:
 	friend class World;
+	friend void CreateConnection(int in_worldId, int in_fromId, int in_toId, int in_direction, float in_cost);
 
 	PathNode(int in_id, const Vector2& m_position);
 
@@ -71,6 +76,7 @@ private:
 
 class World
 {
+public:
 	static int CreateWorld();
 	static World* GetWorld(int id);
 	static void DestroyWorld(int id);
@@ -87,7 +93,28 @@ public:
 	const Pawn& GetBlinky() const { return m_blinky; }
 	const Pawn& GetClyde() const { return m_clyde; }
 protected:
+	friend int CreateWorld();
+	friend void CreateNode(int in_worldId, int in_id, NativeVector2 in_position);
+	friend void CreateConnection(int in_worldId, int in_fromId, int in_toId, int in_direction, float in_cost);
+	friend void DestroyWorld(int in_worldId);
+	friend void CreatePointObj(int in_worldId, int in_nodeId, int in_worth, int in_type);
+	friend void DestroyPointObj(int in_worldId, int in_nodeId);
+	friend void SetPacman(int in_worldId, const NativePawn& in_pawn);
+	friend void SetBlinky(int in_worldId, const NativePawn& in_pawn);
+	friend void SetPinky(int in_worldId, const NativePawn& in_pawn);
+	friend void SetInky(int in_worldId, const NativePawn& in_pawn);
+	friend void SetClyde(int in_worldId, const NativePawn& in_pawn);
+
 	PathNode* CreateNode(int in_id, const Vector2& in_position);
+	PointObj* CreatePointObj(int in_nodeId, PointObj::Type::Enum in_type, int in_cost);
+
+	void DestroyPointObj(int in_nodeId);
+
+	void SetPacman(const Pawn& in_pawn);
+	void SetInky(const Pawn& in_pawn);
+	void SetPinky(const Pawn& in_pawn);
+	void SetBlinky(const Pawn& in_pawn);
+	void SetClyde(const Pawn& in_pawn);
 private:
 	World();
 	~World();

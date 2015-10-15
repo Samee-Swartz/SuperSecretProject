@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacmanGame.CSharp", "PacmanGame.CSharp.csproj", "{2400E252-AB5C-4832-157D-7C1B36EA8C36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacmanGame.CSharp.Editor", "PacmanGame.CSharp.Editor.csproj", "{540E6D52-E055-712C-78A7-BD915EA59F8A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2400E252-AB5C-4832-157D-7C1B36EA8C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2400E252-AB5C-4832-157D-7C1B36EA8C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2400E252-AB5C-4832-157D-7C1B36EA8C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2400E252-AB5C-4832-157D-7C1B36EA8C36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{540E6D52-E055-712C-78A7-BD915EA59F8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{540E6D52-E055-712C-78A7-BD915EA59F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{540E6D52-E055-712C-78A7-BD915EA59F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{540E6D52-E055-712C-78A7-BD915EA59F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
