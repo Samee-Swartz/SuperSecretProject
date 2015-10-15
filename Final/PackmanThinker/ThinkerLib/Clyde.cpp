@@ -2,6 +2,7 @@
 #include "Pawn.h"
 #include "World.h"
 #include "Pacman.h"
+#include <stdlib.h>
 
 
 //TODO: Determine these values (Benny? <3) 
@@ -182,37 +183,75 @@ Direction::Enum OnClydeThink(const Pawn& in_ourPawn, const World& in_ourWorld, f
 		PathNodeConnection con = pacNode.node.GetConnection(pacDir);
 		PathNode* inFront;
 		
-		for(int i = 0; i < 4; i++){
-			if(!con.isValid()){
-					goalNode = pacNode; 
-			}else{ 
+		if(!con.isValid()){
+				goalNode = pacNode; 
+		}
+		else{
+			for(int i = 0; i < 4; i++){
+					inFront = in_world.GetNode(con.GetOtherNodeId());
+					con = inFront->node.getConnection(pacDir);
+					
+					if(!con.isValid()){
+						goalNode = *inFront;
+					}else{
+						goalNode = *in_world.GetNode(con.GetOtherNodeId());
+					}
 				
-				inFront = in_world.GetNode(con.GetOtherNodeId());
-				con = inFront->node.getConnection(pacDir);
-				
-				if(!con.isValid()){
-					goalNode = *inFront;
-				}else{
-					goalNode = *in_world.GetNode(con.GetOtherNodeID());
 				}
-			
-			}
 		}
 		
 		
 		/*Simulated annealing */ 
-		
-		//TODO 
+		float randomness = (100 / in_totalTime) % 100; //gradually decreases as time goes on, stays less than 100 
+		if(rand() % 100 > randomness){
+			//choose a random valid direction
+			vector<Direction::Enum> possibleDirs;
+			int randDir;
+			
+			PathNodeConnection con;
+			//Search in all four directions for a connected node
+			for (int i=0; i < 4; i++) {	// loop through directions
+				con = curNode->GetConnection((Direction::Enum)i); // get connection in that direction
+				if (con.IsValid()) {	// is it valid?
+						possibleDirs.push_back((Direction::Enum)i);
+				}
+			}
+			
+			//possibleDirs now holds then number of connections at the current node 
+			randDir = rand() % possibleDirs.size();
+			return possibleDirs[randDir];
+			
+		}
+		else{
+			//run greedy best for the next node
+			
+			Direction::Enum bestDir = Invalid;
+			float bestHeuristic = 1000; //dummy value, any valid score would be less
+			
+			/* For each possible direction, check if there's a connection. If there's a valid
+			 * connection, the connected node's score with the best score already. if better, save it
+			 */
+			for(int i = 0; i++; i < 4){
+				PathNodeConnection con = curNode.node.node->GetConnection((Direction::Enum)i);
+				if(con.isValid()){
+					PathNode* p = in_world.GetNode(con.GetOtherNodeId()); 
+					float score = CalculateHeuristic(p);
+					
+					if(score > bestHeuristic){
+						bestHeuristic = score;
+						bestDir = Direction::Enum(i);
+					}
+					
+				}
+			} //end for loop
+			return bestDir;
+		}
 		
 		
 		
 	}
-
-	
-	
-	
-	
-
+	else //the state is not chase or frightened or scatter
+		return Direction::Invalid;
 	
 }
 	
