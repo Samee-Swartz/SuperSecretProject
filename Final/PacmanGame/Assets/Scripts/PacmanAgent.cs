@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 public class PacmanAgent : AiAgent
 {
@@ -36,18 +37,21 @@ public class PacmanAgent : AiAgent
 
     protected override Direction OnThink(float deltaTime, float totalTime)
     {
-        throw new System.NotImplementedException();
+        return Movement.InputDirection;
+        return (Direction) ThinkPacman(WorldId, deltaTime, totalTime);
     }
 
     protected override void OnThreadKill()
     {
-        throw new System.NotImplementedException();
     }
 
     protected override void OnKill()
     {
-        throw new System.NotImplementedException();
+        m_animator.SetBool("IsDead", true);
     }
+
+    [DllImport("ThinkerLib", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int ThinkPacman(int worldId, float deltaTime, float totalTime);
 
     private Animator m_animator;
 }

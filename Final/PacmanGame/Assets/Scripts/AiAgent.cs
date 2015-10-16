@@ -84,9 +84,24 @@ public abstract class AiAgent : MonoBehaviour
         get { return m_agentInfo; }
     }
 
+    public virtual bool IsWaiting
+    {
+        get { return !m_movement.enabled; }
+    }
+
     protected MovingAgent Movement
     {
         get { return m_movement; }
+    }
+
+    public virtual void Wait()
+    {
+        m_movement.enabled = false;
+    }
+
+    public virtual void StopWaiting()
+    {
+        m_movement.enabled = true;
     }
 
     public virtual bool CanTravelOnConnection(Connection connection)
@@ -114,6 +129,7 @@ public abstract class AiAgent : MonoBehaviour
     public void Kill()
     {
         m_thread.Interrupt();
+        Wait();
         OnKill();
     }
 
@@ -121,7 +137,7 @@ public abstract class AiAgent : MonoBehaviour
     {
         lock (this)
         {
-            m_movement.InputDirection = m_direction;
+            //m_movement.InputDirection = m_direction;
 
             m_agentInfo.Position = m_movement.transform.position;
             m_agentInfo.AtNode = m_movement.AtNode != null ? m_movement.AtNode.NodeId : -1;
@@ -211,17 +227,17 @@ public abstract class AiAgent : MonoBehaviour
             lock (Game.Instance)
             {
                 pacman = Game.Instance.PacmanAgentInfo;
-                //inky = Game.Instance.InkyAgentInfo;
-                //pinky = Game.Instance.PinkyAgentInfo;
-                //blinky = Game.Instance.BlinkyAgentInfo;
-                //clyde = Game.Instance.ClydeAgentInfo;
+                inky = Game.Instance.InkyAgentInfo;
+                pinky = Game.Instance.PinkyAgentInfo;
+                blinky = Game.Instance.BlinkyAgentInfo;
+                clyde = Game.Instance.ClydeAgentInfo;
             }
 
             SetPacman(m_worldId, ref pacman);
-            //SetBlinky(m_worldId, ref blinky);
-            //SetPinky(m_worldId, ref pinky);
-            //SetInky(m_worldId, ref inky);
-            //SetClyde(m_worldId, ref clyde);
+            SetBlinky(m_worldId, ref blinky);
+            SetPinky(m_worldId, ref pinky);
+            SetInky(m_worldId, ref inky);
+            SetClyde(m_worldId, ref clyde);
 
             DateTime now = DateTime.Now;
             TimeSpan deltaTime = now - lastTime;

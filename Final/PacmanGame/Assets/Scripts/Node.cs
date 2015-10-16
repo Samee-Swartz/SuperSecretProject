@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -27,6 +26,11 @@ public class Connection
         set { m_cost = value; }
     }
 
+    public bool IsStatic
+    {
+        get { return m_isStatic; }
+    }
+
     public Connection(Node target, float cost)
     {
         m_node = target;
@@ -38,6 +42,9 @@ public class Connection
 
     [SerializeField]
     private float m_cost;
+
+    [SerializeField, Tooltip("If true then this connection will not be rebuilt when the navigation is rebuilt")]
+    private bool m_isStatic;
 }
 
 
@@ -50,14 +57,10 @@ public class Node : MonoBehaviour
 
     public Connection GetConnection(Direction connectionDirection)
     {
-        try
-        {
-            return m_connections[(int)connectionDirection];
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
+        int connectionIndex = (int)connectionDirection;
+        if (connectionIndex < 0 || connectionIndex >= m_connections.Length)
+            return null;
+        return m_connections[connectionIndex];
     }
 
     public Connection GetConnection(int connectionId)
@@ -119,7 +122,18 @@ public class Node : MonoBehaviour
                 return 0;
         });
 
-        m_connections = new Connection[4];
+        if (m_connections == null || m_connections.Length < 4)
+        {
+            m_connections = new Connection[4];
+        }
+        else
+        {
+            for (int i = 0; i < m_connections.Length; i++)
+            {
+                if(m_connections[i] != null && !m_connections[i].IsStatic)
+                    m_connections[i] = null;
+            }
+        }
 
         int directionFillCount = 0;
         foreach (Node node in nodeList)
@@ -182,7 +196,7 @@ public class Node : MonoBehaviour
         for (int i = 0; i < m_connections.Length; i++)
         {
             Connection connection = m_connections[i];
-            if (connection == null)
+            if (connection == null || connection.IsStatic)
                 continue;
 
             RaycastHit2D hit = Physics2D.Linecast(connection.TargetNode.transform.position, transform.position, LayerMask.GetMask("Wall"));

@@ -6,7 +6,9 @@ public class GhostAgent : AiAgent
 {
     public enum State
     {
+        Invalid = -1,
         Normal,
+        Scatter,
         Blue,
         Dead,
         Waiting
@@ -17,10 +19,16 @@ public class GhostAgent : AiAgent
         get { return m_state; }
     }
 
+    public override bool IsWaiting
+    {
+        get { return m_state == State.Waiting || !Movement.enabled; }
+    }
+
     public void TurnBlue()
     {
         if (m_state != State.Dead)
         {
+            s_eatenGhosts = 0;
             m_state = State.Blue;
             m_animator.SetBool("IsBlue", true);
             m_animator.SetBool("IsBlinking", false);
@@ -29,19 +37,22 @@ public class GhostAgent : AiAgent
         }
     }
 
-    public void TurnNormal()
+    public override void StopWaiting()
     {
-        m_state = State.Normal;
-        m_animator.SetBool("IsDead", false);
-        m_animator.SetBool("IsBlue", false);
-        m_animator.SetBool("IsBlinking", false);
-        StopCoroutine("BlueTimer");
+        if (!Movement.enabled)
+            Movement.enabled = true;
+
+        if(m_state == State.Waiting)
+            m_state = State.Normal;
     }
 
     public void TurnDead()
     {
         if (m_state == State.Blue)
         {
+            s_eatenGhosts += 1;
+            Game.Instance.IncScore((int) Mathf.Pow(200.0f, s_eatenGhosts));
+
             m_state = State.Dead;
             m_animator.SetBool("IsDead", true);
             m_animator.SetBool("IsBlue", false);
@@ -54,6 +65,7 @@ public class GhostAgent : AiAgent
     {
         m_animator = GetComponentInChildren<Animator>();
         base.Start();
+        Movement.enabled = m_state != State.Waiting;
     }
 
     void Update()
@@ -73,6 +85,7 @@ public class GhostAgent : AiAgent
             switch (m_state)
             {
                 case State.Normal:
+                    Game.Instance.PacmanDied();
                     break;
                 case State.Blue:
                     TurnDead();
@@ -100,17 +113,15 @@ public class GhostAgent : AiAgent
 
     protected override Direction OnThink(float deltaTime, float totalTime)
     {
-        throw new System.NotImplementedException();
+        return Direction.Up;
     }
 
     protected override void OnThreadKill()
     {
-        throw new System.NotImplementedException();
     }
 
     protected override void OnKill()
     {
-        throw new System.NotImplementedException();
     }
 
     private IEnumerator BlueTimer()
@@ -118,11 +129,22 @@ public class GhostAgent : AiAgent
         yield return new WaitForSeconds(Game.Instance.FrightenTime - 2.0f);
         m_animator.SetBool("IsBlinking", true);
         yield return new WaitForSeconds(2.0f);
-        TurnNormal();
+        TurnNormalInternal();
+    }
+
+    private void TurnNormalInternal()
+    {
+        m_state = Movement.enabled ? State.Normal : State.Waiting;
+        m_animator.SetBool("IsDead", false);
+        m_animator.SetBool("IsBlue", false);
+        m_animator.SetBool("IsBlinking", false);
+        StopCoroutine("BlueTimer");
     }
 
     private Animator m_animator;
 
     [SerializeField]
     private State m_state = State.Normal;
+
+    private static int s_eatenGhosts;
 }

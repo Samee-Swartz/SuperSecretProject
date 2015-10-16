@@ -38,6 +38,14 @@ public class MovingAgent : MonoBehaviour
         get { return (Node[])m_closestNodes.Clone(); }
     }
 
+    public void TeleportTo(Node destinationNode)
+    {
+        m_rigidbody2D.position = destinationNode.transform.position;
+        m_atNode = destinationNode;
+        m_closestNode = destinationNode;
+        CalculateClosestNodes();
+    }
+
     void Start()
     {
         m_rigidbody2D = GetComponent<Rigidbody2D>();
@@ -57,6 +65,11 @@ public class MovingAgent : MonoBehaviour
                 bestDistance = sqrMagnitude;
             }
         }
+    }
+
+    void OnDisable()
+    {
+        m_rigidbody2D.velocity = Vector2.zero;
     }
 
     protected virtual void Update()
