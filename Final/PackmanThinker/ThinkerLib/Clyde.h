@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ThinkerLib.h"
+#include <queue>
 
+class PathNode;
+struct ScoredNode;
 class World;
 struct Pawn;
 

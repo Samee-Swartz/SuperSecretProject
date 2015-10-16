@@ -1,5 +1,6 @@
 #include "ThinkerLib.h"
 #include "World.h"
+#include "Pacman.h"
 
 int CreateWorld()
 {
@@ -128,6 +129,6 @@ int ThinkPacman(int in_worldId, float in_deltaTime, float in_totalTime)
 		return -1;
 
 	const Pawn& pacman = world->GetPacman();
-	
-	return 0;
+
+	return static_cast<int>(OnPacmanThink(pacman, *world, in_deltaTime, in_totalTime));
 }

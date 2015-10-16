@@ -181,6 +181,7 @@
     </ClCompile>
     <ClCompile Include="Inky.cpp" />
     <ClCompile Include="Pacman.cpp" />
+    <ClCompile Include="Pacman2.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Pinky.cpp" />
     <ClCompile Include="ThinkerLib.cpp" />

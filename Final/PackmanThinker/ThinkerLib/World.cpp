@@ -140,7 +140,6 @@ void World::DestroyWorld(int id)
 {
 	World* world = m_worlds[id];
 	
-	std::lock_guard<std::recursive_mutex> lock(world->m_lock);
 	delete world;
 }
 

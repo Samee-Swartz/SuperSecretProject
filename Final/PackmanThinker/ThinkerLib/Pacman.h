@@ -1,7 +1,11 @@
 #include "Direction.h"
+#include "World.h"
 
 struct Pawn;
 class World;
+
+Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
+                              float in_deltaTime, float in_totalTime);
 
 // Keeps track of node information during A* computation.
 struct ScoredNode {
