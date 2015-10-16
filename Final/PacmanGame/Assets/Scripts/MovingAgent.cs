@@ -69,7 +69,8 @@ public class MovingAgent : MonoBehaviour
 
     void OnDisable()
     {
-        m_rigidbody2D.velocity = Vector2.zero;
+        if(m_rigidbody2D)
+            m_rigidbody2D.velocity = Vector2.zero;
     }
 
     protected virtual void Update()

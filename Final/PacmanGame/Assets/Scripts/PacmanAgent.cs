@@ -37,7 +37,6 @@ public class PacmanAgent : AiAgent
 
     protected override Direction OnThink(float deltaTime, float totalTime)
     {
-        return Movement.InputDirection;
         return (Direction) ThinkPacman(WorldId, deltaTime, totalTime);
     }
 

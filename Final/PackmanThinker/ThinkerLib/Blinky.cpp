@@ -3,9 +3,9 @@
 #include "World.h"
 #include <queue>
 
-#define SCATTER_NODE 416015878
-#define FRIGHTEN_NODE 416015878
-#define HOUSE_NODE 1132635177
+#define SCATTER_NODE 1986562643
+#define FRIGHTEN_NODE 1986562643
+#define HOUSE_NODE 1753112837
 #include <unordered_set>
 #include <memory>
 
@@ -87,14 +87,14 @@ void pushAll(std::queue<ScoredNode>& queueA, std::queue<ScoredNode>& queueB)
 
 bool NodeComparer(std::shared_ptr<ScoredNode> in_a, std::shared_ptr<ScoredNode> in_b)
 {
-	return in_a->totalScore < in_b->totalScore;
+	return in_a->totalScore > in_b->totalScore;
 }
 
 // expands the current node in all four directions. Adds valid expansions to the frontier list
 void Expand(const World& in_world,
 	std::shared_ptr<ScoredNode> in_curNode,
 	const PathNode& in_targetNode,
-	std::priority_queue<std::shared_ptr<ScoredNode>, std::function<bool(std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>>& inout_frontier,
+	std::priority_queue<std::shared_ptr<ScoredNode>, std::vector<std::shared_ptr<ScoredNode>>, std::function<bool(std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>>& inout_frontier,
 	std::map<PathNode*, std::shared_ptr<ScoredNode>>& inout_frontierMap,
 	const std::map<PathNode*, std::shared_ptr<ScoredNode>>& in_processedNodes)
 {
@@ -137,14 +137,15 @@ void Expand(const World& in_world,
 //run A* from the closest node to Blinky to the closest node that Pacman is occupying
 Direction::Enum aStar(const World& in_ourWorld, PathNode* currentNode, PathNode* targetNode)
 {
-	std::priority_queue<std::shared_ptr<ScoredNode>, std::function<bool(std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>> frontier(NodeComparer);
+	std::priority_queue<std::shared_ptr<ScoredNode>, std::vector<std::shared_ptr<ScoredNode>>, std::function<bool (std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>> frontier(NodeComparer);
 	std::map<PathNode*, std::shared_ptr<ScoredNode>> processedNodes;
 	std::map<PathNode*, std::shared_ptr<ScoredNode>> frontierMap;
 
-	std::shared_ptr<ScoredNode> rootNode = std::make_shared<ScoredNode>(currentNode, 0, crowDist(*currentNode, *targetNode), Direction::Invalid, nullptr);
+	std::shared_ptr<ScoredNode> rootNode = std::make_shared<ScoredNode>(currentNode, 0.f, crowDist(*currentNode, *targetNode), Direction::Invalid, nullptr);
 	frontier.push(rootNode);
+	frontierMap.insert(std::pair<PathNode*, std::shared_ptr<ScoredNode>>(currentNode, rootNode));
 	
-	while(frontier.size() > 0 && frontier.top()->node != currentNode)
+	while(frontier.size() > 0 && frontier.top()->node != targetNode)
 	{
 		std::shared_ptr<ScoredNode> topNode = frontier.top();
 		frontier.pop();
@@ -181,8 +182,10 @@ Direction::Enum OnBlinkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, 
 	switch (in_ourPawn.GetState())
 	{
 	case 1:
+	{
 		PathNode* startingTargetNode = in_ourWorld.GetNode(SCATTER_NODE);
 		return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), startingTargetNode); //start to navigate to respective corner 
+	}
 	case 0:
 		//Chase
 		//standard mode, attempt to move to the node that PacMan is currently occupying
@@ -192,13 +195,17 @@ Direction::Enum OnBlinkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, 
 		//Frightened
 		//Pacman has eaten a power cell thingy
 		//Attempt to navigate to same corner as scatter
+	{
 		PathNode* frightTargetNode = in_ourWorld.GetNode(FRIGHTEN_NODE);
 		return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), frightTargetNode); //start to navigate to respective corner
+	}
 	case 3:
 		//Dead
 		//Return to the house
+	{
 		PathNode* houseNode = in_ourWorld.GetNode(HOUSE_NODE);
 		return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), houseNode);
+	}
 	default:
 		return Direction::Up;
 	}

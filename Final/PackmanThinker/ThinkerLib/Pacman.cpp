@@ -21,7 +21,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 Direction::Enum OnPacmanThink(const Pawn& in_ourPawn, const World& in_ourWorld,
                               float in_deltaTime, float in_totalTime)
 {
-	return static_cast<Direction::Enum>(rand() % 4);
+	return Direction::Invalid;
 	// setup
 	ghosts.clear();
 	blueGhosts.clear();

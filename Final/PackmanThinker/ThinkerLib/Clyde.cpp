@@ -12,6 +12,10 @@
 #define SW_topR 7 //node on the top row of the loop, on the right
 #define SW_topL 8 //node on the top row of the loop, on the left
 
+void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<ScoredNode>& out_frontier);
+
+float CalculateHeuristic(const PathNode* in_node);
+
 
 /* Clyde
 chase algorithm: simulated annealing

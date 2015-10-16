@@ -76,6 +76,7 @@ public class Node : MonoBehaviour
     protected virtual void Start()
     {
         AiAgent[] agents = FindObjectsOfType<AiAgent>();
+
         foreach (AiAgent aiAgent in agents)
         {
             aiAgent.AddEvent(new NodeCreateEvent(this));
@@ -94,7 +95,21 @@ public class Node : MonoBehaviour
     [MenuItem("Navigation/Rebuild")]
     public static void RebuildNodes()
     {
+        HashSet<int> ids = new HashSet<int>();
+
         Node[] nodes = FindObjectsOfType<Node>();
+        foreach (Node node in nodes)
+        {
+            int newId;
+            do
+            {
+               newId = Random.Range(0, int.MaxValue);
+            } while (ids.Contains(newId));
+
+            ids.Add(newId);
+            node.m_nodeId = newId;
+        }
+
         foreach (Node node in nodes)
         {
             node.ReBuild();

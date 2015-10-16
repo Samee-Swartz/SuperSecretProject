@@ -3,20 +3,21 @@
 #include "World.h"
 
 	// Keeps track of node information during greedy best-first computation.
-struct ScoredNode {
+#if 0
+	struct ScoredNode {
         PathNode* node; // current node
-  	
-	    // cost to get to this node (all previous travel + connectionCost) + curNodeValue if applicable
+
+// cost to get to this node (all previous travel + connectionCost) + curNodeValue if applicable
         float arrivalAndNodeCost;
         float totalScore; // arrivalAndNodeCost + heuristic
-        // the first direction taken (leaving pacman's current position) to get to this node
+// the first direction taken (leaving pacman's current position) to get to this node
         Direction::Enum origDirection;
 
         ScoredNode(PathNode* m_node, float m_aanc, float m_heuristic, Direction::Enum m_dir) {
                 node = m_node;
                 origDirection = m_dir;
                 arrivalAndNodeCost = m_aanc;
-				//m_heuristic is ignored to give us greedy best-first
+//m_heuristic is ignored to give us greedy best-first
                 totalScore = m_aanc;
         }
 
@@ -38,10 +39,10 @@ Direction OnInkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in
 
 		case 1:
 			int startingTargetNode = in_ourWorld.getNode(nodeID);
-			//starting mode: Scatter
+//starting mode: Scatter
 			if(in_totalTime <= 30) //at start of game
 				return aStar(in_ourPawn.getClosestNode(), startingTargetNode);	//start to navigate to respective corner 
-			//time this so that it won't actually reach corner by the time limit
+//time this so that it won't actually reach corner by the time limit
 			
 			else
 				state = 1;
@@ -49,18 +50,18 @@ Direction OnInkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in
 			break;
 
 		case 2:
-			//Chase
-			//standard mode, attempt to move to the node that PacMan is currently occupying
-			//Use A* for this
+//Chase
+//standard mode, attempt to move to the node that PacMan is currently occupying
+//Use A* for this
 			return aStar(in_ourPawn.getClosestNode(), in_ourWorld.getPacman().getNode());
 			
 			
 			break;
 
 		case 3:
-                        //Frightened
-                        //Pacman has eaten a power cell thingy
-                        //Attempt to navigate to same corner as scatter
+//Frightened
+//Pacman has eaten a power cell thingy
+//Attempt to navigate to same corner as scatter
                         int frightTargetNode = in_ourWorld.getNode(frightNodeID);
                         return aStar(in_ourPawn.getClosestNode(), startingTargetNode);  //start to navigate to respective corner
 
@@ -95,7 +96,7 @@ void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<Sc
 		if (con.IsValid()) {	// valid connection
 			ScoredNode newNode;
 			PathNode* p = in_world.GetNode(con.GetOtherNodeId());	// get next node
-			// add connection cost to the cost to get to to current Node
+// add connection cost to the cost to get to to current Node
 			float score = con.GetCost() + in_curNode.arrivalAndNodeCost;
 			newNode = ScoredNode(p, score, heuristic(p), in_curNode.origDirection); // keep orig direction
 
@@ -115,7 +116,7 @@ Direction aStar(currentNode, targetNode){
 
 		Expand(in_ourWorld, bestfirstQueue.front(), bestFirstQueue);
 		
-		//goes through the current queue of nodes in the list and places the new node in the proper place
+//goes through the current queue of nodes in the list and places the new node in the proper place
 		for(int i = 0; i <= bestFirstQueue.size(); i++){
 			aNode = bestFirstQueue.pop();
 			if(aNode.totalValue > tempNode.totalValue){
@@ -130,3 +131,4 @@ Direction aStar(currentNode, targetNode){
 	}
 	return bestFirstQueue.front().origDirection;
 }
+#endif

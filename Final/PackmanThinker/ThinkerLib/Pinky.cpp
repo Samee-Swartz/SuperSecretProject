@@ -20,6 +20,10 @@ goal: NorthWest corner
 Frighten mode
 no goal, at any intersection decide a random direction*/
 
+void Expand(const World& in_world, ScoredNode in_curNode, std::priority_queue<ScoredNode>& out_frontier);
+
+float CalculateHeuristic(const PathNode* in_node);
+
 
 #if 0
 	Direction::Enum OnPinkyThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in_deltaTime, float in_totalTime){

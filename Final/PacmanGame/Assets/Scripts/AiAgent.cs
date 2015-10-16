@@ -137,7 +137,8 @@ public abstract class AiAgent : MonoBehaviour
     {
         lock (this)
         {
-            //m_movement.InputDirection = m_direction;
+            if(m_direction != Direction.Invalid)
+                m_movement.InputDirection = m_direction;
 
             m_agentInfo.Position = m_movement.transform.position;
             m_agentInfo.AtNode = m_movement.AtNode != null ? m_movement.AtNode.NodeId : -1;

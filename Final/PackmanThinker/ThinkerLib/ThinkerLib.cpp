@@ -1,6 +1,7 @@
 #include "ThinkerLib.h"
 #include "World.h"
 #include "Pacman.h"
+#include "Blinky.h"
 
 int CreateWorld()
 {
@@ -131,4 +132,15 @@ int ThinkPacman(int in_worldId, float in_deltaTime, float in_totalTime)
 	const Pawn& pacman = world->GetPacman();
 
 	return static_cast<int>(OnPacmanThink(pacman, *world, in_deltaTime, in_totalTime));
+}
+
+int ThinkBlinky(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return Direction::Invalid;
+
+	const Pawn& blinky = world->GetBlinky();
+
+	return OnBlinkyThink(blinky, *world, in_deltaTime, in_totalTime);
 }
