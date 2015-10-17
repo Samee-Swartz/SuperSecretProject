@@ -49,11 +49,27 @@ public class Game : MonoBehaviour
         get { return m_clydeAgentInfo; }
     }
 
+    public bool IsScatter
+    {
+        get { return m_isScatter; }
+    }
+
     void Awake()
     {
         s_instance = this;
 
         m_audioSource = GetComponent<AudioSource>();
+    }
+
+    public void StartGame()
+    {
+        StartCoroutine("ScatterChaseTimer");
+
+        AiAgent[] agents = FindObjectsOfType<AiAgent>();
+        foreach (AiAgent aiAgent in agents)
+        {
+            aiAgent.StartAgent();
+        }
     }
 
     void Start()
@@ -72,6 +88,8 @@ public class Game : MonoBehaviour
         }
 
         m_onHighScoreChanged.Invoke(m_highScore);
+
+        StartGame();
     }
 
     void OnDestroy()
@@ -195,6 +213,41 @@ public class Game : MonoBehaviour
     public void ResetGame()
     {
         m_onLivesChanged.Invoke(m_lives);
+        StopCoroutine("ScatterChaseTimer");
+        StartGame();
+    }
+
+    private IEnumerator ScatterChaseTimer()
+    {
+        m_isScatter = true;
+
+        yield return new WaitForSeconds(7.0f);
+
+        m_isScatter = false;
+
+        yield return new WaitForSeconds(20.0f);
+
+        m_isScatter = true;
+
+        yield return new WaitForSeconds(7.0f);
+
+        m_isScatter = false;
+
+        yield return new WaitForSeconds(20.0f);
+
+        m_isScatter = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        m_isScatter = false;
+
+        yield return new WaitForSeconds(20.0f);
+
+        m_isScatter = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        m_isScatter = false;
     }
 
     private int m_score;
@@ -227,6 +280,8 @@ public class Game : MonoBehaviour
     private int m_clydeDotLimit = 90;
 
     private GhostAgent.State globalState = GhostAgent.State.Invalid;
+
+    private bool m_isScatter;
 
     private static Game s_instance;
 }

@@ -9,14 +9,24 @@ public class PacmanAgent : AiAgent
         return connection.TargetNode.tag != "NoPacmanNode";
     }
 
-    protected override void Start()
+    protected override void OnStartAgent(bool isInit)
     {
         m_animator = GetComponentInChildren<Animator>();
-        base.Start();
+        m_animator.speed = 1.0f;
+        m_isDead = false;
+        m_animator.SetBool("IsDead", false);
+
+        if (!isInit)
+            Movement.enabled = true;
+
+        base.OnStartAgent(isInit);
     }
 
     void Update()
     {
+        if (m_isDead)
+            return;
+
         Vector2 movingDirection = Movement.MoveDirection;
         if (movingDirection != Vector2.zero)
         {
@@ -37,7 +47,7 @@ public class PacmanAgent : AiAgent
 
     protected override Direction OnThink(float deltaTime, float totalTime)
     {
-        return (Direction) ThinkPacman(WorldId, deltaTime, totalTime);
+        return (Direction) NativeThink3(WorldId, deltaTime, totalTime);
     }
 
     protected override void OnThreadKill()
@@ -46,11 +56,21 @@ public class PacmanAgent : AiAgent
 
     protected override void OnKill()
     {
+        m_animator.speed = 1;
         m_animator.SetBool("IsDead", true);
+        m_isDead = true;
     }
 
-    [DllImport("ThinkerLib", CallingConvention = CallingConvention.Cdecl)]
-    private static extern int ThinkPacman(int worldId, float deltaTime, float totalTime);
+    [DllImport("ThinkerLib", EntryPoint = "ThinkPacman", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int NativeThink(int worldId, float deltaTime, float totalTime);
+
+    [DllImport("ThinkerLib", EntryPoint = "ThinkPacman2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int NativeThink2(int worldId, float deltaTime, float totalTime);
+
+    [DllImport("ThinkerLib", EntryPoint = "ThinkPacman3", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int NativeThink3(int worldId, float deltaTime, float totalTime);
 
     private Animator m_animator;
+
+    private bool m_isDead;
 }

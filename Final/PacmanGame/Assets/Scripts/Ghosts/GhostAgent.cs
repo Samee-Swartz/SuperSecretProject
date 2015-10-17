@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using UnityEditor.iOS.Xcode;
 
 public class GhostAgent : AiAgent
 {
@@ -43,7 +44,7 @@ public class GhostAgent : AiAgent
             Movement.enabled = true;
 
         if(m_state == State.Waiting)
-            m_state = State.Normal;
+            m_state = Game.Instance.IsScatter ? State.Scatter : State.Normal;
     }
 
     public void TurnDead()
@@ -61,11 +62,14 @@ public class GhostAgent : AiAgent
         }
     }
 
-    protected override void Start()
+    protected override void OnStartAgent(bool isInit)
     {
+        if (isInit)
+            m_originalState = m_state;
+
         m_animator = GetComponentInChildren<Animator>();
-        base.Start();
-        Movement.enabled = m_state != State.Waiting;
+        base.OnStartAgent(isInit);
+        Movement.enabled = m_originalState != State.Waiting;
     }
 
     void Update()
@@ -76,9 +80,43 @@ public class GhostAgent : AiAgent
             m_animator.SetFloat("horizontal", movingDirection.x);
             m_animator.SetFloat("vertical", movingDirection.y);
         }
+
+        if (m_state == State.Normal && Game.Instance.IsScatter)
+        {
+            m_state = State.Scatter;
+        }
+        else if (m_state == State.Scatter && !Game.Instance.IsScatter)
+        {
+            m_state = State.Normal;
+        }
+        else if (m_state == State.Dead && Movement.AtNode && Movement.AtNode.tag == "NoPacmanNode")
+        {
+            TurnNormalInternal();
+        }
+
+        switch (m_state)
+        {
+            case State.Invalid:
+                break;
+            case State.Normal:
+                Movement.MaxSpeed = 1.1f;
+                break;
+            case State.Scatter:
+                goto case State.Normal;
+            case State.Blue:
+                Movement.MaxSpeed = 0.6f;
+                break;
+            case State.Dead:
+                Movement.MaxSpeed = 2.1f;
+                break;
+            case State.Waiting:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Pacman")
         {
@@ -87,6 +125,8 @@ public class GhostAgent : AiAgent
                 case State.Normal:
                     Game.Instance.PacmanDied();
                     break;
+                case State.Scatter:
+                    goto case State.Normal;
                 case State.Blue:
                     TurnDead();
                     break;
@@ -103,7 +143,7 @@ public class GhostAgent : AiAgent
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        m_agentInfo.State = (int)CurrentState;
+        m_agentInfo.State = (int) CurrentState;
     }
 
     public override bool CanTravelOnConnection(Connection connection)
@@ -134,7 +174,17 @@ public class GhostAgent : AiAgent
 
     private void TurnNormalInternal()
     {
-        m_state = Movement.enabled ? State.Normal : State.Waiting;
+        if (IsWaiting)
+        {
+            m_state = State.Waiting;
+        }
+        else
+        {
+            if (Game.Instance.IsScatter)
+                m_state = State.Scatter;
+            else
+                m_state = State.Normal;
+        }
         m_animator.SetBool("IsDead", false);
         m_animator.SetBool("IsBlue", false);
         m_animator.SetBool("IsBlinking", false);
@@ -143,8 +193,9 @@ public class GhostAgent : AiAgent
 
     private Animator m_animator;
 
-    [SerializeField]
-    private State m_state = State.Normal;
+    [SerializeField] private State m_state = State.Normal;
+
+    private State m_originalState;
 
     private static int s_eatenGhosts;
 }

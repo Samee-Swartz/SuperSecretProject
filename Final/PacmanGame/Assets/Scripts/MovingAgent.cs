@@ -23,6 +23,12 @@ public class MovingAgent : MonoBehaviour
         get { return m_moveDirection.magnitude * m_speed; }
     }
 
+    public float MaxSpeed
+    {
+        get { return m_speed; }
+        set { m_speed = value; }
+    }
+
     public Node ClosestNode
     {
         get { return m_closestNode; }

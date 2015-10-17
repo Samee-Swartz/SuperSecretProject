@@ -94,6 +94,11 @@ public abstract class AiAgent : MonoBehaviour
         get { return m_movement; }
     }
 
+    public bool HasInit
+    {
+        get { return m_hasInit; }
+    }
+
     public virtual void Wait()
     {
         m_movement.enabled = false;
@@ -113,17 +118,36 @@ public abstract class AiAgent : MonoBehaviour
     {
         lock (this)
         {
-            m_events.AddLast(thinkerEvent);
+            m_events.Add(thinkerEvent);
         }
     }
 
-    protected virtual void Start()
+    public void StartAgent()
     {
-        m_movement = GetComponent<MovingAgent>();
-        m_gameInstance = Game.Instance;
+        OnStartAgent(!m_hasInit);
+        m_hasInit = true;
+        StartCoroutine(StartThinkerThread());
+    }
+
+    private IEnumerator StartThinkerThread()
+    {
+        yield return new WaitForFixedUpdate();
+        yield return null;
 
         m_thread = new Thread(Thinker);
         m_thread.Start();
+    }
+
+    protected virtual void OnStartAgent(bool isInit)
+    {
+        m_movement = GetComponent<MovingAgent>();
+        m_isWaiting = m_movement.enabled;
+        m_gameInstance = Game.Instance;
+
+        if (isInit)
+            m_startingNode = m_movement.AtNode ? m_movement.AtNode : m_movement.ClosestNode;
+        else
+            m_movement.TeleportTo(m_startingNode);
     }
 
     public void Kill()
@@ -133,11 +157,11 @@ public abstract class AiAgent : MonoBehaviour
         OnKill();
     }
 
-    protected virtual void FixedUpdate()
+    public void GetherAgentInfo()
     {
         lock (this)
         {
-            if(m_direction != Direction.Invalid)
+            if (m_direction != Direction.Invalid)
                 m_movement.InputDirection = m_direction;
 
             m_agentInfo.Position = m_movement.transform.position;
@@ -157,8 +181,20 @@ public abstract class AiAgent : MonoBehaviour
             m_agentInfo.Speed = m_movement.Speed;
 
             if (m_movement.MoveDirection != Vector2.zero)
-                m_agentInfo.FacingDirection = (int) DirectionHelper.VectorToDirection(m_movement.MoveDirection);
+                m_agentInfo.FacingDirection = (int)DirectionHelper.VectorToDirection(m_movement.MoveDirection);
+
+            m_isWaiting = !Movement.enabled || m_agentInfo.ClosestNode == -1;
         }
+    }
+
+    protected virtual void Start()
+    {
+        
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        GetherAgentInfo();
     }
 
     private void OnDestroy()
@@ -211,18 +247,18 @@ public abstract class AiAgent : MonoBehaviour
         if (m_worldId < 0)
             m_worldId = CreateNativeWorld();
 
+        int eventIndex = 0;
+
         while (true)
         {
             AgentInfo pacman, inky, pinky, blinky, clyde;
 
             lock (this)
             {
-                foreach (ThinkerEvent thinkerEvent in m_events)
+                for (; eventIndex < m_events.Count; eventIndex++)
                 {
-                    thinkerEvent.Apply(this);
+                    m_events[eventIndex].Apply(this);
                 }
-
-                m_events.Clear();
             }
 
             lock (Game.Instance)
@@ -246,7 +282,10 @@ public abstract class AiAgent : MonoBehaviour
 
             lastTime = now;
 
-            SetMovingDirection(OnThink((float) deltaTime.TotalSeconds, (float) totalTime.TotalSeconds));
+            if(m_isWaiting)
+                SetMovingDirection(Direction.Invalid);
+            else
+                SetMovingDirection(OnThink((float) deltaTime.TotalSeconds, (float) totalTime.TotalSeconds));
 
             TimeSpan thinkTime = DateTime.Now - lastTime;
 
@@ -259,6 +298,7 @@ public abstract class AiAgent : MonoBehaviour
             {
                 OnThreadKill();
                 DestroyNativeWorld(m_worldId);
+                m_worldId = -1;
                 return;
             }
         }
@@ -274,7 +314,13 @@ public abstract class AiAgent : MonoBehaviour
 
     private int m_worldId = -1;
 
-    private LinkedList<ThinkerEvent> m_events = new LinkedList<ThinkerEvent>();
+    private bool m_isWaiting = true;
+
+    private bool m_hasInit = false;
+
+    private Node m_startingNode;
+
+    private List<ThinkerEvent> m_events = new List<ThinkerEvent>();
 
     private Game m_gameInstance;
 }

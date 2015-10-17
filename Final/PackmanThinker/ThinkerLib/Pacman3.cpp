@@ -1,36 +1,18 @@
-#include "Clyde.h"
-#include "Pawn.h"
+#include "Pacman3.h"
 #include "World.h"
-#include "Pacman.h"
-#include <stdlib.h>
-
-
-#include "Blinky.h"
-#include "Pawn.h"
-#include "World.h"
+#include <memory>
 #include <queue>
 
-#define SCATTER_NODE 1949939378
-#define FRIGHTEN_NODE 1104250611
-#define HOUSE_NODE 1753112837
-#include <unordered_set>
-#include <memory>
-#include <random>
-
-// Keeps track of node information during A* computation.
-namespace Clyde
+namespace Pacman3
 {
-	float randomness = 1;
-	float randomCycleTimer = 0;
-
 	struct ScoredNode
 	{
 		PathNode* node; // current node
 
-						// cost to get to this node (all previous travel + connectionCost) + curNodeValue if applicable
+		// cost to get to this node (all previous travel + connectionCost) + curNodeValue if applicable
 		float arrivalAndNodeCost;
 		float totalScore; // arrivalAndNodeCost + heuristic
-						  // the first direction taken (leaving pacman's current position) to get to this node
+		// the first direction taken (leaving pacman's current position) to get to this node
 		Direction::Enum connectionDirection;
 		std::shared_ptr<ScoredNode> prev;
 
@@ -80,30 +62,36 @@ namespace Clyde
 		}
 	};
 
+	float CalculateGhostEffect(const PathNode& in_node, const std::vector<const Pawn* const> in_ghosts)
+	{
+		float score = 0;
+		for(auto ghost : in_ghosts)
+		{
+			score += (ghost->GetPosition() - in_node.GetPosition()).MagnitudeSqr() / 1.0f;
+			if (ghost->GetClosestNode() == in_node.GetId())
+				score += 1000;
+
+			//When blue boost our want to go towards the ghost
+			if (ghost->GetState() == 2)
+				score = -score;
+		}
+
+		return score;
+	}
+
+	float CalculatePointBonus(const PathNode& in_node)
+	{
+		const PointObj* const pointObj = in_node.GetObject();
+		if (!pointObj)
+			return 1;
+
+		return -pointObj->GetWorth();
+	}
+
 	//Calculates the straight line distance between the currently node in examination and the target node
-	float crowDist(const PathNode& aNode, const PathNode& bNode)
+	float huristic(const PathNode& aNode, const PathNode& bNode)
 	{
 		return (bNode.GetPosition() - aNode.GetPosition()).Magnitude();
-	}
-
-
-	//pushes all nodes from queue A into queue B
-	void pushAll(std::queue<ScoredNode>& queueA, std::queue<ScoredNode>& queueB)
-	{
-		for (int i = 0; i <= queueA.size(); i++)
-		{
-			ScoredNode aTemp = queueA.front();
-			queueA.pop();
-			queueB.push(aTemp);
-		}
-	}
-
-	float RandomFloat(float a, float b) 
-	{
-		float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-		float diff = b - a;
-		float r = random * diff;
-		return a + r;
 	}
 
 	bool NodeComparer(std::shared_ptr<ScoredNode> in_a, std::shared_ptr<ScoredNode> in_b)
@@ -113,11 +101,12 @@ namespace Clyde
 
 	// expands the current node in all four directions. Adds valid expansions to the frontier list
 	void Expand(const World& in_world,
-		std::shared_ptr<ScoredNode> in_curNode,
-		const PathNode& in_targetNode,
-		std::priority_queue<std::shared_ptr<ScoredNode>, std::vector<std::shared_ptr<ScoredNode>>, std::function<bool(std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>>& inout_frontier,
-		std::map<PathNode*, std::shared_ptr<ScoredNode>>& inout_frontierMap,
-		const std::map<PathNode*, std::shared_ptr<ScoredNode>>& in_processedNodes)
+	            std::shared_ptr<ScoredNode> in_curNode,
+	            const PathNode& in_targetNode,
+				std::vector<const Pawn* const> in_ghosts,
+	            std::priority_queue<std::shared_ptr<ScoredNode>, std::vector<std::shared_ptr<ScoredNode>>, std::function<bool(std::shared_ptr<ScoredNode>, std::shared_ptr<ScoredNode>)>>& inout_frontier,
+	            std::map<PathNode*, std::shared_ptr<ScoredNode>>& inout_frontierMap,
+	            const std::map<PathNode*, std::shared_ptr<ScoredNode>>& in_processedNodes)
 	{
 		for (int i = 0; i < 4; i++)
 		{
@@ -132,8 +121,8 @@ namespace Clyde
 				if (foundInProcessed != in_processedNodes.end())
 					continue;
 
-				float cost = in_curNode->totalScore + connection.GetCost() + (RandomFloat(0.f, 1.f) * randomness * 3);
-				float h = crowDist(*connectedNode, in_targetNode);
+				float cost = in_curNode->totalScore + connection.GetCost();
+				float h = huristic(*connectedNode, in_targetNode) + CalculateGhostEffect(*connectedNode, in_ghosts) + CalculatePointBonus(*connectedNode);
 				float totalCost = cost + h;
 
 				//check if the frontier already contains this node, if it does keep the larger of the two
@@ -162,7 +151,13 @@ namespace Clyde
 		std::map<PathNode*, std::shared_ptr<ScoredNode>> processedNodes;
 		std::map<PathNode*, std::shared_ptr<ScoredNode>> frontierMap;
 
-		std::shared_ptr<ScoredNode> rootNode = std::make_shared<ScoredNode>(currentNode, 0.f, crowDist(*currentNode, *targetNode), Direction::Invalid, nullptr);
+		std::vector<const Pawn* const> ghosts;
+		ghosts.push_back(&in_ourWorld.GetBlinky());
+		ghosts.push_back(&in_ourWorld.GetInky());
+		ghosts.push_back(&in_ourWorld.GetPinky());
+		ghosts.push_back(&in_ourWorld.GetClyde());
+
+		std::shared_ptr<ScoredNode> rootNode = std::make_shared<ScoredNode>(currentNode, 0.f, huristic(*currentNode, *targetNode), Direction::Invalid, nullptr);
 		frontier.push(rootNode);
 		frontierMap.insert(std::pair<PathNode*, std::shared_ptr<ScoredNode>>(currentNode, rootNode));
 
@@ -180,7 +175,7 @@ namespace Clyde
 			frontierMap.erase(frontierEntry);
 			processedNodes.insert(std::pair<PathNode*, std::shared_ptr<ScoredNode>>(topNode->node, topNode));
 
-			Expand(in_ourWorld, topNode, *targetNode, frontier, frontierMap, processedNodes);
+			Expand(in_ourWorld, topNode, *targetNode, ghosts, frontier, frontierMap, processedNodes);
 		}
 
 		if (frontier.size() > 0)
@@ -193,56 +188,37 @@ namespace Clyde
 		return Direction::Invalid;
 	}
 
-	Direction::Enum OnClydeThink(const Pawn& in_ourPawn, const World& in_ourWorld, float in_deltaTime, float in_totalTime)
+
+	Direction::Enum OnThinkPacman3(const Pawn& in_ourPawn, const World& in_ourWorld, float in_deltaTime, float in_totalTime)
 	{
-		static int state;
+		std::vector<PointObj*> pointObjects;
+		in_ourWorld.GetPointObjects(pointObjects);
 
+		Vector2 avgBestLocation = Vector2(0, 0);
 
-		randomCycleTimer = 0;
-
-		const Pawn& pacman = in_ourWorld.GetPacman();
-		float distance = (pacman.GetPosition() - in_ourPawn.GetPosition()).Magnitude();
-
-		randomness = std::max(1.f, distance / 3.f);
-
-		switch (in_ourPawn.GetState())
+		for(auto obj : pointObjects)
 		{
-		case 1:
-		{
-			PathNode* startingTargetNode = in_ourWorld.GetNode(SCATTER_NODE);
-			return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), startingTargetNode); //start to navigate to respective corner 
+			avgBestLocation = avgBestLocation + obj->GetPosition();
 		}
-		case 0:
-			//Chase
-			//standard mode, attempt to move to the node that PacMan is currently occupying
-			//Use A* for this
-			if (in_ourPawn.GetCurrentNode() == -1)
+
+		PointObj* closestObject = nullptr;
+		float closestSqr = FLT_MAX;
+		for (auto obj : pointObjects)
+		{
+			float distanceSqr = (obj->GetPosition() - avgBestLocation).MagnitudeSqr();
+			if(distanceSqr < closestSqr)
 			{
-				return Direction::Invalid;
+				closestSqr = distanceSqr;
+				closestObject = obj;
 			}
-
-			return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), in_ourWorld.GetNode(in_ourWorld.GetPacman().GetClosestNode()));
-		case 2:
-			//Frightened
-			//Pacman has eaten a power cell thingy
-			//Attempt to navigate to same corner as scatter
-		{
-			randomness = 0;
-
-			PathNode* frightTargetNode = in_ourWorld.GetNode(FRIGHTEN_NODE);
-			return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), frightTargetNode); //start to navigate to respective corner
 		}
-		case 3:
-			//Dead
-			//Return to the house
-		{
-			randomness = 0;
 
-			PathNode* houseNode = in_ourWorld.GetNode(HOUSE_NODE);
-			return aStar(in_ourWorld, in_ourWorld.GetNode(in_ourPawn.GetClosestNode()), houseNode);
-		}
-		default:
-			return Direction::Up;
-		}
+		if (!closestObject)
+			return Direction::Invalid;
+
+		PathNode* start = in_ourWorld.GetNode(in_ourPawn.GetClosestNode());
+		PathNode* destination = in_ourWorld.GetNode(closestObject->GetNode());
+
+		return aStar(in_ourWorld, start, destination);
 	}
 }

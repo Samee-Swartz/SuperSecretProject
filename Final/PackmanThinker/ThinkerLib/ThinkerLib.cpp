@@ -2,6 +2,10 @@
 #include "World.h"
 #include "Pacman.h"
 #include "Blinky.h"
+#include "Inky.h"
+#include "Pinky.h"
+#include "Clyde.h"
+#include "Pacman3.h"
 
 int CreateWorld()
 {
@@ -131,8 +135,31 @@ int ThinkPacman(int in_worldId, float in_deltaTime, float in_totalTime)
 
 	const Pawn& pacman = world->GetPacman();
 
-	return static_cast<int>(OnPacmanThink(pacman, *world, in_deltaTime, in_totalTime));
+	return static_cast<int>(Pacman::OnPacmanThink(pacman, *world, in_deltaTime, in_totalTime));
 }
+
+int ThinkPacman2(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return -1;
+
+	const Pawn& pacman = world->GetPacman();
+
+	return static_cast<int>(Pacman2::OnPacmanThink(pacman, *world, in_deltaTime, in_totalTime));
+}
+
+int ThinkPacman3(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return -1;
+
+	const Pawn& pacman = world->GetPacman();
+
+	return static_cast<int>(Pacman3::OnThinkPacman3(pacman, *world, in_deltaTime, in_totalTime));
+}
+
 
 int ThinkBlinky(int in_worldId, float in_deltaTime, float in_totalTime)
 {
@@ -142,5 +169,38 @@ int ThinkBlinky(int in_worldId, float in_deltaTime, float in_totalTime)
 
 	const Pawn& blinky = world->GetBlinky();
 
-	return OnBlinkyThink(blinky, *world, in_deltaTime, in_totalTime);
+	return Blinky::OnBlinkyThink(blinky, *world, in_deltaTime, in_totalTime);
+}
+
+int ThinkInky(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return Direction::Invalid;
+
+	const Pawn& inky = world->GetInky();
+
+	return Inky::OnInkyThink(inky, *world, in_deltaTime, in_totalTime);
+}
+
+int ThinkPinky(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return Direction::Invalid;
+
+	const Pawn& pinky = world->GetPinky();
+
+	return Pinky::OnPinkyThink(pinky, *world, in_deltaTime, in_totalTime);
+}
+
+int ThinkClyde(int in_worldId, float in_deltaTime, float in_totalTime)
+{
+	World* world = World::GetWorld(in_worldId);
+	if (!world)
+		return Direction::Invalid;
+
+	const Pawn& clyde = world->GetClyde();
+
+	return Clyde::OnClydeThink(clyde, *world, in_deltaTime, in_totalTime);
 }

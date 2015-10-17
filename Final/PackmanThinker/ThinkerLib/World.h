@@ -123,6 +123,8 @@ private:
 	std::map<int, PointObj*> m_pointObjs;
 
 	static std::map<int, World*> m_worlds;
+	static std::mutex m_worldLock;
+	static int m_worldCount;
 
 	Pawn m_pacman, m_inky, m_pinky, m_blinky, m_clyde;
 

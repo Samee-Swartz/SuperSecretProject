@@ -2,6 +2,8 @@
 #include <mutex>
 
 std::map<int, World*> World::m_worlds;
+std::mutex World::m_worldLock;
+int World::m_worldCount = 0;
 
 PathNodeConnection::PathNodeConnection()
 	: m_otherNode(-1),
@@ -70,6 +72,8 @@ PointObj* World::CreatePointObj(int in_nodeId, PointObj::Type::Enum in_type, int
 	PointObj* newPointObj = new PointObj(in_nodeId, in_type, in_worth, node->m_position);
 	m_pointObjs.insert(std::pair<int, PointObj*>(in_nodeId, newPointObj));
 
+	node->m_object = newPointObj;
+
 	return newPointObj;
 }
 
@@ -117,27 +121,26 @@ void World::SetClyde(const Pawn& in_pawn)
 
 int World::CreateWorld()
 {
-	static int worldCount = 0;
-	static std::mutex creationLock;
-
-	std::lock_guard<std::mutex> lock(creationLock);
+	std::lock_guard<std::mutex> lock(m_worldLock);
 	
 	World* world = new World();
-	m_worlds.insert(std::pair<int, World*>(worldCount, world));
-	int assignedWorldId = worldCount;
+	m_worlds.insert(std::pair<int, World*>(m_worldCount, world));
+	int assignedWorldId = m_worldCount;
 
-	worldCount++;
+	m_worldCount++;
 
 	return assignedWorldId;
 }
 
 World* World::GetWorld(int id)
 {
+	std::lock_guard<std::mutex> lock(m_worldLock);
 	return m_worlds[id];
 }
 
 void World::DestroyWorld(int id)
 {
+	std::lock_guard<std::mutex> lock(m_worldLock);
 	World* world = m_worlds[id];
 	
 	delete world;

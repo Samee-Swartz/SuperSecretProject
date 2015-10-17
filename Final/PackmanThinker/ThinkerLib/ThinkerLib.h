@@ -35,6 +35,8 @@ THINKERLIB_API void SetInky(int in_worldId, const NativePawn& in_pawn);
 THINKERLIB_API void SetClyde(int in_worldId, const NativePawn& in_pawn);
 
 THINKERLIB_API int ThinkPacman(int in_worldId, float in_deltaTime, float in_totalTime);
+THINKERLIB_API int ThinkPacman2(int in_worldId, float in_deltaTime, float in_totalTime);
+THINKERLIB_API int ThinkPacman3(int in_worldId, float in_deltaTime, float in_totalTime);
 THINKERLIB_API int ThinkBlinky(int in_worldId, float in_deltaTime, float in_totalTime);
 THINKERLIB_API int ThinkPinky(int in_worldId, float in_deltaTime, float in_totalTime);
 THINKERLIB_API int ThinkInky(int in_worldId, float in_deltaTime, float in_totalTime);
